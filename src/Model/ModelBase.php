@@ -2,7 +2,7 @@
 
 namespace Mollie\API\Model;
 
-class ModelBase {
+abstract class ModelBase {
 
 	/**
 	 * @var object
