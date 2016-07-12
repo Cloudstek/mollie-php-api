@@ -25,24 +25,6 @@ abstract class ResourceBase {
 	}
 
 	/**
-	 * Get customer ID from customer object
-	 * @param Model\Customer|string $customer
-	 * @throws InvalidArgumentException
-	 * @return string
-	 */
-	protected function _getCustomerID($customer) {
-		if($customer instanceof Model\Customer) {
-			$customer_id = $customer->id;
-		} elseif(is_string($customer)) {
-			$customer_id = $customer;
-		} else {
-			throw new InvalidArgumentException("Customer argument must either be a Customer object or a string.");
-		}
-
-		return $customer_id;
-	}
-
-	/**
 	 * Get payment ID from payment object
 	 * @param Payment|string $payment
 	 * @throws InvalidArgumentException

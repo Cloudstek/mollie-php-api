@@ -5,7 +5,7 @@ namespace Mollie\API\Resource;
 use Mollie\API\Mollie;
 use Mollie\API\Model\Customer;
 
-class CustomerResource extends ResourceBase {
+class CustomerResource extends Customer\CustomerResourceBase {
 
 	/**
 	 * @var Customer\PaymentResource
@@ -18,24 +18,38 @@ class CustomerResource extends ResourceBase {
 	public $mandate;
 
 	/**
+	 * @var Customer\SubscriptionResource
+	 */
+	public $subscription;
+
+	/**
 	 * Constructor
 	 * @param string $api_key Mollie API key
+	 * @param Customer|string $customer
 	 */
-	public function __construct(Mollie $api) {
+	public function __construct(Mollie $api, $customer = null) {
 
 		// Customer resources
-		$this->payment 		= new Customer\PaymentResource($api, $this);
-		$this->mandate 		= new Customer\MandateResource($api, $this);
+		if(isset($customer)) {
+			$this->payment		= new Customer\PaymentResource($api, $customer);
+			$this->mandate		= new Customer\MandateResource($api, $customer);
+			$this->subscription	= new Customer\SubscriptionResource($api, $customer);
+		}
 
-		parent::__construct($api);
+		parent::__construct($api, $customer);
 	}
 
 	/**
 	 * Get customer
-	 * @param string $id Customer ID
+	 * @param Customer|string $id
 	 * @return Customer
 	 */
-	public function get($id) {
+	public function get($id = null) {
+
+		// Convert customer argument to ID
+		$customer_id = $this->_getCustomerID($id);
+
+		// API request
 		$resp = $this->api->get("/customers/{$id}");
 
 		// Return customer model
