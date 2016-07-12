@@ -13,7 +13,7 @@ class PaymentResource extends ResourceBase {
 	 * @return Payment
 	 */
 	public function get($id) {
-		$resp = $this->api->get("/payments/{$id}");
+		$resp = $this->api->request->get("/payments/{$id}");
 
 		// Return payment model
 		return new Payment($resp);
@@ -24,7 +24,7 @@ class PaymentResource extends ResourceBase {
 	 * @return Generator|Payment[]
 	 */
 	public function all() {
-		$items = $this->api->getAll("/payments");
+		$items = $this->api->request->getAll("/payments");
 
 		foreach($items as $item) {
 			yield new Payment($item);
@@ -91,7 +91,7 @@ class PaymentResource extends ResourceBase {
 		}
 
 		// API request
-		$resp = $this->api->post("/payments", $params);
+		$resp = $this->api->request->post("/payments", $params);
 
 		// Return payment model
 		return new Payment($resp);

@@ -50,7 +50,7 @@ class CustomerResource extends Customer\CustomerResourceBase {
 		$customer_id = $this->_getCustomerID($id);
 
 		// API request
-		$resp = $this->api->get("/customers/{$id}");
+		$resp = $this->api->request->get("/customers/{$id}");
 
 		// Return customer model
 		return new Customer($resp);
@@ -61,7 +61,7 @@ class CustomerResource extends Customer\CustomerResourceBase {
 	 * @return Generator|Customer[]
 	 */
 	public function all() {
-		$items = $this->api->getAll("/customers");
+		$items = $this->api->request->getAll("/customers");
 
 		foreach($items as $item) {
 			yield new Customer($item);
@@ -100,7 +100,7 @@ class CustomerResource extends Customer\CustomerResourceBase {
 		];
 
 		// API request
-		$resp = $this->api->post("/customers", $params);
+		$resp = $this->api->request->post("/customers", $params);
 
 		// Return customer model
 		return new Customer($resp);

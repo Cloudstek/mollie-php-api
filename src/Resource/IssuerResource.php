@@ -13,7 +13,7 @@ class IssuerResource extends ResourceBase {
 	 * @return Issuer
 	 */
 	public function get($id) {
-		$resp = $this->api->get("/issuers/{$id}");
+		$resp = $this->api->request->get("/issuers/{$id}");
 
 		// Return method model
 		return new Issuer($resp);
@@ -24,7 +24,7 @@ class IssuerResource extends ResourceBase {
 	 * @return Generator|Issuer[]
 	 */
 	public function all() {
-		$items = $this->api->getAll("/issuers");
+		$items = $this->api->request->getAll("/issuers");
 
 		foreach($items as $item) {
 			yield new Issuer($item);

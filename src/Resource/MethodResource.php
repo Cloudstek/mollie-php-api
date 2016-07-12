@@ -13,7 +13,7 @@ class MethodResource extends ResourceBase {
 	 * @return Method
 	 */
 	public function get($id) {
-		$resp = $this->api->get("/methods/{$id}");
+		$resp = $this->api->request->get("/methods/{$id}");
 
 		// Return method model
 		return new Method($resp);
@@ -24,7 +24,7 @@ class MethodResource extends ResourceBase {
 	 * @return Generator|Method[]
 	 */
 	public function all() {
-		$items = $this->api->getAll("/methods");
+		$items = $this->api->request->getAll("/methods");
 
 		foreach($items as $item) {
 			yield new Method($item);

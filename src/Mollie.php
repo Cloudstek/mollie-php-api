@@ -42,10 +42,11 @@ class Mollie {
 
 	/**
 	 * Mollie API constructor
-	 * @param string $api_key Mollie API key
-	 * @param string $api_ep Mollie API endpoint URL
+	 * @param string|null $api_key Mollie API key
+	 * @param string|null $api_ep Mollie API endpoint URL
+	 * @param RequestInterface|null
 	 */
-	public function __construct($api_key = null, $api_ep = null) {
+	public function __construct($api_key = null, $api_ep = null, RequestInterface $requestHandler = null) {
 
 		// API Key
 		if(!empty($api_key)) {
@@ -58,7 +59,7 @@ class Mollie {
 		}
 
 		// Request handler
-		$this->request = new Request($this);
+		$this->request = isset($requestHandler) ? $requestHandler : new Request($this);
 
 		// Resources
 		$this->payment = new Resource\PaymentResource($this);
@@ -117,16 +118,5 @@ class Mollie {
 	 */
 	public function setRequestHandler(RequestInterface $handler) {
 		$this->request = $handler;
-	}
-
-	/**
-	 * Magic method for direct access to request functions
-	 */
-	public function __call($name, $args) {
-
-		// Check if called function is defined in request handler (and thus in RequestInterface)
-		if(method_exists($this->request, $name)) {
-			call_user_func_array([$this->request, $name], $args);
-		}
 	}
 }

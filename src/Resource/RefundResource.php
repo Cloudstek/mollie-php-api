@@ -19,7 +19,7 @@ class RefundResource extends ResourceBase {
 		// Convert payment argument to ID
 		$payment_id = $this->_getPaymentID($payment);
 
-		$resp = $this->api->get("/payments/{$payment_id}/refunds/{$refund_id}");
+		$resp = $this->api->request->get("/payments/{$payment_id}/refunds/{$refund_id}");
 
 		// Return payment model
 		return new Refund($resp);
@@ -35,7 +35,7 @@ class RefundResource extends ResourceBase {
 		$payment_id = $this->_getPaymentID($payment);
 
 		// API request
-		$items = $this->api->getAll("/payments/{$payment_id}/refunds");
+		$items = $this->api->request->getAll("/payments/{$payment_id}/refunds");
 
 		// Yield items
 		foreach($items as $item) {
@@ -56,7 +56,7 @@ class RefundResource extends ResourceBase {
 		$payment_id = $this->_getPaymentID($payment);
 
 		// API request
-		$resp = $this->api->post("/payments", [
+		$resp = $this->api->request->post("/payments", [
 			'amount'		=> $amount
 		]);
 
@@ -77,6 +77,6 @@ class RefundResource extends ResourceBase {
 		$payment_id = $this->_getPaymentID($payment);
 
 		// API request
-		$this->api->delete("/payments/{$payment_id}/refunds/{$refund_id}");
+		$this->api->request->delete("/payments/{$payment_id}/refunds/{$refund_id}");
 	}
 }

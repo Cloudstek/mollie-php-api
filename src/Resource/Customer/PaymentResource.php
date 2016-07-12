@@ -19,7 +19,7 @@ class PaymentResource extends CustomerResourceBase {
 		$customer_id = $this->_getCustomerID($customer);
 
 		// API request
-		$items = $this->api->getAll("/customers/{$customer_id}/payments");
+		$items = $this->api->request->getAll("/customers/{$customer_id}/payments");
 
 		// Return payment model iterator
 		foreach($items as $item) {
@@ -93,7 +93,7 @@ class PaymentResource extends CustomerResourceBase {
 		}
 
 		// API request
-		$resp = $this->api->post("/customers/{$customer_id}/payments", $params);
+		$resp = $this->api->request->post("/customers/{$customer_id}/payments", $params);
 
 		// Return payment model
 		return new Payment($resp);

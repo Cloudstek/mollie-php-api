@@ -20,7 +20,7 @@ class MandateResource extends CustomerResourceBase {
 		$customer_id = $this->_getCustomerID($customer);
 
 		// API request
-		$resp = $this->api->get("/customers/{$customer_id}/mandates/{$id}");
+		$resp = $this->api->request->get("/customers/{$customer_id}/mandates/{$id}");
 
 		// Return mandate model
 		return new Mandate($resp);
@@ -37,7 +37,7 @@ class MandateResource extends CustomerResourceBase {
 		$customer_id = $this->_getCustomerID($customer);
 
 		// API request
-		$items = $this->api->getAll("/customers/{$customer_id}/mandates");
+		$items = $this->api->request->getAll("/customers/{$customer_id}/mandates");
 
 		// Return mandate model iterator
 		foreach($items as $item) {

@@ -20,7 +20,7 @@ class SubscriptionResource extends CustomerResourceBase {
 		$customer_id = $this->_getCustomerID($customer);
 
 		// API request
-		$resp = $this->api->get("/customers/{$customer_id}/subscriptions/{$id}");
+		$resp = $this->api->request->get("/customers/{$customer_id}/subscriptions/{$id}");
 
 		// Return subscription model
 		return new Subscription($resp);
@@ -37,7 +37,7 @@ class SubscriptionResource extends CustomerResourceBase {
 		$customer_id = $this->_getCustomerID($customer);
 
 		// API request
-		$items = $this->api->getAll("/customers/{$customer_id}/subscriptions");
+		$items = $this->api->request->getAll("/customers/{$customer_id}/subscriptions");
 
 		// Return subscription model iterator
 		foreach($items as $item) {
@@ -86,7 +86,7 @@ class SubscriptionResource extends CustomerResourceBase {
 		];
 
 		// API request
-		$resp = $this->api->post("/customers/{$customer_id}/subscriptions", $params);
+		$resp = $this->api->request->post("/customers/{$customer_id}/subscriptions", $params);
 
 		// Return subscription model
 		return new Subscription($resp);
@@ -105,7 +105,7 @@ class SubscriptionResource extends CustomerResourceBase {
 		$customer_id = $this->_getCustomerID($customer);
 
 		// API request
-		$resp = $this->api->delete("/customers/{$customer_id}/subscriptions/{$id}");
+		$resp = $this->api->request->delete("/customers/{$customer_id}/subscriptions/{$id}");
 
 		// Return cancelled subscription model
 		return new Subscription($resp);
