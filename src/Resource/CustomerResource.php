@@ -30,11 +30,9 @@ class CustomerResource extends Customer\CustomerResourceBase {
 	public function __construct(Mollie $api, $customer = null) {
 
 		// Customer resources
-		if(isset($customer)) {
-			$this->payment		= new Customer\PaymentResource($api, $customer);
-			$this->mandate		= new Customer\MandateResource($api, $customer);
-			$this->subscription	= new Customer\SubscriptionResource($api, $customer);
-		}
+		$this->payment		= new Customer\PaymentResource($api, $customer);
+		$this->mandate		= new Customer\MandateResource($api, $customer);
+		$this->subscription	= new Customer\SubscriptionResource($api, $customer);
 
 		parent::__construct($api, $customer);
 	}
@@ -47,7 +45,7 @@ class CustomerResource extends Customer\CustomerResourceBase {
 	public function get($id = null) {
 
 		// Convert customer argument to ID
-		$customer_id = $this->_getCustomerID($id);
+		$id = $this->_getCustomerID($id);
 
 		// API request
 		$resp = $this->api->request->get("/customers/{$id}");
