@@ -4,6 +4,7 @@ namespace Mollie\API\Resource;
 
 use Mollie\API\Mollie;
 use Mollie\API\Model\Payment;
+use Mollie\API\Base\ResourceBase;
 use Mollie\API\Model\Refund;
 
 class RefundResource extends ResourceBase {

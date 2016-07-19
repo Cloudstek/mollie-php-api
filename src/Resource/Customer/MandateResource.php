@@ -3,6 +3,7 @@
 namespace Mollie\API\Resource\Customer;
 
 use Mollie\API\Mollie;
+use Mollie\API\Base\CustomerResourceBase;
 use Mollie\API\Model\Customer;
 use Mollie\API\Model\Mandate;
 

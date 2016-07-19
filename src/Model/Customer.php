@@ -2,6 +2,7 @@
 
 namespace Mollie\API\Model;
 
+use Mollie\API\Base\ModelBase;
 class Customer extends ModelBase {
 
 }

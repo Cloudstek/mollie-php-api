@@ -2,5 +2,7 @@
 
 namespace Mollie\API\Model;
 
-class Mandate extends ModelBase {	
+use Mollie\API\Base\ModelBase;
+
+class Mandate extends ModelBase {
 }

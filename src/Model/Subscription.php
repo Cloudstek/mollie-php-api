@@ -2,5 +2,7 @@
 
 namespace Mollie\API\Model;
 
-class Subscription extends ModelBase {	
+use Mollie\API\Base\ModelBase;
+
+class Subscription extends ModelBase {
 }

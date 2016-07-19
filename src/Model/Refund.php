@@ -2,6 +2,8 @@
 
 namespace Mollie\API\Model;
 
+use Mollie\API\Base\ModelBase;
+
 class Refund extends ModelBase {
 
 	/**

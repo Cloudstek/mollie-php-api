@@ -4,6 +4,8 @@ namespace Mollie\API;
 
 require_once __DIR__ . '/../vendor/composer/autoload.php';
 
+use Mollie\API\Base\RequestBase;
+
 class Mollie {
 
 	/**
@@ -18,10 +20,7 @@ class Mollie {
 	 */
 	private $api_endpoint = "https://api.mollie.nl/v1";
 
-	/**
-	 * Request handler
-	 * @var RequestInterface
-	 */
+	/**  @var RequestBase Request Handler */
 	private $request;
 
 	/**
@@ -46,7 +45,7 @@ class Mollie {
 	 * @param string|null $api_ep Mollie API endpoint URL
 	 * @param RequestInterface|null
 	 */
-	public function __construct($api_key = null, $api_ep = null, RequestInterface $requestHandler = null) {
+	public function __construct($api_key = null, $api_ep = null, RequestBase $requestHandler = null) {
 
 		// API Key
 		if(!empty($api_key)) {
@@ -116,7 +115,7 @@ class Mollie {
 	 * Set request handler
 	 * @param RequestInterface $handler
 	 */
-	public function setRequestHandler(RequestInterface $handler) {
+	public function setRequestHandler(RequestBase $handler) {
 		$this->request = $handler;
 	}
 }
