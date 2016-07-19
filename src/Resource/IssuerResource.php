@@ -10,6 +10,7 @@ class IssuerResource extends ResourceBase {
 
 	/**
 	 * Get iDEAL issuer
+	 *
 	 * @param string $id iDEAL issuer ID
 	 * @return Issuer
 	 */

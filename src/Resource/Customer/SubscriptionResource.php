@@ -11,6 +11,7 @@ class SubscriptionResource extends CustomerResourceBase {
 
 	/**
 	 * Get customer subscription
+	 *
 	 * @param string $id Subscription ID
 	 * @param Customer|string $customer
 	 * @return Subscription
@@ -29,6 +30,7 @@ class SubscriptionResource extends CustomerResourceBase {
 
 	/**
 	 * Get all customer subscriptions
+	 *
 	 * @param Customer|string $customer
 	 * @return Generator|Mandate[]
 	 */
@@ -48,6 +50,7 @@ class SubscriptionResource extends CustomerResourceBase {
 
 	/**
 	 * Create customer subscription
+	 *
 	 * @see https://www.mollie.com/nl/docs/reference/subscriptions/create
 	 * @param double $amount The constant amount in EURO that you want to charge with each subscription payment
 	 * @param string $interval Interval to wait between charges like "1 month(s)" or "14 days"
@@ -95,6 +98,7 @@ class SubscriptionResource extends CustomerResourceBase {
 
 	/**
 	 * Cancel customer subscription
+	 * 
 	 * @see https://www.mollie.com/nl/docs/reference/subscriptions/delete
 	 * @param string $id Subscription ID
 	 * @param Customer|string $customer

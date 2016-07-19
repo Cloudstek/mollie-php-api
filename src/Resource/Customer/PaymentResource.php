@@ -11,6 +11,7 @@ class PaymentResource extends CustomerResourceBase {
 
 	/**
 	 * Get all customer payments
+	 *
 	 * @param Customer|string $customer
 	 * @return Generator|Payment[]
 	 */
@@ -30,6 +31,7 @@ class PaymentResource extends CustomerResourceBase {
 
 	/**
 	 * Create customer payment
+	 *
 	 * @see https://www.mollie.com/nl/docs/reference/payments/create
 	 * @see https://www.mollie.com/nl/docs/reference/customers/create-payment
 	 * @param double $amount The amount in EURO that you want to charge

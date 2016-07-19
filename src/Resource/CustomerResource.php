@@ -8,24 +8,19 @@ use Mollie\API\Model\Customer;
 
 class CustomerResource extends CustomerResourceBase {
 
-	/**
-	 * @var Customer\PaymentResource
-	 */
+	/** @var Customer\PaymentResource */
 	public $payment;
 
-	/**
-	 * @var Customer\MandateResource
-	 */
+	/** @var Customer\MandateResource */
 	public $mandate;
 
-	/**
-	 * @var Customer\SubscriptionResource
-	 */
+	/** @var Customer\SubscriptionResource */
 	public $subscription;
 
 	/**
 	 * Constructor
-	 * @param string $api_key Mollie API key
+	 *
+	 * @param Mollie $api
 	 * @param Customer|string $customer
 	 */
 	public function __construct(Mollie $api, $customer = null) {
@@ -40,6 +35,7 @@ class CustomerResource extends CustomerResourceBase {
 
 	/**
 	 * Get customer
+	 *
 	 * @param Customer|string $id
 	 * @return Customer
 	 */
@@ -69,6 +65,7 @@ class CustomerResource extends CustomerResourceBase {
 
 	/**
 	 * Create customer
+	 *
 	 * @see https://www.mollie.com/nl/docs/reference/customers/create
 	 * @param string $name Customer name
 	 * @param string $email Customer email

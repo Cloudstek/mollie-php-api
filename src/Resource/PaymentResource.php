@@ -34,6 +34,7 @@ class PaymentResource extends PaymentResourceBase {
 
 	/**
 	 * Create payment
+	 *
 	 * @see https://www.mollie.com/nl/docs/reference/payments/create
 	 * @param double $amount The amount in EURO that you want to charge
 	 * @param string $description The description of the payment you're creating.

@@ -10,6 +10,7 @@ class MethodResource extends ResourceBase {
 
 	/**
 	 * Get payment method
+	 * 
 	 * @param string $id Payment method ID
 	 * @return Method
 	 */

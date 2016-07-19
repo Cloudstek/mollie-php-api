@@ -11,6 +11,7 @@ class MandateResource extends CustomerResourceBase {
 
 	/**
 	 * Get customer mandate
+	 *
 	 * @param string $id Mandate ID
 	 * @param Customer|string $customer
 	 * @return Mandate
@@ -29,6 +30,7 @@ class MandateResource extends CustomerResourceBase {
 
 	/**
 	 * Get all customer mandates
+	 * 
 	 * @param Customer|string $customer
 	 * @return Generator|Mandate[]
 	 */
