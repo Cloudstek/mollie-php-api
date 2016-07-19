@@ -8,12 +8,35 @@ use Mollie\API\Model\Payment;
 
 class PaymentResource extends PaymentResourceBase {
 
+	/** @var Payment\RefundResource */
+	public $refund;
+
+	/**
+	 * Constructor
+	 *
+	 * @param string $api_key Mollie API key
+	 * @param Payment|string $payment
+	 */
+	public function __construct(Mollie $api, $payment = null) {
+
+		// Payment resources
+		$this->refund = new Payment\RefundResource($api, $payment);
+
+		parent::__construct($api, $payment);
+	}
+
 	/**
 	 * Get payment
+	 *
 	 * @param string $id Payment ID
 	 * @return Payment
 	 */
 	public function get($id) {
+
+		// Convert payment argument to ID
+		$id = $this->_getPaymentID($id);
+
+		// API request
 		$resp = $this->api->request->get("/payments/{$id}");
 
 		// Return payment model
