@@ -78,13 +78,6 @@ class CustomerResource extends CustomerResourceBase {
 	 */
 	public function create($name, $email, $locale = null, array $metadata = null) {
 
-		// Check locale
-		if(!empty($locale)) {
-			if(!in_array($locale, Mollie::locales)) {
-				$locale = null; // Use browser language
-			}
-		}
-
 		// Convert metadata to JSON
 		if(!empty($metadata)) {
 			$metadata = json_encode($metadata);

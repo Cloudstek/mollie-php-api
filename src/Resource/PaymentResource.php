@@ -55,13 +55,6 @@ class PaymentResource extends PaymentResourceBase {
 			}
 		}
 
-		// Check locale
-		if(!empty($locale)) {
-			if(!in_array($locale, Mollie::locales)) {
-				$locale = null; // Use browser language
-			}
-		}
-
 		// Check recurring type
 		if(!empty($recurringType)) {
 			if($recurringType != "first" && $recurringType != "recurring") {
