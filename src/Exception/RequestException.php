@@ -4,18 +4,16 @@ namespace Mollie\API\Exception;
 
 class RequestException extends \Exception {
 
-	/**
-	 * Response
-	 * @var mixed
-	 */
+	/** @var mixed */
 	private $response;
 
 	/**
 	 * Request exception constructor
+	 *
 	 * @param string $message
 	 * @param int $code
-	 * @param string $url
-	 * @param string $response
+	 * @param string|null $url
+	 * @param string|null $response
 	 */
 	public function __construct($message, $code = 0, $url = "", $response = null) {
 		$this->response = $response;
@@ -32,7 +30,8 @@ class RequestException extends \Exception {
 	}
 
 	/**
-	 * Get response
+	 * Get response that threw the exception
+	 *
 	 * @return mixed
 	 */
 	public function getResponse() {
