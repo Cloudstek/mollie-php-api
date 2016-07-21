@@ -28,7 +28,7 @@ abstract class PaymentResourceBase extends ResourceBase {
 	}
 
 	/**
-	 * Get payment ID from string or payment object
+	 * Get payment ID
 	 *
 	 * For example:
 	 * <code>
@@ -39,6 +39,7 @@ abstract class PaymentResourceBase extends ResourceBase {
 	 *		$customer = $mollie->payment()->get() 			// Error! No global or local customer defined
 	 * ?>
 	 * </code>
+	 *
 	 * @param Payment|string $payment
 	 * @throws InvalidArgumentException
 	 * @return string
@@ -52,15 +53,12 @@ abstract class PaymentResourceBase extends ResourceBase {
 			$payment_id = $payment;
 		} elseif(!empty($payment)) {
 			throw new \InvalidArgumentException("Payment argument must either be a Payment object or a string.");
+		} elseif(!empty($this->payment)) {
+			$payment_id = $this->payment;
 		}
 
-		// If payment argument is empty, check global payment or throw exception when both empty
 		if(empty($payment_id)) {
-			if(empty($this->payment)) {
-				throw new \BadMethodCallException("No payment ID was given");
-			}
-
-			return $this->payment;
+			throw new \BadMethodCallException("No payment ID was given");
 		}
 
 		return $payment_id;

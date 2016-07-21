@@ -41,7 +41,7 @@ class CustomerResource extends CustomerResourceBase {
 	 */
 	public function get($id = null) {
 
-		// Convert customer argument to ID
+		// Get customer ID
 		$id = $this->_getCustomerID($id);
 
 		// API request

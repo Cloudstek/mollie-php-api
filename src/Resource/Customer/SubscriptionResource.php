@@ -18,7 +18,7 @@ class SubscriptionResource extends CustomerResourceBase {
 	 */
 	public function get($id, $customer = null) {
 
-		// Convert customer argument to ID
+		// Get customer ID
 		$customer_id = $this->_getCustomerID($customer);
 
 		// API request
@@ -36,7 +36,7 @@ class SubscriptionResource extends CustomerResourceBase {
 	 */
 	public function all($customer = null) {
 
-		// Convert customer argument to ID
+		// Get customer ID
 		$customer_id = $this->_getCustomerID($customer);
 
 		// API request
@@ -64,7 +64,7 @@ class SubscriptionResource extends CustomerResourceBase {
 	 */
 	public function create($amount, $interval, $description, $customer = null, $times = null, $method = null, $webhookUrl = null) {
 
-		// Convert customer argument to ID
+		// Get customer ID
 		$customer_id = $this->_getCustomerID($customer);
 
 		// Check number of times
@@ -106,7 +106,7 @@ class SubscriptionResource extends CustomerResourceBase {
 	 */
 	public function cancel($id, $customer = null) {
 
-		// Convert customer argument to ID
+		// Get customer ID
 		$customer_id = $this->_getCustomerID($customer);
 
 		// API request

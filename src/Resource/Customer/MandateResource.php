@@ -18,7 +18,7 @@ class MandateResource extends CustomerResourceBase {
 	 */
 	public function get($id, $customer = null) {
 
-		// Convert customer argument to ID
+		// Get customer ID
 		$customer_id = $this->_getCustomerID($customer);
 
 		// API request
@@ -36,7 +36,7 @@ class MandateResource extends CustomerResourceBase {
 	 */
 	public function all($customer = null) {
 
-		// Convert customer argument to ID
+		// Get customer ID
 		$customer_id = $this->_getCustomerID($customer);
 
 		// API request

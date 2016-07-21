@@ -33,7 +33,7 @@ class PaymentResource extends PaymentResourceBase {
 	 */
 	public function get($id) {
 
-		// Convert payment argument to ID
+		// Get payment ID
 		$id = $this->_getPaymentID($id);
 
 		// API request

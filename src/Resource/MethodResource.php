@@ -10,11 +10,15 @@ class MethodResource extends ResourceBase {
 
 	/**
 	 * Get payment method
-	 * 
-	 * @param string $id Payment method ID
+	 *
+	 * @param string|null $id Payment method ID
 	 * @return Method
 	 */
-	public function get($id) {
+	public function get($id = null) {
+
+		// Get method ID
+		$id = $this->_getResourceID($id);
+
 		$resp = $this->api->request->get("/methods/{$id}");
 
 		// Return method model

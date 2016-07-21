@@ -8,42 +8,21 @@ use Mollie\API\Base\RequestBase;
 
 class Mollie {
 
-	/**
-	 * API key
-	 * @var string
-	 */
+	/** @var string API Key */
 	private $api_key;
 
-	/**
-	 * API endpoint
-	 * @var string
-	 */
+	/** @var string API Endpoint */
 	private $api_endpoint = "https://api.mollie.nl/v1";
 
-	/**  @var RequestBase Request Handler */
+	/** @var RequestBase Request Handler */
 	private $request;
 
 	/**
-	 * Locales
-	 * @var array
-	 */
-	public static $locales = ['de', 'en', 'es', 'fr', 'be', 'be-fr', 'nl'];
-
-	/**
-	 * @var Resource\PaymentResource
-	 */
-	public $payment;
-
-	/**
-	 * @var Resource\RefundResource
-	 */
-	public $refund;
-
-	/**
 	 * Mollie API constructor
+	 *
 	 * @param string|null $api_key Mollie API key
 	 * @param string|null $api_ep Mollie API endpoint URL
-	 * @param RequestInterface|null
+	 * @param RequestBase|null $requestHandler Request handler
 	 */
 	public function __construct($api_key = null, $api_ep = null, RequestBase $requestHandler = null) {
 
@@ -59,10 +38,6 @@ class Mollie {
 
 		// Request handler
 		$this->request = isset($requestHandler) ? $requestHandler : new Request($this);
-
-		// Resources
-		$this->payment = new Resource\PaymentResource($this);
-		$this->refund = new Resource\RefundResource($this);
 	}
 
 	/**
@@ -89,7 +64,9 @@ class Mollie {
 
 	/**
 	 * Get API endppoint URL
-	 * @return string
+	 *
+	 * @param string $uri Endpoint URI like /customers
+	 * @return string Complete endpoint URL to make requests to
 	 */
 	public function getApiEndpoint($uri = null) {
 		$url = $this->api_endpoint;
@@ -113,9 +90,57 @@ class Mollie {
 
 	/**
 	 * Set request handler
-	 * @param RequestInterface $handler
+	 * @param RequestBase $handler
 	 */
 	public function setRequestHandler(RequestBase $handler) {
 		$this->request = $handler;
+	}
+
+	/**
+	 * Customer Resource
+	 *
+	 * @param Model\Customer|string $customer Customer ID
+	 * @return Resource\CustomerResource
+	 */
+	public function customer($customer = null) {
+		return new Resource\CustomerResource($this, $customer);
+	}
+
+	/**
+	 * Issuer Resource
+	 *
+	 * @param string $issuer Issuer ID
+	 * @return Resource\IssuerResource
+	 */
+	public function issuer($issuer = null) {
+		return new Resource\IssuerResource($this, $issuer);
+	}
+
+	/**
+	 * Payment Method Resource
+	 *
+	 * @param string $method Payment Method ID
+	 * @return Resource\MethodResource
+	 */
+	public function method($method = null) {
+		return new Resource\MethodResource($this, $method);
+	}
+
+	/**
+	 * Payment Resource
+	 *
+	 * @param Model\Payment|string $payment Payment ID
+	 * @return Resource\PaymentResource
+	 */
+	public function payment($payment = null) {
+		return new Resource\PaymentResource($this, $payment);
+	}
+
+	/**
+	 * Refund Resource
+	 * @return Resource\RefundResource
+	 */
+	public function refund() {
+		return new Resource\RefundResource($this);
 	}
 }

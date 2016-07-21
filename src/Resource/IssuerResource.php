@@ -14,7 +14,11 @@ class IssuerResource extends ResourceBase {
 	 * @param string $id iDEAL issuer ID
 	 * @return Issuer
 	 */
-	public function get($id) {
+	public function get($id = null) {
+
+		// Get issuer ID
+		$id = $this->_getResourceID($id);
+
 		$resp = $this->api->request->get("/issuers/{$id}");
 
 		// Return method model

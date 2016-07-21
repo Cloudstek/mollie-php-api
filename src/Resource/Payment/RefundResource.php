@@ -18,7 +18,7 @@ class RefundResource extends PaymentResourceBase {
 	 */
 	public function get($refund_id, $payment = null) {
 
-		// Convert payment argument to ID
+		// Get payment ID
 		$payment_id = $this->_getPaymentID($payment);
 
 		$resp = $this->api->request->get("/payments/{$payment_id}/refunds/{$refund_id}");
@@ -33,7 +33,7 @@ class RefundResource extends PaymentResourceBase {
 	 */
 	public function all($payment = null) {
 
-		// Convert payment argument to ID
+		// Get payment ID
 		$payment_id = $this->_getPaymentID($payment);
 
 		// API request
@@ -55,7 +55,7 @@ class RefundResource extends PaymentResourceBase {
 	 */
 	public function create($amount = null, $payment = null) {
 
-		// Convert payment argument to ID
+		// Get payment ID
 		$payment_id = $this->_getPaymentID($payment);
 
 		// API request
@@ -77,7 +77,7 @@ class RefundResource extends PaymentResourceBase {
 	 */
 	public function cancel($refund_id, $payment = null) {
 
-		// Convert payment argument to ID
+		// Get payment ID
 		$payment_id = $this->_getPaymentID($payment);
 
 		// API request
