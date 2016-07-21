@@ -6,8 +6,8 @@ use Mollie\API\Resource\Customer\MandateResource;
 use Mollie\API\Resource\Customer\PaymentResource;
 use Mollie\API\Resource\Customer\SubscriptionResource;
 
-class Customer extends Base\ModelBase {
-
+class Customer extends Base\ModelBase
+{
     /** @var string Customer ID */
     public $id;
 
@@ -36,7 +36,8 @@ class Customer extends Base\ModelBase {
      * Customer Mandates
      * @return MandateResource
      */
-    public function mandate() {
+    public function mandate()
+    {
         return new MandateResource($this->api, $this);
     }
 
@@ -44,7 +45,8 @@ class Customer extends Base\ModelBase {
      * Customer Payments
      * @return PaymentResource
      */
-    public function payment() {
+    public function payment()
+    {
         return new PaymentResource($this->api, $this);
     }
 
@@ -52,7 +54,8 @@ class Customer extends Base\ModelBase {
      * Customer Subscriptions
      * @return SubscriptionResource
      */
-    public function subscription() {
+    public function subscription()
+    {
         return new SubscriptionResource($this->api, $this);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Mollie\API\Model;
 
-class Issuer extends Base\ModelBase {
-
+class Issuer extends Base\ModelBase
+{
     /** @var string Issuer ID */
     public $id;
 

@@ -2,39 +2,41 @@
 
 namespace Mollie\API\Exception;
 
-class RequestException extends \Exception {
+class RequestException extends \Exception
+{
+    /** @var mixed */
+    private $response;
 
-	/** @var mixed */
-	private $response;
+    /**
+     * Request exception constructor
+     *
+     * @param string $message
+     * @param int $code
+     * @param string|null $url
+     * @param string|null $response
+     */
+    public function __construct($message, $code = 0, $url = "", $response = null)
+    {
+        $this->response = $response;
 
-	/**
-	 * Request exception constructor
-	 *
-	 * @param string $message
-	 * @param int $code
-	 * @param string|null $url
-	 * @param string|null $response
-	 */
-	public function __construct($message, $code = 0, $url = "", $response = null) {
-		$this->response = $response;
+        if (!empty($url)) {
+            $message .= ": [{$code}][{$url}]";
+        }
 
-		if(!empty($url)) {
-			$message .= ": [{$code}][{$url}]";
-		}
+        if (!empty($response) && !empty($response->body->error)) {
+            $message .= ": {$response->body->error->message}.";
+        }
 
-		if(!empty($response) && !empty($response->body->error)) {
-			$message .= ": {$response->body->error->message}.";
-		}
+        parent::__construct($message, $code);
+    }
 
-		parent::__construct($message, $code);
-	}
-
-	/**
-	 * Get response that threw the exception
-	 *
-	 * @return mixed
-	 */
-	public function getResponse() {
-		return $this->response;
-	}
+    /**
+     * Get response that threw the exception
+     *
+     * @return mixed
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
 }

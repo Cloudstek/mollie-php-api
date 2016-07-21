@@ -7,44 +7,46 @@ use Mollie\API\Resource\Base\CustomerResourceBase;
 use Mollie\API\Model\Customer;
 use Mollie\API\Model\Mandate;
 
-class MandateResource extends CustomerResourceBase {
+class MandateResource extends CustomerResourceBase
+{
+    /**
+     * Get customer mandate
+     *
+     * @param string $id Mandate ID
+     * @param Customer|string $customer
+     * @return Mandate
+     */
+    public function get($id, $customer = null)
+    {
 
-	/**
-	 * Get customer mandate
-	 *
-	 * @param string $id Mandate ID
-	 * @param Customer|string $customer
-	 * @return Mandate
-	 */
-	public function get($id, $customer = null) {
+        // Get customer ID
+        $customer_id = $this->_getCustomerID($customer);
 
-		// Get customer ID
-		$customer_id = $this->_getCustomerID($customer);
+        // API request
+        $resp = $this->api->request->get("/customers/{$customer_id}/mandates/{$id}");
 
-		// API request
-		$resp = $this->api->request->get("/customers/{$customer_id}/mandates/{$id}");
+        // Return mandate model
+        return new Mandate($resp);
+    }
 
-		// Return mandate model
-		return new Mandate($resp);
-	}
+    /**
+     * Get all customer mandates
+     *
+     * @param Customer|string $customer
+     * @return Generator|Mandate[]
+     */
+    public function all($customer = null)
+    {
 
-	/**
-	 * Get all customer mandates
-	 *
-	 * @param Customer|string $customer
-	 * @return Generator|Mandate[]
-	 */
-	public function all($customer = null) {
+        // Get customer ID
+        $customer_id = $this->_getCustomerID($customer);
 
-		// Get customer ID
-		$customer_id = $this->_getCustomerID($customer);
+        // API request
+        $items = $this->api->request->getAll("/customers/{$customer_id}/mandates");
 
-		// API request
-		$items = $this->api->request->getAll("/customers/{$customer_id}/mandates");
-
-		// Return mandate model iterator
-		foreach($items as $item) {
-			yield new Mandate($item);
-		}
-	}
+        // Return mandate model iterator
+        foreach ($items as $item) {
+            yield new Mandate($item);
+        }
+    }
 }

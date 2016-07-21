@@ -2,8 +2,8 @@
 
 namespace Mollie\API\Model;
 
-class Mandate extends Base\ModelBase {
-
+class Mandate extends Base\ModelBase
+{
     /** @var string Mandate ID */
     public $id;
 
@@ -29,7 +29,8 @@ class Mandate extends Base\ModelBase {
      * Mandate customer
      * @return Customer
      */
-    public function customer() {
+    public function customer()
+    {
         return $this->api->customer($this->customerId)->get();
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Mollie\API\Model;
 
-class Method extends Base\ModelBase {
-
+class Method extends Base\ModelBase
+{
     /** @var string Payment method ID */
     public $id;
 
@@ -23,8 +23,9 @@ class Method extends Base\ModelBase {
      * @see https://www.mollie.com/nl/docs/reference/methods/get
      * @return string
      */
-    public function image($size = 'normal') {
-        if(property_exists($this->image, $size)) {
+    public function image($size = 'normal')
+    {
+        if (property_exists($this->image, $size)) {
             return sprintf('<img src="%s" alt="%s">', $this->image->$size, $this->description);
         }
     }
@@ -33,7 +34,8 @@ class Method extends Base\ModelBase {
      * Minimum allowed payment amount in EURO for this payment method
      * @return double
      */
-    public function getMinimumAmount() {
+    public function getMinimumAmount()
+    {
         return $this->amount->minimum;
     }
 
@@ -41,7 +43,8 @@ class Method extends Base\ModelBase {
      * Maximum allowed payment amount in EURO for this payment method
      * @return double
      */
-    public function getMaximumAmount() {
+    public function getMaximumAmount()
+    {
         return $this->amount->maximum;
     }
 }

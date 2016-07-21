@@ -2,8 +2,8 @@
 
 namespace Mollie\API\Model;
 
-class Subscription extends Base\ModelBase {
-
+class Subscription extends Base\ModelBase
+{
     /** @var string Subscription ID */
     public $id;
 
@@ -44,7 +44,8 @@ class Subscription extends Base\ModelBase {
      * Customer the subscription belongs to
      * @return Customer
      */
-    public function customer() {
+    public function customer()
+    {
         return $this->api->customer($this->customerId)->get();
     }
 }

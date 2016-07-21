@@ -2,9 +2,10 @@
 
 namespace Mollie\API\Base;
 
-abstract class RequestBase {
-	public abstract function get($uri, array $parameters = []);
-	public abstract function getAll($uri);
-	public abstract function post($uri, $data);
-	public abstract function delete($uri);
+abstract class RequestBase
+{
+    abstract public function get($uri, array $parameters = []);
+    abstract public function getAll($uri);
+    abstract public function post($uri, $data);
+    abstract public function delete($uri);
 }
