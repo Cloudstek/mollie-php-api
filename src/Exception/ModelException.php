@@ -4,7 +4,7 @@ namespace Mollie\API\Exception;
 
 class ModelException extends \Exception {
 
-	/** @var ModelBase */
+	/** @var string Name of the model that threw the exception */
 	private $model;
 
 	/**
@@ -15,18 +15,14 @@ class ModelException extends \Exception {
 	 * @param int $code
 	 */
 	public function __construct($message, $model, $code = 0) {
-		$this->model = $model;
-
-		$model_name = get_class($model);
-		$message = "[{$model_name}] {$message}";
+		$this->model = get_class($model);
 
 		parent::__construct($message, $code);
 	}
 
 	/**
-	 * Get model that threw the exception
-	 *
-	 * @return ModelBase
+	 * Get the name of the model that threw the exception
+	 * @return string
 	 */
 	public function getModel() {
 		return $this->model;
