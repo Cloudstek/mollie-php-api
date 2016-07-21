@@ -19,7 +19,7 @@ abstract class ModelBase {
 	 * Constructor
 	 *
 	 * @param Mollie $api
-	 * @param mixed $data
+	 * @param object|array $data
 	 */
 	public function __construct(Mollie $api, $data = null) {
 		if(isset($data)) {
@@ -43,9 +43,9 @@ abstract class ModelBase {
 
 		foreach($data as $k => $v) {
 			if(property_exists($this, $k)) {
-				$this->$k = $v;
+				$this->$k = $this->_parseDates($k, $v);
 			} else {
-				throw new \ModelException("Property {$k} is not a member of this model.", $this);
+				throw new \ModelException("Unexpected property '{$k}' in response.", $this);
 			}
 		}
 
@@ -60,7 +60,6 @@ abstract class ModelBase {
 
 	/**
 	 * Get JSON response object
-	 *
 	 * @return object
 	 */
 	public function getResponse() {
@@ -68,25 +67,33 @@ abstract class ModelBase {
 	}
 
 	/**
-	 * Convert values to correct type on assignment
+	 * Parse dates into their respective objects (DateTime or DateInterval)
 	 *
-	 * Used for example to convert DateTime strings to DateTime objects on assignment.
+	 * @param string $name Variable name
+	 * @return DateTime|DateInterval
 	 */
-	public function __set($name, $value) {
-		if(property_exists($this, $name)) {
+	protected function _parseDates($name, $value) {
+		if(!empty($value) && is_string($value)) {
 
-			// DateTime
-			if(is_string($value) && preg_match('/.+(Datetime|Date)$/', $name)) {
+			// ISO 8601 Date
+			if(preg_match('/.+(Datetime|Date)$/', $name)) {
 				try {
-					$this->$name = new \DateTime($value);
+				 	return new \DateTime($value);
 				} catch(\Exception $ex) {
-					throw new \ModelException("Property {$name} is not a valid DateTime object or string as it's name suggests.", $this);
+					throw new \ModelException("Property {$name} does not contain a valid ISO 8601 date/time string.", $this);
 				}
 			}
 
-			$this->$name = $value;
-		} else {
-			throw new \ModelException("Property {$name} is not a member of this model.", $this);
+			// ISO 8601 Duration
+			if(preg_match('/.+(Period)$/', $name) && preg_match('^P.+', $value)) {
+				try {
+					return new \DateInterval($value);
+				} catch(\Exception $ex) {
+					throw new \ModelException("Property {$name} does not contain a valid ISO 8601 duration string.", $this);
+				}
+			}
 		}
+
+		return $value;
 	}
 }
