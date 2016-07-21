@@ -1,4 +1,9 @@
 {
+    "autoload": {
+        "psr-4": {
+            "Mollie\\API\\": "src/"
+        }
+    },
     "require": {
         "nategood/httpful": "^0.2.20"
     }
