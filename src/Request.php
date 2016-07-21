@@ -82,7 +82,6 @@ class Request extends Base\RequestBase
      */
     public function getAll($uri)
     {
-
         // Do request
         $resp = $this->get($uri);
 

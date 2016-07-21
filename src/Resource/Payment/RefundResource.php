@@ -18,7 +18,6 @@ class RefundResource extends PaymentResourceBase
      */
     public function get($refund_id, $payment = null)
     {
-
         // Get payment ID
         $payment_id = $this->_getPaymentID($payment);
 
@@ -34,7 +33,6 @@ class RefundResource extends PaymentResourceBase
      */
     public function all($payment = null)
     {
-
         // Get payment ID
         $payment_id = $this->_getPaymentID($payment);
 
@@ -57,7 +55,6 @@ class RefundResource extends PaymentResourceBase
      */
     public function create($amount = null, $payment = null)
     {
-
         // Get payment ID
         $payment_id = $this->_getPaymentID($payment);
 
@@ -80,7 +77,6 @@ class RefundResource extends PaymentResourceBase
      */
     public function cancel($refund_id, $payment = null)
     {
-
         // Get payment ID
         $payment_id = $this->_getPaymentID($payment);
 

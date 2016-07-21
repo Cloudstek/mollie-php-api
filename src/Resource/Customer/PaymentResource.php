@@ -17,7 +17,6 @@ class PaymentResource extends CustomerResourceBase
      */
     public function all($customer = null)
     {
-
         // Get customer ID
         $customer_id = $this->_getCustomerID($customer);
 
@@ -50,7 +49,6 @@ class PaymentResource extends CustomerResourceBase
      */
     public function create($amount, $description, $redirectUrl, $customer = null, $webhookUrl = null, $method = null, array $methodParams = null, array $metadata = null, $locale = null, $recurringType = null)
     {
-
         // Get customer ID
         $customer_id = $this->_getCustomerID($customer);
 

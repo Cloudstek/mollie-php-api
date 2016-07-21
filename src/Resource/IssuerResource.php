@@ -15,7 +15,6 @@ class IssuerResource extends Base\ResourceBase
      */
     public function get($id = null)
     {
-
         // Get issuer ID
         $id = $this->_getResourceID($id);
 

@@ -13,7 +13,6 @@ class RefundResource extends Base\ResourceBase
      */
     public function all()
     {
-
         // API request
         $items = $this->api->request->getAll("/refunds");
 

@@ -26,7 +26,6 @@ class Mollie
      */
     public function __construct($api_key = null, $api_ep = null, RequestBase $requestHandler = null)
     {
-
         // API Key
         if (!empty($api_key)) {
             $this->setApiKey($api_key);
@@ -59,7 +58,7 @@ class Mollie
         $api_key = trim($api_key);
 
         if (!preg_match('/^(live|test)_\w+$/', $api_key)) {
-            throw new Exception("Invalid Mollie API key: {$api_key}.");
+            throw new \InvalidArgumentException("Invalid Mollie API key: {$api_key}.");
         }
 
         $this->api_key = $api_key;
@@ -88,6 +87,10 @@ class Mollie
      */
     public function setApiEndpoint($ep)
     {
+        if (!preg_match('/^https?\:\/\//', $ep)) {
+            throw new \InvalidArgumentException("Invalid Mollie API endpoint: {$ep}. Must be a valid http(s) url starting with http:// or https://.");
+        }
+
         $ep = trim(rtrim($ep, '/'));
 
         $this->api_endpoint = $ep;

@@ -18,7 +18,6 @@ class PaymentResource extends Base\PaymentResourceBase
      */
     public function __construct(Mollie $api, $payment = null)
     {
-
         // Payment resources
         $this->refund = new Payment\RefundResource($api, $payment);
 
@@ -33,7 +32,6 @@ class PaymentResource extends Base\PaymentResourceBase
      */
     public function get($id)
     {
-
         // Get payment ID
         $id = $this->_getPaymentID($id);
 
@@ -74,7 +72,6 @@ class PaymentResource extends Base\PaymentResourceBase
      */
     public function create($amount, $description, $redirectUrl, $webhookUrl = null, $method = null, array $methodParams = null, array $metadata = null, $locale = null, $recurringType = null)
     {
-
         // Check payment method
         if (!empty($method)) {
             if (!in_array($method, Payment::methods)) {

@@ -24,7 +24,6 @@ class CustomerResource extends Base\CustomerResourceBase
      */
     public function __construct(Mollie $api, $customer = null)
     {
-
         // Customer resources
         $this->payment        = new Customer\PaymentResource($api, $customer);
         $this->mandate        = new Customer\MandateResource($api, $customer);
@@ -41,7 +40,6 @@ class CustomerResource extends Base\CustomerResourceBase
      */
     public function get($id = null)
     {
-
         // Get customer ID
         $id = $this->_getCustomerID($id);
 
@@ -77,7 +75,6 @@ class CustomerResource extends Base\CustomerResourceBase
      */
     public function create($name, $email, $locale = null, array $metadata = null)
     {
-
         // Convert metadata to JSON
         if (!empty($metadata)) {
             $metadata = json_encode($metadata);

@@ -18,7 +18,6 @@ class SubscriptionResource extends CustomerResourceBase
      */
     public function get($id, $customer = null)
     {
-
         // Get customer ID
         $customer_id = $this->_getCustomerID($customer);
 
@@ -37,7 +36,6 @@ class SubscriptionResource extends CustomerResourceBase
      */
     public function all($customer = null)
     {
-
         // Get customer ID
         $customer_id = $this->_getCustomerID($customer);
 
@@ -66,7 +64,6 @@ class SubscriptionResource extends CustomerResourceBase
      */
     public function create($amount, $interval, $description, $customer = null, $times = null, $method = null, $webhookUrl = null)
     {
-
         // Get customer ID
         $customer_id = $this->_getCustomerID($customer);
 
@@ -109,7 +106,6 @@ class SubscriptionResource extends CustomerResourceBase
      */
     public function cancel($id, $customer = null)
     {
-
         // Get customer ID
         $customer_id = $this->_getCustomerID($customer);
 

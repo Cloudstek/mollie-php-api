@@ -18,7 +18,6 @@ class MandateResource extends CustomerResourceBase
      */
     public function get($id, $customer = null)
     {
-
         // Get customer ID
         $customer_id = $this->_getCustomerID($customer);
 
@@ -37,7 +36,6 @@ class MandateResource extends CustomerResourceBase
      */
     public function all($customer = null)
     {
-
         // Get customer ID
         $customer_id = $this->_getCustomerID($customer);
 
