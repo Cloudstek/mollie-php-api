@@ -1,6 +1,6 @@
 <?php
 
-namespace Mollie\API\Resource\Payment;
+namespace Mollie\API\Resource\Base;
 
 use Mollie\API\Mollie;
 use Mollie\API\Model\Payment;

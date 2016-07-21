@@ -3,7 +3,7 @@
 namespace Mollie\API\Resource\Payment;
 
 use Mollie\API\Mollie;
-use Mollie\API\Base\PaymentResourceBase;
+use Mollie\API\Resource\Base\PaymentResourceBase;
 use Mollie\API\Model\Payment;
 use Mollie\API\Model\Refund;
 
@@ -69,7 +69,7 @@ class RefundResource extends PaymentResourceBase {
 
 	/**
 	 * Cancel payment refund
-	 * 
+	 *
 	 * @see https://www.mollie.com/nl/docs/reference/refunds/delete
 	 * @param int $refund_id Refund ID
 	 * @param Payment|string $payment Payment object or id to cancel refund for

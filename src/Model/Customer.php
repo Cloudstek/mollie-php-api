@@ -2,12 +2,11 @@
 
 namespace Mollie\API\Model;
 
-use Mollie\API\Base\ModelBase;
 use Mollie\API\Resource\Customer\MandateResource;
 use Mollie\API\Resource\Customer\PaymentResource;
 use Mollie\API\Resource\Customer\SubscriptionResource;
 
-class Customer extends ModelBase {
+class Customer extends Base\ModelBase {
 
     /** @var string Customer ID */
     public $id;

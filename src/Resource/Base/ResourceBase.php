@@ -1,6 +1,6 @@
 <?php
 
-namespace Mollie\API\Resource;
+namespace Mollie\API\Resource\Base;
 
 use Mollie\API\Mollie;
 
@@ -35,7 +35,7 @@ abstract class ResourceBase {
 	 *		$customer = $mollie->method()->get() 			// Error! No global or local customer defined
 	 * ?>
 	 * </code>
-	 * 
+	 *
 	 * @param string $id
 	 * @throws InvalidArgumentException
 	 * @return string

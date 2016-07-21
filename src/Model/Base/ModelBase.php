@@ -1,6 +1,6 @@
 <?php
 
-namespace Mollie\API\Model;
+namespace Mollie\API\Model\Base;
 
 use Mollie\API\Mollie;
 

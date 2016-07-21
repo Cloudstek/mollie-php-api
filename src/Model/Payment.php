@@ -2,10 +2,9 @@
 
 namespace Mollie\API\Model;
 
-use Mollie\API\Base\ModelBase;
 use Mollie\API\Resource\Payment\RefundResource;
 
-class Payment extends ModelBase {
+class Payment extends Base\ModelBase {
 
 	/** @var string Payment ID */
 	public $id;

@@ -2,9 +2,7 @@
 
 namespace Mollie\API\Model;
 
-use Mollie\API\Base\ModelBase;
-
-class Subscription extends ModelBase {
+class Subscription extends Base\ModelBase {
 
     /** @var string Subscription ID */
     public $id;

@@ -5,9 +5,7 @@ namespace Mollie\API;
 use Httpful\Request as HttpRequest;
 use Mollie\API\Exception\RequestException;
 
-use Mollie\API\Base\RequestBase;
-
-class Request extends RequestBase {
+class Request extends Base\RequestBase {
 
 	/**
 	 * API Instance

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mollie\API;
+namespace Mollie\API\Base;
 
 abstract class RequestBase {
 	public abstract function get($uri, array $parameters = []);

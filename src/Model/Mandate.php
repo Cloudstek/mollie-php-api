@@ -2,9 +2,7 @@
 
 namespace Mollie\API\Model;
 
-use Mollie\API\Base\ModelBase;
-
-class Mandate extends ModelBase {
+class Mandate extends Base\ModelBase {
 
     /** @var string Mandate ID */
     public $id;

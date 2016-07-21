@@ -2,9 +2,7 @@
 
 namespace Mollie\API\Model;
 
-use Mollie\API\Base\ModelBase;
-
-class Method extends ModelBase {
+class Method extends Base\ModelBase {
 
     /** @var string Payment method ID */
     public $id;

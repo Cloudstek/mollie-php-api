@@ -3,10 +3,9 @@
 namespace Mollie\API\Resource;
 
 use Mollie\API\Mollie;
-use Mollie\API\Base\PaymentResourceBase;
 use Mollie\API\Model\Payment;
 
-class PaymentResource extends PaymentResourceBase {
+class PaymentResource extends Base\PaymentResourceBase {
 
 	/** @var Payment\RefundResource */
 	public $refund;
