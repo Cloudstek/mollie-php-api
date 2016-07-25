@@ -45,7 +45,7 @@ abstract class ModelBase
 
         foreach ($data as $k => $v) {
             if (property_exists($this, $k)) {
-                $this->$k = $this->_parseDates($k, $v);
+                $this->$k = $this->_parseData($k, $v);
             } else {
                 throw new \ModelException("Unexpected property '{$k}' in response.", $this);
             }
@@ -70,12 +70,13 @@ abstract class ModelBase
     }
 
     /**
-     * Parse dates into their respective objects (DateTime or DateInterval)
+     * Parse data and convert it's value when needed e.g. parse dates into their respective objects (DateTime or DateInterval)
      *
      * @param string $name Variable name
-     * @return DateTime|DateInterval
+     * @param mixed $value
+     * @return mixed
      */
-    protected function _parseDates($name, $value)
+    protected function _parseData($name, $value)
     {
         if (!empty($value) && is_string($value)) {
 
@@ -94,6 +95,15 @@ abstract class ModelBase
                     return new \DateInterval($value);
                 } catch (\Exception $ex) {
                     throw new \ModelException("Property {$name} does not contain a valid ISO 8601 duration string.", $this);
+                }
+            }
+
+            // JSON metadata
+            if($name == 'metadata') {
+                try {
+                    return json_decode($value);
+                } catch(\Exception $ex) {
+                    throw new \ModelException("Property {$name} does not contain valid JSON metadata.", $this);
                 }
             }
         }
