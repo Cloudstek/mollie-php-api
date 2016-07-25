@@ -39,7 +39,7 @@ class PaymentResource extends Base\PaymentResourceBase
         $resp = $this->api->request->get("/payments/{$id}");
 
         // Return payment model
-        return new Payment($resp);
+        return new Payment($this->api, $resp);
     }
 
     /**
@@ -51,7 +51,7 @@ class PaymentResource extends Base\PaymentResourceBase
         $items = $this->api->request->getAll("/payments");
 
         foreach ($items as $item) {
-            yield new Payment($item);
+            yield new Payment($this->api, $item);
         }
     }
 
@@ -112,6 +112,6 @@ class PaymentResource extends Base\PaymentResourceBase
         $resp = $this->api->request->post("/payments", $params);
 
         // Return payment model
-        return new Payment($resp);
+        return new Payment($this->api, $resp);
     }
 }

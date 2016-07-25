@@ -25,7 +25,7 @@ class SubscriptionResource extends CustomerResourceBase
         $resp = $this->api->request->get("/customers/{$customer_id}/subscriptions/{$id}");
 
         // Return subscription model
-        return new Subscription($resp);
+        return new Subscription($this->api, $resp);
     }
 
     /**
@@ -44,7 +44,7 @@ class SubscriptionResource extends CustomerResourceBase
 
         // Return subscription model iterator
         foreach ($items as $item) {
-            yield new Subscription($item);
+            yield new Subscription($this->api, $item);
         }
     }
 
@@ -93,7 +93,7 @@ class SubscriptionResource extends CustomerResourceBase
         $resp = $this->api->request->post("/customers/{$customer_id}/subscriptions", $params);
 
         // Return subscription model
-        return new Subscription($resp);
+        return new Subscription($this->api, $resp);
     }
 
     /**
@@ -113,6 +113,6 @@ class SubscriptionResource extends CustomerResourceBase
         $resp = $this->api->request->delete("/customers/{$customer_id}/subscriptions/{$id}");
 
         // Return cancelled subscription model
-        return new Subscription($resp);
+        return new Subscription($this->api, $resp);
     }
 }

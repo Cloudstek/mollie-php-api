@@ -21,7 +21,7 @@ class IssuerResource extends Base\ResourceBase
         $resp = $this->api->request->get("/issuers/{$id}");
 
         // Return method model
-        return new Issuer($resp);
+        return new Issuer($this->api, $resp);
     }
 
     /**
@@ -33,7 +33,7 @@ class IssuerResource extends Base\ResourceBase
         $items = $this->api->request->getAll("/issuers");
 
         foreach ($items as $item) {
-            yield new Issuer($item);
+            yield new Issuer($this->api, $item);
         }
     }
 }

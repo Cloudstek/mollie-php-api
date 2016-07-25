@@ -18,7 +18,7 @@ class RefundResource extends Base\ResourceBase
 
         // Yield items
         foreach ($items as $item) {
-            yield new Refund($item);
+            yield new Refund($this->api, $item);
         }
     }
 }

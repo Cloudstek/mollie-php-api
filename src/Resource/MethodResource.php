@@ -21,7 +21,7 @@ class MethodResource extends Base\ResourceBase
         $resp = $this->api->request->get("/methods/{$id}");
 
         // Return method model
-        return new Method($resp);
+        return new Method($this->api, $resp);
     }
 
     /**
@@ -33,7 +33,7 @@ class MethodResource extends Base\ResourceBase
         $items = $this->api->request->getAll("/methods");
 
         foreach ($items as $item) {
-            yield new Method($item);
+            yield new Method($this->api, $item);
         }
     }
 }

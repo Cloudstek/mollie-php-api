@@ -14,7 +14,7 @@ class RefundResource extends PaymentResourceBase
      *
      * @param string $refund_id Refund ID
      * @param Payment|string $payment
-     * @return Model\Refund
+     * @return Refund
      */
     public function get($refund_id, $payment = null)
     {
@@ -24,7 +24,7 @@ class RefundResource extends PaymentResourceBase
         $resp = $this->api->request->get("/payments/{$payment_id}/refunds/{$refund_id}");
 
         // Return payment model
-        return new Refund($resp);
+        return new Refund($this->api, $resp);
     }
 
     /**
@@ -41,7 +41,7 @@ class RefundResource extends PaymentResourceBase
 
         // Yield items
         foreach ($items as $item) {
-            yield new Refund($item);
+            yield new Refund($this->api, $item);
         }
     }
 
@@ -64,7 +64,7 @@ class RefundResource extends PaymentResourceBase
         ]);
 
         // Return payment model
-        return new Refund($resp);
+        return new Refund($this->api, $resp);
     }
 
     /**

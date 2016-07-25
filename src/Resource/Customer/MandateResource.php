@@ -25,7 +25,7 @@ class MandateResource extends CustomerResourceBase
         $resp = $this->api->request->get("/customers/{$customer_id}/mandates/{$id}");
 
         // Return mandate model
-        return new Mandate($resp);
+        return new Mandate($this->api, $resp);
     }
 
     /**
@@ -44,7 +44,7 @@ class MandateResource extends CustomerResourceBase
 
         // Return mandate model iterator
         foreach ($items as $item) {
-            yield new Mandate($item);
+            yield new Mandate($this->api, $item);
         }
     }
 }

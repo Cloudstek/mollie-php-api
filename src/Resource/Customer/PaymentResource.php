@@ -25,7 +25,7 @@ class PaymentResource extends CustomerResourceBase
 
         // Return payment model iterator
         foreach ($items as $item) {
-            yield new Payment($item);
+            yield new Payment($this->api, $item);
         }
     }
 
@@ -92,6 +92,6 @@ class PaymentResource extends CustomerResourceBase
         $resp = $this->api->request->post("/customers/{$customer_id}/payments", $params);
 
         // Return payment model
-        return new Payment($resp);
+        return new Payment($this->api, $resp);
     }
 }

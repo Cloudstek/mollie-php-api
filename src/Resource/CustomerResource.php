@@ -3,7 +3,7 @@
 namespace Mollie\API\Resource;
 
 use Mollie\API\Mollie;
-use Mollie\API\Model\Customer;
+use Mollie\API\Model;
 
 class CustomerResource extends Base\CustomerResourceBase
 {
@@ -27,7 +27,7 @@ class CustomerResource extends Base\CustomerResourceBase
         // Customer resources
         $this->payment        = new Customer\PaymentResource($api, $customer);
         $this->mandate        = new Customer\MandateResource($api, $customer);
-        $this->subscription    = new Customer\SubscriptionResource($api, $customer);
+        $this->subscription   = new Customer\SubscriptionResource($api, $customer);
 
         parent::__construct($api, $customer);
     }
@@ -47,7 +47,7 @@ class CustomerResource extends Base\CustomerResourceBase
         $resp = $this->api->request->get("/customers/{$id}");
 
         // Return customer model
-        return new Customer($resp);
+        return new Model\Customer($this->api, $resp);
     }
 
     /**
@@ -59,7 +59,7 @@ class CustomerResource extends Base\CustomerResourceBase
         $items = $this->api->request->getAll("/customers");
 
         foreach ($items as $item) {
-            yield new Customer($item);
+            yield new Model\Customer($this->api, $item);
         }
     }
 
@@ -92,6 +92,6 @@ class CustomerResource extends Base\CustomerResourceBase
         $resp = $this->api->request->post("/customers", $params);
 
         // Return customer model
-        return new Customer($resp);
+        return new Model\Customer($this->api, $resp);
     }
 }
