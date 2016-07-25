@@ -15,7 +15,7 @@ class Mollie
     private $api_endpoint = "https://api.mollie.nl/v1";
 
     /** @var RequestBase Request Handler */
-    private $request;
+    public $request;
 
     /**
      * Mollie API constructor
@@ -75,7 +75,7 @@ class Mollie
         $url = $this->api_endpoint;
 
         if (!empty($uri)) {
-            $url .= "/" . trim(ltrim($uri, '/'));
+            $url .= "/" . trim(trim($uri), '/');
         }
 
         return $url;
@@ -94,15 +94,6 @@ class Mollie
         $ep = trim(rtrim($ep, '/'));
 
         $this->api_endpoint = $ep;
-    }
-
-    /**
-     * Set request handler
-     * @param RequestBase $handler
-     */
-    public function setRequestHandler(RequestBase $handler)
-    {
-        $this->request = $handler;
     }
 
     /**
