@@ -4,7 +4,7 @@ namespace Mollie\API\Resource\Base;
 
 use Mollie\API\Mollie;
 use Mollie\API\Model\Payment;
-use Mollie\API\Resource\ResourceBase;
+use Mollie\API\Resource\Base\ResourceBase;
 
 abstract class PaymentResourceBase extends ResourceBase
 {
@@ -13,7 +13,7 @@ abstract class PaymentResourceBase extends ResourceBase
 
     /**
      * Constructor
-     * 
+     *
      * @param Mollie Mollie API reference
      * @param Payment|string $payment
      */
