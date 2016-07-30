@@ -50,12 +50,7 @@ class Request extends Base\RequestBase
         $api_key = $this->api->getApiKey();
 
         // Endpoint
-        $url = $this->api->getApiEndpoint($uri);
-
-        // Build uri parameters
-        if (!empty($params)) {
-            $url .= "/?" . http_build_query($params);
-        }
+        $url = $this->api->getApiEndpoint($uri, $params);
 
         // Do request
         $resp = HttpRequest::get($url)

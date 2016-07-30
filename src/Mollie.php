@@ -68,14 +68,20 @@ class Mollie
      * Get API endppoint URL
      *
      * @param string $uri Endpoint URI like /customers
+     * @param string[] $params URI parameters
      * @return string Complete endpoint URL to make requests to
      */
-    public function getApiEndpoint($uri = null)
+    public function getApiEndpoint($uri = null, $params = [])
     {
         $url = $this->api_endpoint;
 
         if (!empty($uri)) {
             $url .= "/" . trim(trim($uri), '/');
+        }
+
+        // Build uri parameters
+        if (!empty($params)) {
+            $url .= "/?" . http_build_query($params);
         }
 
         return $url;
