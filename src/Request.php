@@ -68,20 +68,20 @@ class Request extends Base\RequestBase
         $resp = $this->get($uri);
 
         // Data
-        $data = $resp->data;
-        $next = isset($resp->links) ? $resp->links->next : null;
+        $data = !empty($resp->data) ? $resp->data : [];
+        $next = !empty($resp->links->next) ? $resp->links->next : null;
 
         // Get next pages (if any)
         while (!empty($next)) {
 
             // Request page data
-            $pageResp = $this->get($next);
+            $resp = $this->get($next);
 
             // Append page items
-            $data = array_merge($data, $pageResp->data);
+            $data = array_merge($data, $resp->data);
 
             // Get next page link
-            $next = isset($resp->links) ? $resp->links->next : null;
+            $next = !empty($resp->links->next) ? $resp->links->next : null;
         }
 
         return $data;
