@@ -1,7 +1,8 @@
 {
     "autoload": {
         "psr-4": {
-            "Mollie\\API\\": "src/"
+            "Mollie\\API\\": "src/",
+            "Mollie\\API\\Tests\\": "tests/"
         }
     },
     "require": {
