@@ -25,28 +25,47 @@ abstract class ResourceBase
     }
 
     /**
-     * Get resource ID
+     * Get resource ID from string or model
      *
      * For example:
      * <code>
      * <?php
-     * 		$mollie = new Mollie('api_key');
-     * 		$customer = $mollie->method('tr_test')->get()	// call using global defined customer
-     * 		$customer = $mollie->method()->get('tr__test')	// call using local defined customer
-     *		$customer = $mollie->method()->get() 			// Error! No global or local customer defined
+     *     $mollie = new Mollie('api_key');
+     *     $customer = $mollie->customer('cst_test')->get()     // call using global defined customer
+     *     $customer = $mollie->customer()->get('cst_test')     // call using local defined customer
+     *     $customer = $mollie->customer()->get()               // Error! No global or local customer defined
      * ?>
      * </code>
-     *
-     * @param string $id
-     * @throws InvalidArgumentException
+     * @param ModelBase|string $resource Model or string containing the resource ID
+     * @param string $type Full class reference
+     * @param string $property Resource ID property for resource
      * @return string
      */
-    protected function _getResourceID($id)
+    protected function _getResourceID($resource, $type, &$property)
     {
-        if (empty($id) && empty($this->id)) {
-            throw new \BadMethodCallException("No resource ID was given");
-        }
+        // Get short class name
+        $name = strtolower(substr($type, strrpos($type, '\\') + 1));
 
-        return empty($id) ? $this->id : $id;
+        // Check local resource ID
+        if(!empty($resource))
+        {
+            if ($resource instanceof $type) {
+                return $resource->id;
+            }
+            elseif (is_string($resource)) {
+                return $resource;
+            }
+            else {
+                throw new \InvalidArgumentException(sprintf("%s argument must either be a %s object or an ID as string.", ucfirst($name), $type));
+            }
+        }
+        elseif(!empty($property)) {
+            // Return global resource ID
+            return $property;
+        }
+        else {
+            // No local or global resource ID
+            throw new \BadMethodCallException("No {$name} ID was given");
+        }
     }
 }

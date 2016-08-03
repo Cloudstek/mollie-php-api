@@ -46,22 +46,6 @@ abstract class PaymentResourceBase extends ResourceBase
      */
     protected function _getPaymentID($payment)
     {
-        $payment_id = null;
-
-        if ($payment instanceof Payment) {
-            $payment_id = $payment->id;
-        } elseif (is_string($payment)) {
-            $payment_id = $payment;
-        } elseif (!empty($payment)) {
-            throw new \InvalidArgumentException("Payment argument must either be a Payment object or a string.");
-        } elseif (!empty($this->payment)) {
-            $payment_id = $this->payment;
-        }
-
-        if (empty($payment_id)) {
-            throw new \BadMethodCallException("No payment ID was given");
-        }
-
-        return $payment_id;
+        return $this->_getResourceID($payment, Payment::class, $this->payment);
     }
 }

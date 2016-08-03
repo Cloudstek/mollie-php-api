@@ -4,6 +4,8 @@ namespace Mollie\API\Resource\Base;
 
 use Mollie\API\Mollie;
 use Mollie\API\Model\Customer;
+use Mollie\API\Model\Mandate;
+use Mollie\API\Model\Subscription;
 use Mollie\API\Resource\Base\ResourceBase;
 
 abstract class CustomerResourceBase extends ResourceBase
@@ -40,30 +42,50 @@ abstract class CustomerResourceBase extends ResourceBase
      * ?>
      * </code>
      * @param Customer|string $customer
-     * @throws \InvalidArgumentException
      * @return string
      */
     protected function _getCustomerID($customer = null)
     {
-        $customer_id = null;
+        return $this->_getResourceID($customer, Customer::class, $this->customer);
+    }
 
-        if ($customer instanceof Customer) {
-            $customer_id = $customer->id;
-        } elseif (is_string($customer)) {
-            $customer_id = $customer;
-        } elseif (!empty($customer)) {
-            throw new \InvalidArgumentException("Customer argument must either be a Customer object or a string.");
-        }
+    /**
+     * Get mandate ID from string or mandate object
+     *
+     * For example:
+     * <code>
+     * <?php
+     * 		$mollie = new Mollie('api_key');
+     * 		$mandate = $mollie->customer('cst_test')->mandate('mdt_test')->get()	// call using global defined mandate
+     * 		$mandate = $mollie->customer('cst_test')->mandate()->get('cst_test')	// call using local defined mandate
+     *		$mandate = $mollie->customer('cst_test')->mandate()->get() 		       	// Error! No global or local mandate defined
+     * ?>
+     * </code>
+     * @param Mandate|string $mandate
+     * @return string
+     */
+    protected function _getMandateID($mandate = null)
+    {
+        return $this->_getResourceID($mandate, Mandate::class, $this->mandate);
+    }
 
-        // If customer argument is empty, check global customer or throw exception when both empty
-        if (empty($customer_id)) {
-            if (empty($this->customer)) {
-                throw new \BadMethodCallException("No customer ID was given");
-            }
-
-            return $this->customer;
-        }
-
-        return $customer_id;
+    /**
+     * Get subscription ID from string or subscription object
+     *
+     * For example:
+     * <code>
+     * <?php
+     * 		$mollie = new Mollie('api_key');
+     * 		$subscription = $mollie->customer('cst_test')->subscription('mdt_test')->get()  // call using global defined subscription
+     * 		$subscription = $mollie->customer('cst_test')->subscription()->get('cst_test')  // call using local defined subscription
+     *		$subscription = $mollie->customer('cst_test')->subscription()->get()            // Error! No global or local subscription defined
+     * ?>
+     * </code>
+     * @param Subscription|string $subscription
+     * @return string
+     */
+    protected function _getSubscriptionID($subscription = null)
+    {
+        return $this->_getResourceID($subscription, Subscription::class, $this->subscription);
     }
 }
