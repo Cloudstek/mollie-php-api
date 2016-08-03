@@ -3,6 +3,7 @@
 namespace Mollie\API\Model\Base;
 
 use Mollie\API\Mollie;
+use Mollie\API\Exception\ModelException;
 
 abstract class ModelBase
 {
@@ -40,14 +41,14 @@ abstract class ModelBase
     public function fill($data)
     {
         if (!is_object($data) && !is_array($data) && !$data instanceof \Traversable) {
-            throw new InvalidArgumentException("Model data should either be an object, array or any other traversable object.");
+            throw new \InvalidArgumentException("Model data should either be an object, array or any other traversable object.");
         }
 
         foreach ($data as $k => $v) {
             if (property_exists($this, $k)) {
                 $this->$k = $this->_parseData($k, $v);
             } else {
-                throw new \ModelException("Unexpected property '{$k}' in response.", $this);
+                throw new ModelException("Unexpected property '{$k}' in response.", $this);
             }
         }
 
@@ -85,7 +86,7 @@ abstract class ModelBase
                 try {
                     return new \DateTime($value);
                 } catch (\Exception $ex) {
-                    throw new \ModelException("Property {$name} does not contain a valid ISO 8601 date/time string.", $this);
+                    throw new ModelException("Property {$name} does not contain a valid ISO 8601 date/time string.", $this);
                 }
             }
 
@@ -94,7 +95,7 @@ abstract class ModelBase
                 try {
                     return new \DateInterval($value);
                 } catch (\Exception $ex) {
-                    throw new \ModelException("Property {$name} does not contain a valid ISO 8601 duration string.", $this);
+                    throw new ModelException("Property {$name} does not contain a valid ISO 8601 duration string.", $this);
                 }
             }
 
@@ -103,8 +104,13 @@ abstract class ModelBase
                 try {
                     return json_decode($value);
                 } catch(\Exception $ex) {
-                    throw new \ModelException("Property {$name} does not contain valid JSON metadata.", $this);
+                    throw new ModelException("Property {$name} does not contain valid JSON metadata.", $this);
                 }
+            }
+
+            // Amount
+            if($name == 'amount') {
+                return $value + 0.0;
             }
         }
 
