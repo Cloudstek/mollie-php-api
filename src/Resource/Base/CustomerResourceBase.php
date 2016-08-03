@@ -16,17 +16,15 @@ abstract class CustomerResourceBase extends ResourceBase
     /**
      * Constructor
      *
-     * @param Mollie Mollie API reference
+     * @param Mollie $api Mollie API reference
      * @param Customer|string $customer
      */
-    public function __construct(Mollie $api, $customer = null)
+    public function __construct(Mollie $api, $customer)
     {
         parent::__construct($api);
 
-        // Store customer ID, if any
-        if (isset($customer)) {
-            $this->customer = $this->_getCustomerID($customer);
-        }
+        // Store customer ID (if any)
+        $this->customer = isset($customer) ? $this->_getCustomerID($customer) : null;
     }
 
     /**

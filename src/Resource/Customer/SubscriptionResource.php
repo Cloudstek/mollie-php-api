@@ -4,25 +4,42 @@ namespace Mollie\API\Resource\Customer;
 
 use Mollie\API\Mollie;
 use Mollie\API\Resource\Base\CustomerResourceBase;
-use Mollie\API\Model\Customer;
 use Mollie\API\Model\Subscription;
 
 class SubscriptionResource extends CustomerResourceBase
 {
+    /** @var string $subscription */
+    protected $subscription;
+
+    /**
+     * Subscription resource constructor
+     *
+     * @param Mollie $api API reference
+     * @param Customer|string $customer
+     * @param Subscription|string $subscription
+     */
+    public function __construct(Mollie $api, $customer, $subscription = null)
+    {
+        parent::__construct($api, $customer);
+
+        if(isset($subscription)) {
+            $this->subscription = $this->_getSubscriptionID($subscription);
+        }
+    }
+
     /**
      * Get customer subscription
      *
-     * @param string $id Subscription ID
-     * @param Customer|string $customer
+     * @param Subscription|string $id Subscription ID
      * @return Subscription
      */
-    public function get($id, $customer = null)
+    public function get($id = null)
     {
-        // Get customer ID
-        $customer_id = $this->_getCustomerID($customer);
+        // Get subscription ID
+        $subscription_id = $this->_getSubscriptionID($id);
 
-        // API request
-        $resp = $this->api->request->get("/customers/{$customer_id}/subscriptions/{$id}");
+        // Get subscription
+        $resp = $this->api->request->get("/customers/{$this->customer}/subscriptions/{$subscription_id}");
 
         // Return subscription model
         return new Subscription($this->api, $resp);
@@ -30,19 +47,34 @@ class SubscriptionResource extends CustomerResourceBase
 
     /**
      * Get all customer subscriptions
-     *
-     * @param Customer|string $customer
-     * @return Generator|Mandate[]
+     * @return Subscription[]
      */
-    public function all($customer = null)
+    public function all()
     {
-        // Get customer ID
-        $customer_id = $this->_getCustomerID($customer);
+        $items = [];
 
-        // API request
-        $items = $this->api->request->getAll("/customers/{$customer_id}/subscriptions");
+        // Get all subscriptions
+        $resp = $this->api->request->getAll("/customers/{$this->customer}/subscriptions");
 
-        // Return subscription model iterator
+        if(!empty($resp) && is_array($resp)) {
+            foreach ($resp as $item) {
+                $items[] = new Subscription($this->api, $item);
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * Get all customer subscriptions as generator
+     * @return Generator
+     */
+    public function yieldAll()
+    {
+        // Get all subscriptions
+        $items = $this->api->request->getAll("/customers/{$this->customer}/subscriptions");
+
+        // Yield all subscriptions
         foreach ($items as $item) {
             yield new Subscription($this->api, $item);
         }
@@ -55,42 +87,28 @@ class SubscriptionResource extends CustomerResourceBase
      * @param double $amount The constant amount in EURO that you want to charge with each subscription payment
      * @param string $interval Interval to wait between charges like "1 month(s)" or "14 days"
      * @param string $description A description unique per customer. This will be included in the payment description along with the charge date in Y-m-d format
-     * @param Customer|string $customer
      * @param int|null $times Total number of charges for the subscription to complete. Leave empty for an on-going subscription
      * @param string|null $method The payment method used for this subscription, either forced on creation or null if any of the customer's valid mandates may be used
      * @param string|null $webhookUrl Use this parameter to set a webhook URL for all subscription payments
      * @throws \InvalidArgumentException
      * @return Subscription
      */
-    public function create($amount, $interval, $description, $customer = null, $times = null, $method = null, $webhookUrl = null)
+    public function create($amount, $interval, $description, $times = null, $method = null, $webhookUrl = null)
     {
-        // Get customer ID
-        $customer_id = $this->_getCustomerID($customer);
-
         // Check number of times
-        if (isset($times) && (!is_integer($times) || $times < 1)) {
+        if (isset($times) && $times < 1) {
             throw new \InvalidArgumentException("Invalid number of charges for this subscription. Please enter a number of 1 or more, or leave null for an ongoing subscription.");
         }
 
-        // Check payment method
-        if (!empty($method)) {
-            if (!in_array($method, ['creditcard', 'directdebit'])) {
-                throw new \InvalidArgumentException("Invalid payment method '{$method}'. Please see https://www.mollie.com/nl/docs/reference/subscriptions/create for available payment methods.");
-            }
-        }
-
-        // Construct parameters
-        $params = [
+        // Create customer subscription
+        $resp = $this->api->request->post("/customers/{$this->customer}/subscriptions", [
             'amount'        => $amount,
-            'times'            => $times,
-            'interval'        => $interval,
-            'description'    => $description,
+            'times'         => $times,
+            'interval'      => $interval,
+            'description'   => $description,
             'method'        => $method,
             'webhookUrl'    => $webhookUrl
-        ];
-
-        // API request
-        $resp = $this->api->request->post("/customers/{$customer_id}/subscriptions", $params);
+        ]);
 
         // Return subscription model
         return new Subscription($this->api, $resp);
@@ -100,17 +118,16 @@ class SubscriptionResource extends CustomerResourceBase
      * Cancel customer subscription
      *
      * @see https://www.mollie.com/nl/docs/reference/subscriptions/delete
-     * @param string $id Subscription ID
-     * @param Customer|string $customer
+     * @param Subscription|string $id Subscription ID
      * @return Subscription
      */
-    public function cancel($id, $customer = null)
+    public function cancel($id = null)
     {
-        // Get customer ID
-        $customer_id = $this->_getCustomerID($customer);
+        // Get subscription ID
+        $subscription_id = $this->_getSubscriptionID($id);
 
         // API request
-        $resp = $this->api->request->delete("/customers/{$customer_id}/subscriptions/{$id}");
+        $resp = $this->api->request->delete("/customers/{$this->customer}/subscriptions/{$subscription_id}");
 
         // Return cancelled subscription model
         return new Subscription($this->api, $resp);

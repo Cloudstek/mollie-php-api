@@ -2,28 +2,41 @@
 
 namespace Mollie\API\Resource\Customer;
 
-use Mollie\API\Mollie;
 use Mollie\API\Resource\Base\CustomerResourceBase;
-use Mollie\API\Model\Customer;
 use Mollie\API\Model\Payment;
 
 class PaymentResource extends CustomerResourceBase
 {
     /**
      * Get all customer payments
-     *
-     * @param Customer|string $customer
-     * @return Generator|Payment[]
+     * @return Payment[]
      */
-    public function all($customer = null)
+    public function all()
     {
-        // Get customer ID
-        $customer_id = $this->_getCustomerID($customer);
+        $items = [];
 
-        // API request
-        $items = $this->api->request->getAll("/customers/{$customer_id}/payments");
+        // Get all customer payments
+        $resp = $this->api->request->getAll("/customers/{$this->customer}/payments");
 
-        // Return payment model iterator
+        if(!empty($resp) && is_array($resp)) {
+            foreach ($resp as $item) {
+                $items[] = new Payment($this->api, $item);
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * Get all customer payments as generator
+     * @return Generator
+     */
+    public function yieldAll()
+    {
+        // Get all customer payments
+        $items = $this->api->request->getAll("/customers/{$this->customer}/payments");
+
+        // Yield all payments
         foreach ($items as $item) {
             yield new Payment($this->api, $item);
         }
@@ -37,50 +50,34 @@ class PaymentResource extends CustomerResourceBase
      * @param double $amount The amount in EURO that you want to charge
      * @param string $description The description of the payment you're creating.
      * @param string $redirectUrl The URL the consumer will be redirected to after the payment process.
-     * @param Customer|string $customer
      * @param string $webhookUrl Use this parameter to set a webhook URL for this payment only.
      * @param string $method Payment method to use, leave blank to use payment method selection screen
      * @param array $methodParams Payment method specific parameters
      * @param array $metadata Metadata for this payment
-     * @param string $locale Allow you to preset the language to be used in the payment screens shown to the consumer.
      * @param string $recurringType
      * @throws \InvalidArgumentException
      * @return Payment
      */
-    public function create($amount, $description, $redirectUrl, $customer = null, $webhookUrl = null, $method = null, array $methodParams = null, array $metadata = null, $locale = null, $recurringType = null)
+    public function create($amount, $description, $redirectUrl, $webhookUrl = null, $method = null, array $methodParams = null, array $metadata = null, $recurringType = null)
     {
-        // Get customer ID
-        $customer_id = $this->_getCustomerID($customer);
-
-        // Check payment method
-        if (!empty($method)) {
-            if (!in_array($method, Payment::methods)) {
-                throw new \InvalidArgumentException("Invalid payment method '{$method}'. Please see https://www.mollie.com/nl/docs/reference/payments/create for available payment methods.");
-            }
-        }
-
         // Check recurring type
-        if (!empty($recurringType)) {
-            if ($recurringType != "first" && $recurringType != "recurring") {
-                throw new \InvalidArgumentException("Invalid recurring type '{$recurringType}'. Recurring type must be 'first' or 'recurring'.");
-            }
+        if (!empty($recurringType) && $recurringType != "first" && $recurringType != "recurring") {
+            throw new \InvalidArgumentException("Invalid recurring type '{$recurringType}'. Recurring type must be 'first' or 'recurring'.");
         }
 
         // Convert metadata to JSON
-        if (!empty($metadata)) {
-            $metadata = json_encode($metadata);
-        }
+        $metadata = !empty($metadata) ? json_encode($metadata) : null;
 
         // Construct parameters
         $params = [
             'amount'        => $amount,
-            'description'    => $description,
-            'redirectUrl'    => $redirectUrl,
+            'description'   => $description,
+            'redirectUrl'   => $redirectUrl,
             'webhookUrl'    => $webhookUrl,
             'method'        => $method,
-            'metadata'        => $metadata,
-            'locale'        => $locale,
-            'recurringType'    => $recurringType
+            'metadata'      => $metadata,
+            'locale'        => $this->api->getLocale(),
+            'recurringType' => $recurringType
         ];
 
         // Append method parameters if defined
@@ -88,8 +85,8 @@ class PaymentResource extends CustomerResourceBase
             $params = array_merge($params, $methodParams);
         }
 
-        // API request
-        $resp = $this->api->request->post("/customers/{$customer_id}/payments", $params);
+        // Create payment
+        $resp = $this->api->request->post("/customers/{$this->customer}/payments", $params);
 
         // Return payment model
         return new Payment($this->api, $resp);

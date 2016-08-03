@@ -2,48 +2,22 @@
 
 namespace Mollie\API\Resource;
 
-use Mollie\API\Mollie;
 use Mollie\API\Model;
 
 class CustomerResource extends Base\CustomerResourceBase
 {
-    /** @var Customer\PaymentResource */
-    public $payment;
-
-    /** @var Customer\MandateResource */
-    public $mandate;
-
-    /** @var Customer\SubscriptionResource */
-    public $subscription;
-
-    /**
-     * Constructor
-     *
-     * @param Mollie $api
-     * @param Customer|string $customer
-     */
-    public function __construct(Mollie $api, $customer = null)
-    {
-        // Customer resources
-        $this->payment        = new Customer\PaymentResource($api, $customer);
-        $this->mandate        = new Customer\MandateResource($api, $customer);
-        $this->subscription   = new Customer\SubscriptionResource($api, $customer);
-
-        parent::__construct($api, $customer);
-    }
-
     /**
      * Get customer
      *
      * @param Customer|string $id
-     * @return Customer
+     * @return Model\Customer
      */
     public function get($id = null)
     {
         // Get customer ID
         $id = $this->_getCustomerID($id);
 
-        // API request
+        // Get customer
         $resp = $this->api->request->get("/customers/{$id}");
 
         // Return customer model
@@ -52,14 +26,38 @@ class CustomerResource extends Base\CustomerResourceBase
 
     /**
      * Get all customers
-     * @return Generator|Customer[]
+     * @return Model\Customer[]
      */
     public function all()
     {
-        $items = $this->api->request->getAll("/customers");
+        $items = [];
 
-        foreach ($items as $item) {
-            yield new Model\Customer($this->api, $item);
+        // Get all customers
+        $resp = $this->api->request->getAll("/customers");
+
+        if(!empty($resp) && is_array($resp)) {
+            foreach ($resp as $item) {
+                $items[] = new Model\Customer($this->api, $item);
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * Get all customers as generator
+     * @return Generator
+     */
+    public function yieldAll()
+    {
+        // Get all customers
+        $resp = $this->api->request->getAll("/customers");
+
+        // Yield all customers
+        if(!empty($resp) && is_array($resp)) {
+            foreach ($resp as $item) {
+                yield new Model\Customer($this->api, $item);
+            }
         }
     }
 
@@ -71,27 +69,65 @@ class CustomerResource extends Base\CustomerResourceBase
      * @param string $email Customer email
      * @param string $locale Allow you to preset the language to be used in the payment screens shown to the consumer.
      * @param array $metadata Metadata for this customer
-     * @return Customer
+     * @return Model\Customer
      */
     public function create($name, $email, $locale = null, array $metadata = null)
     {
         // Convert metadata to JSON
-        if (!empty($metadata)) {
-            $metadata = json_encode($metadata);
-        }
+        $metadata = !empty($metadata) ? json_encode($metadata) : null;
 
-        // Construct parameters
-        $params = [
-            'name'        => $name,
-            'email'        => $email,
+        // Create customer
+        $resp = $this->api->request->post("/customers", [
+            'name'      => $name,
+            'email'     => $email,
             'locale'    => $locale,
-            'metadata'    => $metadata,
-        ];
-
-        // API request
-        $resp = $this->api->request->post("/customers", $params);
+            'metadata'  => $metadata,
+        ]);
 
         // Return customer model
         return new Model\Customer($this->api, $resp);
+    }
+
+    /**
+     * Customer payment resource
+     * @return Customer\PaymentResource
+     */
+    public function payment()
+    {
+        if (empty($this->customer)) {
+            throw new \BadMethodCallException("No customer ID was given");
+        }
+
+        return new Customer\PaymentResource($this->api, $this->customer);
+    }
+
+    /**
+     * Customer mandate resource
+     *
+     * @param Model\Mandate|string $mandate
+     * @return Customer\MandateResource
+     */
+    public function mandate($mandate = null)
+    {
+        if (empty($this->customer)) {
+            throw new \BadMethodCallException("No customer ID was given");
+        }
+
+        return new Customer\MandateResource($this->api, $this->customer, $mandate);
+    }
+
+    /**
+     * Customer subscription resource
+     *
+     * @param Model\Subscription|string $subscription
+     * @return Customer\SubscriptionResource
+     */
+    public function subscription($subscription = null)
+    {
+        if (empty($this->customer)) {
+            throw new \BadMethodCallException("No customer ID was given");
+        }
+
+        return new Customer\SubscriptionResource($this->api, $this->customer, $subscription);
     }
 }
