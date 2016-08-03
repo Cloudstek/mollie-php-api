@@ -52,7 +52,10 @@ class Payment extends Base\ModelBase
     public $expiryPeriod;
 
     /** @var string Payment method */
-    protected $method;
+    public $method;
+
+    /** @var object|null Payment method specific details */
+    public $details;
 
     /** @var string Profile ID */
     public $profileId;
