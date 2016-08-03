@@ -14,6 +14,9 @@ class Mollie
     /** @var string API Endpoint */
     private $api_endpoint = "https://api.mollie.nl/v1";
 
+    /** @var string Locale */
+    private $api_locale;
+
     /** @var RequestBase Request Handler */
     public $request;
 
@@ -100,6 +103,24 @@ class Mollie
         $ep = trim(rtrim($ep, '/'));
 
         $this->api_endpoint = $ep;
+    }
+
+    /**
+     * Get API locale
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->api_locale;
+    }
+
+    /**
+     * Set API locale
+     * @param string $locale
+     */
+    public function setLocale($locale)
+    {
+        $this->api_locale = $locale;
     }
 
     /**

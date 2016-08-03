@@ -20,21 +20,6 @@ class Request extends Base\RequestBase
     }
 
     /**
-     * Check configuration before doing a request
-     * @throws RequestException
-     */
-    private function _checkConfig()
-    {
-        if (empty($this->api->getApiKey())) {
-            throw new RequestException('No API key entered');
-        }
-
-        if (empty($this->api->getApiEndpoint())) {
-            throw new RequestException('No API endpoint defined');
-        }
-    }
-
-    /**
      * GET Request
      *
      * @param string $uri Request URI e.g. /customer/1
@@ -44,10 +29,12 @@ class Request extends Base\RequestBase
      */
     public function get($uri, array $params = [])
     {
-        $this->_checkConfig();
-
         // API key
         $api_key = $this->api->getApiKey();
+
+        if (empty($api_key)) {
+            throw new RequestException('No API key entered');
+        }
 
         // Endpoint
         $url = $this->api->getApiEndpoint($uri, $params);
@@ -110,10 +97,12 @@ class Request extends Base\RequestBase
      */
     public function post($uri, $data)
     {
-        $this->_checkConfig();
-
         // API key
         $api_key = $this->api->getApiKey();
+
+        if (empty($api_key)) {
+            throw new RequestException('No API key entered');
+        }
 
         // Endpoint
         $url = $this->api->getApiEndpoint($uri);
@@ -146,10 +135,12 @@ class Request extends Base\RequestBase
      */
     public function delete($uri)
     {
-        $this->_checkConfig();
-
         // API key
         $api_key = $this->api->getApiKey();
+
+        if (empty($api_key)) {
+            throw new RequestException('No API key entered');
+        }
 
         // Endpoint
         $url = $this->api->getApiEndpoint($uri);
