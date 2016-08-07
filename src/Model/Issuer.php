@@ -12,4 +12,13 @@ class Issuer extends Base\ModelBase
 
     /** @var string Payment method the issuer belongs to */
     public $method;
+
+    /**
+     * Issuer payment method
+     * @return Method Payment method the issuer belongs to
+     */
+    public function method()
+    {
+        return $this->api->method($this->method)->get();
+    }
 }

@@ -173,10 +173,12 @@ class Payment extends Base\ModelBase
 
     /**
      * Refunds connected to this payment
+     *
+     * @param Refund|string $refund Refund ID
      * @return RefundResource
      */
-    public function refund()
+    public function refund($refund = null)
     {
-        return new RefundResource($this->api, $this);
+        return new RefundResource($this->api, $this, $refund);
     }
 }

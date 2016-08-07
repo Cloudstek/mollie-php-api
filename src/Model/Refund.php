@@ -8,7 +8,7 @@ class Refund extends Base\ModelBase
     public $id;
 
     /** @var Payment The original payment related to the refund */
-    private $payment;
+    protected $payment;
 
     /** @var double The amount refunded to the customer */
     public $amount;

@@ -17,6 +17,23 @@ class Method extends Base\ModelBase
     public $image;
 
     /**
+     * Parse data and convert it's value when needed e.g. parse dates into their respective objects (DateTime or DateInterval)
+     *
+     * @param string $name Variable name
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function _parseData($name, $value)
+    {
+        if ($name == 'amount' && !empty($value) && is_object($value)) {
+            $value->minimum += 0;
+            $value->maximum += 0;
+        }
+
+        return $value;
+    }
+
+    /**
      * Get HTML representation of payment method image
      *
      * @param string $size Image size (normal or bigger)
@@ -25,9 +42,11 @@ class Method extends Base\ModelBase
      */
     public function image($size = 'normal')
     {
-        if (property_exists($this->image, $size)) {
-            return sprintf('<img src="%s" alt="%s">', $this->image->$size, $this->description);
+        if (!property_exists($this->image, $size)) {
+            throw new \InvalidArgumentException("Image size '{$size}' for payment method {$this->id} does not exist.");
         }
+
+        return sprintf('<img src="%s" alt="%s">', $this->image->$size, $this->description);
     }
 
     /**

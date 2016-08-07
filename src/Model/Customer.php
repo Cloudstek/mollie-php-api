@@ -36,9 +36,9 @@ class Customer extends Base\ModelBase
      * Customer Mandates
      * @return MandateResource
      */
-    public function mandate()
+    public function mandate($id = null)
     {
-        return new MandateResource($this->api, $this);
+        return new MandateResource($this->api, $this, $id);
     }
 
     /**
@@ -54,8 +54,8 @@ class Customer extends Base\ModelBase
      * Customer Subscriptions
      * @return SubscriptionResource
      */
-    public function subscription()
+    public function subscription($id = null)
     {
-        return new SubscriptionResource($this->api, $this);
+        return new SubscriptionResource($this->api, $this, $id);
     }
 }
