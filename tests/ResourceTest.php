@@ -1,10 +1,9 @@
 <?php
 
-use Mollie\API\Tests\ResourceTestCase;
 use Mollie\API\Mollie;
 use Mollie\API\Request;
-use Mollie\API\Model\Customer;
-use Mollie\API\Model\Mandate;
+use Mollie\API\Model;
+use Mollie\API\Tests\TestCase\ResourceTestCase;
 
 class ResourceTest extends ResourceTestCase
 {
@@ -13,8 +12,8 @@ class ResourceTest extends ResourceTestCase
      */
     public function testGetResourceByModel()
     {
-        // Customer data
-        $customerData = (object) ['id' => 'cst_test'];
+        // Mock the customer
+        $customerMock = $this->getCustomer();
 
         // Mock the request
         $requestMock = $this->createMock(Request::class);
@@ -22,20 +21,22 @@ class ResourceTest extends ResourceTestCase
         $requestMock
             ->expects($this->once())
             ->method('get')
-            ->with($this->equalTo("/customers/cst_test"))
-            ->will($this->returnValue($customerData));
+            ->with($this->equalTo("/customers/{$customerMock->id}"))
+            ->will($this->returnValue($customerMock));
 
         // Initialize API
-        $api = new Mollie('test_testapikey', null, $requestMock);
-
-        // Mock the customer
-        $customer = new Customer($api, $customerData);
+        $api = new Mollie('test_testapikey');
+        $api->request = $requestMock;
 
         // Get the customer
-        $customer = $api->customer($customer)->get();
+        $customerModel = new Model\Customer($api, $customerMock);
+
+        // Get the customer
+        $customer = $api->customer($customerModel)->get();
 
         // Assert that the customer ID's are equal
-        $this->assertEquals($customer->id, $customerData->id);
+        $this->assertEquals($customer, $customerModel);
+        $this->assertCustomer($customer, $customerMock);
     }
 
     /**
@@ -58,45 +59,120 @@ class ResourceTest extends ResourceTestCase
         $api = new Mollie('test_testapikey', null, $requestMock);
 
         // Mock the mandate
-        $mandate = new Mandate($api, ['id' => 'mdt_test']);
+        $mandate = new Model\Mandate($api, ['id' => 'mdt_test']);
 
         // Get the customer with a mandate object (invalid)
         $customer = $api->customer($mandate)->get();
     }
 
     /**
-     * Get customer resource without supplying resource ID
-     *
-     * @expectedException BadMethodCallException
-     * @expectedExceptionMessage No mandate ID
+     * Get raw response from model
      */
-    public function testGetCustomerResourceWithoutID()
+    public function testModelRawResponse()
     {
+        // Create API instance
         $api = new Mollie('test_testapikey');
-        $api->customer('cst_test')->mandate()->get();
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
+        // Get the customer
+        $customer = new Model\Customer($api, $customerMock);
+
+        $this->assertTrue(method_exists($customer, 'getResponse'));
+        $this->assertEquals($customerMock, $customer->getResponse());
     }
 
     /**
-     * Get customer resource without supplying customer ID
+     * Test model raw response type
      *
-     * @expectedException BadMethodCallException
-     * @expectedExceptionMessage No customer ID
+     * Fill model with array instead of object to test array->object conversion to normalize response object type.
      */
-    public function testGetCustomerResourceWithoutCustomerID()
+    public function testModelRawResponseType()
     {
+        // Mock the customer as array
+        $customerMock = $this->getCustomer();
+        $customerArrayMock = json_decode(json_encode($customerMock), true);
+
+        // Create API instance
         $api = new Mollie('test_testapikey');
-        $api->customer()->mandate('mdt_test')->get();
+
+        // Get the customer
+        $customer = new Model\Customer($api, $customerArrayMock);
+
+        $this->assertTrue(method_exists($customer, 'getResponse'));
+        $this->assertTrue(is_object($customer->getResponse()));
+        $this->assertEquals($customerMock, $customer->getResponse());
     }
 
     /**
-     * Get customer resource without supplying anything (doh!)
+     * Fill model with invalid data
      *
-     * @expectedException BadMethodCallException
-     * @expectedExceptionMessage No customer ID
+     * @expectedException InvalidArgumentException
      */
-    public function testGetCustomerResourceWithoutAnything()
+    public function testFillModelInvalidData()
     {
+        // Create API instance
         $api = new Mollie('test_testapikey');
-        $api->customer()->mandate()->get();
+
+        // Get the customer
+        $customer = new Model\Customer($api, false);
+    }
+
+    /**
+     * Fill model with data that contains invalid date
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Property createdDatetime does not contain
+     */
+    public function testFillModelInvalidDate()
+    {
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+        $customerMock->createdDatetime = 'asd';
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+
+        // Get customer
+        $customer = new Model\Customer($api, $customerMock);
+    }
+
+    /**
+     * Fill model with data that contains invalid duration
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Property expiryPeriod does not contain
+     */
+    public function testFillModelInvalidDuration()
+    {
+        // Mock the payment
+        $paymentMock = $this->getPayment();
+        $paymentMock->expiryPeriod = 'asd';
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+
+        // Get payment
+        $payment = new Model\Payment($api, $paymentMock);
+    }
+
+    /**
+     * Fill model with data that contains invalid JSON metadata
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Property metadata does not contain
+     */
+    public function testFillModelInvalidMetadata()
+    {
+        // Mock the payment
+        $paymentMock = $this->getPayment();
+        $paymentMock->metadata = '{asdaSD}';
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+
+        // Get payment
+        $payment = new Model\Payment($api, $paymentMock);
     }
 }

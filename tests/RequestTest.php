@@ -1,8 +1,9 @@
 <?php
 
-use Mollie\API\Tests\ResourceTestCase;
 use Mollie\API\Mollie;
 use Mollie\API\Request;
+use Mollie\API\Exception\RequestException;
+use Mollie\API\Tests\TestCase\ResourceTestCase;
 
 class RequestTest extends ResourceTestCase
 {
@@ -34,7 +35,7 @@ class RequestTest extends ResourceTestCase
     public function testInvalidListRequest()
     {
         // Create API instance
-        $api = new Mollie();
+        $api = new Mollie('test_testapikey');
 
         // Mock the request handler
         $requestMock = $this->getMockBuilder(Request::class)
@@ -62,5 +63,44 @@ class RequestTest extends ResourceTestCase
 
         // Check data
         $this->assertEquals($data, $resp->data);
+    }
+
+    /**
+     * Test request exception
+     */
+    public function testRequestException()
+    {
+        // Exception constants
+        $message = "Test exception";
+        $code = 400;
+        $url = "http://example.org/v1/test";
+        $response = (object) [
+            'body' => (object) [
+                'error' => (object) ['message' => 'Test exception message from response']
+            ]
+        ];
+
+        // Basic exception
+        $exception = new RequestException($message);
+        $this->assertContains($message, $exception->getMessage());
+
+        // Exception with code
+        $exception = new RequestException($message, $code);
+        $this->assertContains((string)$code, $exception->getMessage());
+        $this->assertContains($message, $exception->getMessage());
+
+        // Exception with code and url
+        $exception = new RequestException($message, $code, $url);
+        $this->assertContains((string)$code, $exception->getMessage());
+        $this->assertContains($url, $exception->getMessage());
+        $this->assertContains($message, $exception->getMessage());
+
+        // Exception with code, url and response
+        $exception = new RequestException($message, $code, $url, $response);
+        $this->assertContains((string)$code, $exception->getMessage());
+        $this->assertContains($url, $exception->getMessage());
+        $this->assertContains($message, $exception->getMessage());
+        $this->assertContains($response->body->error->message, $exception->getMessage());
+        $this->assertEquals($response, $exception->getResponse());
     }
 }

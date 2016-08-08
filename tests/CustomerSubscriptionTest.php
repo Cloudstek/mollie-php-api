@@ -1,69 +1,43 @@
 <?php
 
-use Mollie\API\Tests\ResourceTestCase;
 use Mollie\API\Mollie;
 use Mollie\API\Request;
+use Mollie\API\Model\Subscription;
+use Mollie\API\Tests\TestCase\ResourceTestCase;
 
 class CustomerSubscriptionTest extends ResourceTestCase
 {
-    /** @var object $johnDoeSubscription Subscription for John Doe */
-    protected $johnDoeSubscription;
-
-    /**
-     * Set Up
-     */
-    public function setUp()
-    {
-        // Create subscription for John Doe
-        $this->johnDoeSubscription = (object) [
-            "resource" => "subscription",
-            "id" => "sub_test",
-            "customerId" => "cst_test",
-            "mode" => "test",
-            "createdDatetime" => "2016-06-01T12:23:34.0Z",
-            "status" => "active",
-            "amount" => "25.00",
-            "times" => 4,
-            "interval" => "3 months",
-            "description" => "Quarterly payment",
-            "method" => null,
-            "cancelledDatetime" => null,
-            "links" => (object) [
-                "webhookUrl" => "https://example.org/payments/webhook"
-            ]
-        ];
-    }
-
     /**
      * Get customer subscription
      */
     public function testGetCustomerSubscription()
     {
+        // Mock the subscription
+        $subscriptionMock = $this->getSubscription();
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
         // Mock the request
         $requestMock = $this->createMock(Request::class);
 
         $requestMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('get')
-            ->with($this->equalTo("/customers/cst_test/subscriptions/sub_test"))
-            ->will($this->returnValue($this->johnDoeSubscription));
+            ->with($this->equalTo("/customers/{$customerMock->id}/subscriptions/{$subscriptionMock->id}"))
+            ->will($this->returnValue($subscriptionMock));
 
         // Create API instance
         $api = new Mollie('test_testapikey');
         $api->request = $requestMock;
 
         // Get customer subscription
-        $subscription = $api->customer('cst_test')->subscription('sub_test')->get();
+        $subscription = $api->customer($customerMock->id)->subscription($subscriptionMock->id)->get();
+        $subscription2 = $api->customer($customerMock->id)->subscription()->get($subscriptionMock->id);
 
-        // Check if we have the correct mandate
-        $this->assertEquals($this->johnDoeSubscription->id, $subscription->id);
-        $this->assertEquals($this->johnDoeSubscription->status, $subscription->status);
-
-        // Check if date objects are parsed correctly
-        $this->assertEquals(strtotime($this->johnDoeSubscription->createdDatetime), $subscription->createdDatetime->format('U'));
-
-        // Check links
-        $this->assertEquals($this->johnDoeSubscription->links->webhookUrl, $subscription->links->webhookUrl);
+        // Check if we have the correct subscription
+        $this->assertEquals($subscription, $subscription2);
+        $this->assertSubscription($subscription, $subscriptionMock);
     }
 
     /**
@@ -72,40 +46,33 @@ class CustomerSubscriptionTest extends ResourceTestCase
     public function testGetCustomerSubscriptions()
     {
         // Prepare a list of subscriptions
-        $johnDoeSubscriptionList = [];
+        $subscriptionListMock = [];
 
         for($i = 0; $i <= 15; $i++) {
-            $subscription = clone $this->johnDoeSubscription;
+            $subscription = $this->getSubscription();
             $subscription->id .= "_{$i}";   // sub_test_1
 
             // Add subscription to list
-            $johnDoeSubscriptionList[] = $subscription;
+            $subscriptionListMock[] = $subscription;
         }
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
 
         // Create API instance
         $api = new Mollie('test_testapikey');
 
         // Mock the request handler
-        $requestMock = $this->getMultiPageRequestMock($api, $johnDoeSubscriptionList, '/customers/cst_test/subscriptions');
+        $requestMock = $this->getMultiPageRequestMock($api, $subscriptionListMock, "/customers/{$customerMock->id}/subscriptions");
 
         // Set request handler
         $api->request = $requestMock;
 
         // Get subscriptions
-        $subscriptions = $api->customer('cst_test')->subscription()->all();
+        $subscriptions = $api->customer($customerMock->id)->subscription()->all();
 
         // Check the number of subscriptions returned
-        $this->assertEquals(count($johnDoeSubscriptionList), count($subscriptions));
-
-        // Get subscriptions through generator
-        $subscriptions = [];
-
-        foreach($api->customer('cst_test')->subscription()->yieldAll() as $subscription) {
-            $subscriptions[] = $subscription;
-        }
-
-        // Check the number of subscriptions returned
-        $this->assertEquals(count($johnDoeSubscriptionList), count($subscriptions));
+        $this->assertEquals(count($subscriptionListMock), count($subscriptions));
     }
 
     /**
@@ -113,6 +80,12 @@ class CustomerSubscriptionTest extends ResourceTestCase
      */
     public function testCreateCustomerSubscription()
     {
+        // Mock the subscription
+        $subscriptionMock = $this->getSubscription();
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
         // Mock the request
         $requestMock = $this->createMock(Request::class);
 
@@ -120,41 +93,99 @@ class CustomerSubscriptionTest extends ResourceTestCase
             ->expects($this->once())
             ->method('post')
             ->with(
-                $this->equalTo("/customers/cst_test/subscriptions"),
+                $this->equalTo("/customers/{$customerMock->id}/subscriptions"),
                 $this->equalTo([
-                    'amount'        => $this->johnDoeSubscription->amount,
-                    'times'         => $this->johnDoeSubscription->times,
-                    'interval'      => $this->johnDoeSubscription->interval,
-                    'description'   => $this->johnDoeSubscription->description,
-                    'method'        => $this->johnDoeSubscription->method,
-                    'webhookUrl'    => $this->johnDoeSubscription->links->webhookUrl
+                    'amount'        => $subscriptionMock->amount,
+                    'times'         => $subscriptionMock->times,
+                    'interval'      => $subscriptionMock->interval,
+                    'description'   => $subscriptionMock->description,
+                    'method'        => $subscriptionMock->method,
+                    'webhookUrl'    => $subscriptionMock->links->webhookUrl
                 ])
             )
-            ->will($this->returnValue($this->johnDoeSubscription));
+            ->will($this->returnValue($subscriptionMock));
 
         // Create API instance
         $api = new Mollie('test_testapikey');
         $api->request = $requestMock;
 
         // Create subscription
-        $subscription = $api->customer('cst_test')->subscription()->create(
-            $this->johnDoeSubscription->amount,
-            $this->johnDoeSubscription->interval,
-            $this->johnDoeSubscription->description,
-            $this->johnDoeSubscription->times,
-            $this->johnDoeSubscription->method,
-            $this->johnDoeSubscription->links->webhookUrl
+        $subscription = $api->customer($customerMock->id)->subscription()->create(
+            $subscriptionMock->amount,
+            $subscriptionMock->interval,
+            $subscriptionMock->description,
+            $subscriptionMock->times,
+            $subscriptionMock->method,
+            $subscriptionMock->links->webhookUrl
         );
 
         // Check subscription details
-        $this->assertEquals($this->johnDoeSubscription->id, $subscription->id);
-        $this->assertEquals($this->johnDoeSubscription->mode, $subscription->mode);
-        $this->assertEquals($this->johnDoeSubscription->status, $subscription->status);
-        $this->assertEquals($this->johnDoeSubscription->amount, $subscription->amount);
-        $this->assertEquals('double', gettype($subscription->amount));
+        $this->assertSubscription($subscription, $subscriptionMock);
+    }
 
-        // Check if date objects are parsed correctly
-        $this->assertEquals(strtotime($this->johnDoeSubscription->createdDatetime), $subscription->createdDatetime->format('U'));
+    /**
+     * Cancel customer subscription
+     */
+    public function testCancelCustomerSubscription()
+    {
+        // Cancelled subscription mock
+        $cancelledSubscription = $this->getSubscription();
+        $cancelledSubscription->status = "cancelled";
+        $cancelledSubscription->cancelledDatetime = "2016-06-05T12:00:34.0Z";
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
+        // Mock the request
+        $requestMock = $this->createMock(Request::class);
+
+        $requestMock
+            ->expects($this->once())
+            ->method('delete')
+            ->with($this->equalTo("/customers/{$customerMock->id}/subscriptions/{$cancelledSubscription->id}"))
+            ->will($this->returnValue($cancelledSubscription));
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+        $api->request = $requestMock;
+
+        // Cancel subscription
+        $subscription = $api->customer($customerMock->id)->subscription($cancelledSubscription->id)->cancel();
+
+        // Check subscription details
+        $this->assertSubscription($subscription, $cancelledSubscription);
+    }
+
+    /**
+     * Get customer for subscription object
+     */
+    public function testGetCustomerFromModel()
+    {
+        // Mock the subscription
+        $subscriptionMock = $this->getSubscription();
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
+        // Mock the request
+        $requestMock = $this->createMock(Request::class);
+
+        $requestMock
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->equalTo("/customers/{$customerMock->id}"))
+            ->will($this->returnValue($customerMock));
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+        $api->request = $requestMock;
+
+        // Get customer subscription
+        $subscription = new Subscription($api, $subscriptionMock);
+
+        // Get customer
+        $customer = $subscription->customer();
+        $this->assertCustomer($customer, $customerMock);
     }
 
     /**
@@ -165,6 +196,9 @@ class CustomerSubscriptionTest extends ResourceTestCase
      */
     public function testCreateCustomerSubscriptionInvalidtimes()
     {
+        // Mock the subscription
+        $subscriptionMock = $this->getSubscription();
+
         // Mock the request
         $requestMock = $this->createMock(Request::class);
 
@@ -178,50 +212,49 @@ class CustomerSubscriptionTest extends ResourceTestCase
 
         // Create subscription
         $subscription = $api->customer('cst_test')->subscription()->create(
-            $this->johnDoeSubscription->amount,
-            $this->johnDoeSubscription->interval,
-            $this->johnDoeSubscription->description,
+            $subscriptionMock->amount,
+            $subscriptionMock->interval,
+            $subscriptionMock->description,
             0,
-            $this->johnDoeSubscription->method,
-            $this->johnDoeSubscription->links->webhookUrl
+            $subscriptionMock->method,
+            $subscriptionMock->links->webhookUrl
         );
     }
 
     /**
-     * Cancel customer subscription
+     * Get customer subscription without subscription ID
+     *
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage No subscription ID
      */
-    public function testCancelCustomerSubscription()
+    public function testGetCustomerSubscriptionWithoutID()
     {
-        // Cancelled subscription mock
-        $cancelledSubscription = clone $this->johnDoeSubscription;
-        $cancelledSubscription->status = "cancelled";
-        $cancelledSubscription->cancelledDatetime = "2016-06-05T12:00:34.0Z";
-
-        // Mock the request
-        $requestMock = $this->createMock(Request::class);
-
-        $requestMock
-            ->expects($this->once())
-            ->method('delete')
-            ->with($this->equalTo("/customers/cst_test/subscriptions/sub_test"))
-            ->will($this->returnValue($cancelledSubscription));
-
-        // Create API instance
         $api = new Mollie('test_testapikey');
-        $api->request = $requestMock;
+        $api->customer('cst_test')->subscription()->get();
+    }
 
-        // Cancel subscription
-        $subscription = $api->customer('cst_test')->subscription('sub_test')->cancel();
+    /**
+     * Get customer subscription without customer ID
+     *
+     * @covers Mollie\API\Resource\CustomerResource::payment
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage No customer ID
+     */
+    public function testGetCustomerSubscriptionWithoutCustomerID()
+    {
+        $api = new Mollie('test_testapikey');
+        $api->customer()->subscription('sub_test')->get();
+    }
 
-        // Check subscription details
-        $this->assertEquals($cancelledSubscription->id, $subscription->id);
-        $this->assertEquals($cancelledSubscription->mode, $subscription->mode);
-        $this->assertEquals($cancelledSubscription->status, $subscription->status);
-        $this->assertEquals($cancelledSubscription->amount, $subscription->amount);
-        $this->assertEquals('double', gettype($subscription->amount));
-
-        // Check if date objects are parsed correctly
-        $this->assertEquals(strtotime($cancelledSubscription->createdDatetime), $subscription->createdDatetime->format('U'));
-        $this->assertEquals(strtotime($cancelledSubscription->cancelledDatetime), $subscription->cancelledDatetime->format('U'));
+    /**
+     * Get customer subscription without any arguments (doh!)
+     *
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage No customer ID
+     */
+    public function testGetCustomeSubscriptionWithoutAnything()
+    {
+        $api = new Mollie('test_testapikey');
+        $api->customer()->subscription()->get();
     }
 }

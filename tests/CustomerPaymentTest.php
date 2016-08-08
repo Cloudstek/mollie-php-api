@@ -1,86 +1,41 @@
 <?php
 
-use Mollie\API\Tests\ResourceTestCase;
 use Mollie\API\Mollie;
 use Mollie\API\Request;
+use Mollie\API\Tests\TestCase\ResourceTestCase;
 
 class CustomerPaymentTest extends ResourceTestCase
 {
-    /** @var object $johnDoePayment */
-    protected $johnDoePayment;
-
-    /**
-     * Set Up
-     */
-    public function setUp()
-    {
-        // Create payment for John Doe
-        $this->johnDoePayment = (object) [
-            "id" => "tr_test",
-            "mode" => "test",
-            "createdDatetime" => "2016-08-01T10:57:45.0Z",
-            "status" => "paid",
-            "paidDatetime" => "2016-08-01T11:02:28.0Z",
-            "amount" => 35.07,
-            "description" => "Order 33",
-            "method" => "ideal",
-            "metadata" => (object) [
-                "order_id" => "33"
-            ],
-            "details" => (object) [
-                "consumerName" => "John Doe",
-                "consumerAccount" => "NL53INGB0000000000",
-                "consumerBic" => "INGBNL2A"
-            ],
-            "locale" => "nl",
-            "profileId" => "pfl_test",
-            "links" => (object) [
-                "webhookUrl" => "https://webshop.example.org/payments/webhook",
-                "redirectUrl" => "https://webshop.example.org/order/33/"
-            ]
-        ];
-    }
-
     /**
      * Get all customer payments
      */
     public function testGetCustomerPayments()
     {
         // Prepare a list of payments
-        $johnDoePaymentList = [];
+        $paymentListMock = [];
 
         for($i = 0; $i <= 15; $i++) {
-            $payment = clone $this->johnDoePayment;
-            $payment->id .= "_{$i}";   // tr_test_1
-
-            // Add mandate to list
-            $johnDoePaymentList[] = $payment;
+            $payment = $this->getPayment();
+            $paymentListMock[] = $payment;
         }
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
 
         // Create API instance
         $api = new Mollie('test_testapikey');
 
         // Mock the request handler
-        $requestMock = $this->getMultiPageRequestMock($api, $johnDoePaymentList, '/customers/cst_test/payments');
+        $requestMock = $this->getMultiPageRequestMock($api, $paymentListMock, "/customers/{$customerMock->id}/payments");
 
         // Set request handler
         $api->request = $requestMock;
 
         // Get payments
-        $payments = $api->customer('cst_test')->payment()->all();
+        $payments = $api->customer($customerMock->id)->payment()->all();
 
         // Check the number of payments returned
-        $this->assertEquals(count($johnDoePaymentList), count($payments));
-
-        // Get payments through generator
-        $payments = [];
-
-        foreach($api->customer('cst_test')->payment()->yieldAll() as $payment) {
-            $payments[] = $payment;
-        }
-
-        // Check the number of payments returned
-        $this->assertEquals(count($johnDoePaymentList), count($payments));
+        $this->assertEquals(count($paymentListMock), count($payments));
     }
 
     /**
@@ -88,6 +43,12 @@ class CustomerPaymentTest extends ResourceTestCase
      */
     public function testCreateCustomerPayment()
     {
+        // Mock the payment
+        $paymentMock = $this->getPayment();
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
         // Mock the request
         $requestMock = $this->createMock(Request::class);
 
@@ -95,53 +56,39 @@ class CustomerPaymentTest extends ResourceTestCase
             ->expects($this->once())
             ->method('post')
             ->with(
-                $this->equalTo("/customers/cst_test/payments"),
+                $this->equalTo("/customers/{$customerMock->id}/payments"),
                 $this->equalTo([
-                    'amount'        => $this->johnDoePayment->amount,
-                    'description'   => $this->johnDoePayment->description,
-                    'redirectUrl'   => $this->johnDoePayment->links->redirectUrl,
-                    'webhookUrl'    => $this->johnDoePayment->links->webhookUrl,
-                    'method'        => $this->johnDoePayment->method,
-                    'metadata'      => json_encode($this->johnDoePayment->metadata),
+                    'amount'        => $paymentMock->amount,
+                    'description'   => $paymentMock->description,
+                    'redirectUrl'   => $paymentMock->links->redirectUrl,
+                    'webhookUrl'    => $paymentMock->links->webhookUrl,
+                    'method'        => $paymentMock->method,
+                    'metadata'      => $paymentMock->metadata,
                     'locale'        => null,
                     'recurringType' => 'first',
                     'issuer'        => 'ideal_INGNL2A'
                 ])
             )
-            ->will($this->returnValue($this->johnDoePayment));
+            ->will($this->returnValue($paymentMock));
 
         // Create API instance
         $api = new Mollie('test_testapikey');
         $api->request = $requestMock;
 
         // Get payment
-        $payment = $api->customer('cst_test')->payment()->create(
-            $this->johnDoePayment->amount,
-            $this->johnDoePayment->description,
-            $this->johnDoePayment->links->redirectUrl,
-            $this->johnDoePayment->links->webhookUrl,
-            $this->johnDoePayment->method,
+        $payment = $api->customer($customerMock->id)->payment()->create(
+            $paymentMock->amount,
+            $paymentMock->description,
+            $paymentMock->links->redirectUrl,
+            $paymentMock->links->webhookUrl,
+            $paymentMock->method,
             ['issuer' => 'ideal_INGNL2A'],
-            (array) $this->johnDoePayment->metadata,
+            json_decode($paymentMock->metadata, true),
              'first'
          );
 
         // Check if we have the correct customer
-        $this->assertEquals($this->johnDoePayment->id, $payment->id);
-        $this->assertEquals($this->johnDoePayment->mode, $payment->mode);
-
-        // Check if JSON metadata is correctly parsed
-        $this->assertEquals($this->johnDoePayment->metadata, $payment->metadata);
-
-        // Check if date objects are parsed correctly
-        $this->assertEquals(strtotime($this->johnDoePayment->createdDatetime), $payment->createdDatetime->format('U'));
-        $this->assertEquals(strtotime($this->johnDoePayment->paidDatetime), $payment->paidDatetime->format('U'));
-
-        // Check links
-        $this->assertEquals($this->johnDoePayment->links->redirectUrl, $payment->links->redirectUrl);
-
-        // Check details
-        $this->assertEquals($this->johnDoePayment->details->consumerName, $payment->details->consumerName);
+        $this->assertPayment($payment, $paymentMock);
     }
 
     /**
@@ -152,6 +99,9 @@ class CustomerPaymentTest extends ResourceTestCase
      */
     public function testCreateInvalidRecurringCustomerPayment()
     {
+        // Mock the payment
+        $paymentMock = $this->getPayment();
+
         // Mock the request
         $requestMock = $this->createMock(Request::class);
 
@@ -165,15 +115,27 @@ class CustomerPaymentTest extends ResourceTestCase
 
         // Get payment
         $payment = $api->customer('cst_test')->payment()->create(
-            $this->johnDoePayment->amount,
-            $this->johnDoePayment->description,
-            $this->johnDoePayment->links->redirectUrl,
-            $this->johnDoePayment->links->webhookUrl,
-            $this->johnDoePayment->method,
+            $paymentMock->amount,
+            $paymentMock->description,
+            $paymentMock->links->redirectUrl,
+            $paymentMock->links->webhookUrl,
+            $paymentMock->method,
             ['issuer' => 'ideal_INGNL2A'],
-            (array) $this->johnDoePayment->metadata,
-             $this->johnDoePayment->locale,
+            json_decode($paymentMock->metadata, true),
+             $paymentMock->locale,
              'superawesome' // Invalid recurring type
          );
+    }
+
+    /**
+     * Get customer payments without customer ID
+     *
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage No customer ID
+     */
+    public function testGetCustomerPaymentWithoutCustomerID()
+    {
+        $api = new Mollie('test_testapikey');
+        $api->customer()->payment()->all();
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
-use Mollie\API\Tests\ResourceTestCase;
 use Mollie\API\Mollie;
+use Mollie\API\Model;
 use Mollie\API\Base\RequestBase;
+use Mollie\API\Tests\TestCase\ResourceTestCase;
 
 class InitTest extends ResourceTestCase
 {

@@ -1,68 +1,40 @@
 <?php
 
-use Mollie\API\Tests\ResourceTestCase;
 use Mollie\API\Mollie;
 use Mollie\API\Request;
+use Mollie\API\Model\Customer;
+use Mollie\API\Tests\TestCase\ResourceTestCase;
 
 class CustomerTest extends ResourceTestCase
 {
-    /** @var object $johnDoe Customer */
-    protected $johnDoe;
-
-    /**
-     * Set Up
-     */
-    public function setUp()
-    {
-        // Create or John Doe customer
-        $this->johnDoe = (object) [
-            "resource" => "customer",
-            "id" => "cst_test",
-            "mode" => "test",
-            "name" => "Customer",
-            "email" => "customer@example.org",
-            "locale" => "nl_NL",
-            "metadata" => (object) [
-                'orderno' => 404
-            ],
-            "recentlyUsedMethods" => (object) [
-                "creditcard",
-                "ideal"
-            ],
-            "createdDatetime" => "2016-04-06T13:23:21.0Z"
-        ];
-    }
-
     /**
      * Get customer
      */
     public function testGetCustomer()
     {
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
         // Mock the request
         $requestMock = $this->createMock(Request::class);
 
         $requestMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('get')
-            ->with($this->equalTo("/customers/cst_test"))
-            ->will($this->returnValue($this->johnDoe));
+            ->with($this->equalTo("/customers/{$customerMock->id}"))
+            ->will($this->returnValue($customerMock));
 
         // Create API instance
         $api = new Mollie('test_testapikey');
         $api->request = $requestMock;
 
         // Get customer
-        $customer = $api->customer('cst_test')->get();
+        $customer = $api->customer($customerMock->id)->get();
+        $customer2 = $api->customer()->get($customerMock->id);
 
         // Check if we have the correct customer
-        $this->assertEquals($this->johnDoe->id, $customer->id);
-        $this->assertEquals($this->johnDoe->mode, $customer->mode);
-
-        // Check if JSON metadata is correctly parsed
-        $this->assertEquals($this->johnDoe->metadata, $customer->metadata);
-
-        // Check if date objects are parsed correctly
-        $this->assertEquals(strtotime($this->johnDoe->createdDatetime), $customer->createdDatetime->format('U'));
+        $this->assertEquals($customer, $customer2);
+        $this->assertCustomer($customer, $customerMock);
     }
 
     /**
@@ -70,23 +42,23 @@ class CustomerTest extends ResourceTestCase
      */
     public function testGetCustomers()
     {
-        // Prepare a list of John doe customers
-        $johnDoeList = [];
+        // Prepare a list of customers
+        $customerListMock = [];
 
         for($i = 0; $i <= 15; $i++) {
-            $john = clone $this->johnDoe;
+            $customer = $this->getCustomer();
 
-            $john->id .= "_{$i}";   // cst_test_1
-            $john->name .= " {$i}"; // Customer 1
+            $customer->id .= "_{$i}";   // cst_test_1
+            $customer->name .= " {$i}"; // Customer 1
 
-            $johnDoeList[] = $john;
+            $customerListMock[] = $customer;
         }
 
         // Create API instance
         $api = new Mollie('test_testapikey');
 
         // Mock the request handler
-        $requestMock = $this->getMultiPageRequestMock($api, $johnDoeList, '/customers');
+        $requestMock = $this->getMultiPageRequestMock($api, $customerListMock, '/customers');
 
         // Set request handler
         $api->request = $requestMock;
@@ -95,17 +67,7 @@ class CustomerTest extends ResourceTestCase
         $customers = $api->customer()->all();
 
         // Check the number of customers returned
-        $this->assertEquals(count($johnDoeList), count($customers));
-
-        // Get mandates through generator
-        $customers = [];
-
-        foreach($api->customer()->yieldAll() as $customer) {
-            $customers[] = $customer;
-        }
-
-        // Check the number of customers returned
-        $this->assertEquals(count($johnDoeList), count($customers));
+        $this->assertEquals(count($customerListMock), count($customers));
     }
 
     /**
@@ -113,6 +75,9 @@ class CustomerTest extends ResourceTestCase
      */
     public function testCreateCustomer()
     {
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
         // Mock the request
         $requestMock = $this->createMock(Request::class);
 
@@ -122,29 +87,149 @@ class CustomerTest extends ResourceTestCase
             ->with(
                 $this->equalTo("/customers"),
                 $this->equalTo([
-                    'name'      => $this->johnDoe->name,
-                    'email'     => $this->johnDoe->email,
-                    'locale'    => $this->johnDoe->locale,
-                    'metadata'  => json_encode($this->johnDoe->metadata)
+                    'name'      => $customerMock->name,
+                    'email'     => $customerMock->email,
+                    'locale'    => $customerMock->locale,
+                    'metadata'  => $customerMock->metadata
                 ])
             )
-            ->will($this->returnValue($this->johnDoe));
+            ->will($this->returnValue($customerMock));
 
         // Create API instance
         $api = new Mollie('test_testapikey');
         $api->request = $requestMock;
 
         // Create customer
-        $customer = $api->customer()->create($this->johnDoe->name, $this->johnDoe->email, $this->johnDoe->locale, (array) $this->johnDoe->metadata);
+        $customer = $api->customer()->create($customerMock->name, $customerMock->email, $customerMock->locale, json_decode($customerMock->metadata, true));
 
         // Check if we have the correct customer
-        $this->assertEquals($this->johnDoe->id, $customer->id);
-        $this->assertEquals($this->johnDoe->mode, $customer->mode);
+        $this->assertCustomer($customer, $customerMock);
+    }
 
-        // Check if JSON metadata is correctly parsed
-        $this->assertEquals($this->johnDoe->metadata, $customer->metadata);
+    /**
+     * Get customer mandate through customer object
+     *
+     * Will first fetch the customer and then get the specified mandate.
+     */
+    public function testGetCustomerMandateFromModel()
+    {
+        // Mock the customer
+        $customerMock = $this->getCustomer();
 
-        // Check if date objects are parsed correctly
-        $this->assertEquals(strtotime($this->johnDoe->createdDatetime), $customer->createdDatetime->format('U'));
+        // Mock the mandate
+        $mandateMock = $this->getMandate();
+
+        // Mock the request
+        $requestMock = $this->createMock(Request::class);
+
+        $requestMock
+            ->expects($this->exactly(2))
+            ->method('get')
+            ->with($this->equalTo("/customers/{$customerMock->id}/mandates/{$mandateMock->id}"))
+            ->will($this->returnValue($mandateMock));
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+        $api->request = $requestMock;
+
+        // Get customer
+        $customer = new Customer($api, $customerMock);
+
+        // Get customer mandate
+        $mandate = $customer->mandate($mandateMock->id)->get();
+        $mandate2 = $customer->mandate()->get($mandateMock->id);
+
+        // Check if we have the correct mandate
+        $this->assertEquals($mandate, $mandate2);
+        $this->assertMandate($mandate, $mandateMock);
+    }
+
+    /**
+     * Get customer payments through customer object
+     *
+     * Will first fetch the customer and then get all payments by that customer
+     */
+    public function testGetCustomerPaymentsFromModel()
+    {
+        // Prepare a list of payments
+        $paymentListMock = [];
+
+        for($i = 0; $i <= 15; $i++) {
+            $payment = $this->getPayment();
+            $payment->id .= "_{$i}";   // tr_test_1
+
+            $paymentListMock[] = $payment;
+        }
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+
+        // Mock the request handler
+        $requestMock = $this->getMultiPageRequestMock($api, $paymentListMock, "/customers/{$customerMock->id}/payments");
+
+        // Set request handler
+        $api->request = $requestMock;
+
+        // Get customer
+        $customer = new Customer($api, $customerMock);
+
+        // Get customer payments
+        $payments = $customer->payment()->all();
+
+        // Check if we have the correct payment
+        $this->assertEquals(count($paymentListMock), count($payments));
+    }
+
+    /**
+     * Get customer subscription through customer object
+     *
+     * Will first fetch the customer and then get the specified subscription.
+     */
+    public function testGetCustomerSubscriptionFromModel()
+    {
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
+        // Mock the subscription
+        $subscriptionMock = $this->getSubscription();
+
+        // Mock the request
+        $requestMock = $this->createMock(Request::class);
+
+        $requestMock
+            ->expects($this->exactly(2))
+            ->method('get')
+            ->with($this->equalTo("/customers/{$customerMock->id}/subscriptions/{$subscriptionMock->id}"))
+            ->will($this->returnValue($subscriptionMock));
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+        $api->request = $requestMock;
+
+        // Get customer
+        $customer = new Customer($api, $customerMock);
+
+        // Get customer subscription
+        $subscription = $customer->subscription($subscriptionMock->id)->get();
+        $subscription2 = $customer->subscription()->get($subscriptionMock->id);
+
+        // Check if we have the correct subscription
+        $this->assertEquals($subscription, $subscription2);
+        $this->assertSubscription($subscription, $subscriptionMock);
+    }
+
+    /**
+     * Get customer without customer ID
+     *
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage No customer ID
+     */
+    public function testGetCustomerWithoutID()
+    {
+        $api = new Mollie('test_testapikey');
+        $api->customer()->get();
     }
 }

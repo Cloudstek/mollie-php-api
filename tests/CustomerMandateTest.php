@@ -1,64 +1,43 @@
 <?php
 
-use Mollie\API\Tests\ResourceTestCase;
 use Mollie\API\Mollie;
 use Mollie\API\Request;
+use Mollie\API\Model\Mandate;
+use Mollie\API\Tests\TestCase\ResourceTestCase;
 
 class CustomerMandateTest extends ResourceTestCase
 {
-    /** @var object $johnDoeMandate Mandate for John Doe */
-    protected $johnDoeMandate;
-
-    /**
-     * Set Up
-     */
-    public function setUp()
-    {
-        // Create valid mandate for John Doe
-        $this->johnDoeMandate = (object) [
-            "resource" => "mandate",
-            "id" => "mdt_test",
-            "status" => "valid",
-            "method" => "creditcard",
-            "customerId" => "cst_test",
-            "details" => (object) [
-                "cardHolder" => "John Doe",
-                "cardNumber" => "1234",
-                "cardLabel" => "Mastercard",
-                "cardFingerprint" => "fHB3CCKx9REkz8fPplT8N4nq",
-                "cardExpiryDate" => "2016-03-31"
-            ],
-            "createdDatetime" => "2016-04-13T11:32:38.0Z"
-        ];
-    }
-
     /**
      * Get customer mandate
      */
     public function testGetCustomerMandate()
     {
+        // Mock the mandate
+        $mandateMock = $this->getMandate();
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
         // Mock the request
         $requestMock = $this->createMock(Request::class);
 
         $requestMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('get')
-            ->with($this->equalTo("/customer/cst_test/mandates/mdt_test"))
-            ->will($this->returnValue($this->johnDoeMandate));
+            ->with($this->equalTo("/customers/{$customerMock->id}/mandates/{$mandateMock->id}"))
+            ->will($this->returnValue($mandateMock));
 
         // Create API instance
         $api = new Mollie('test_testapikey');
         $api->request = $requestMock;
 
         // Get customer mandate
-        $mandate = $api->customer('cst_test')->mandate('mdt_test')->get();
+        $mandate = $api->customer($customerMock->id)->mandate($mandateMock->id)->get();
+        $mandate2 = $api->customer($customerMock->id)->mandate()->get($mandateMock->id);
 
         // Check if we have the correct mandate
-        $this->assertEquals($this->johnDoeMandate->id, $mandate->id);
-        $this->assertEquals($this->johnDoeMandate->status, $mandate->status);
-
-        // Check if date objects are parsed correctly
-        $this->assertEquals(strtotime($this->johnDoeMandate->createdDatetime), $mandate->createdDatetime->format('U'));
+        $this->assertEquals($mandate, $mandate2);
+        $this->assertMandate($mandate, $mandateMock);
     }
 
     /**
@@ -67,10 +46,10 @@ class CustomerMandateTest extends ResourceTestCase
     public function testGetCustomerMandates()
     {
         // Prepare a list of mandates for John Doe
-        $johnDoeMandateList = [];
+        $mandateListMock = [];
 
         for($i = 0; $i <= 15; $i++) {
-            $mandate = clone $this->johnDoeMandate;
+            $mandate = $this->getMandate();
             $mandate->id .= "_{$i}";   // mdt_test_1
 
             // Leave one valid mandate
@@ -79,32 +58,93 @@ class CustomerMandateTest extends ResourceTestCase
             }
 
             // Add mandate to list
-            $johnDoeMandateList[] = $mandate;
+            $mandateListMock[] = $mandate;
         }
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
 
         // Create API instance
         $api = new Mollie('test_testapikey');
 
         // Mock the request handler
-        $requestMock = $this->getMultiPageRequestMock($api, $johnDoeMandateList, '/customer/cst_test/mandates');
+        $requestMock = $this->getMultiPageRequestMock($api, $mandateListMock, "/customer/{$customerMock->id}/mandates");
 
         // Set request handler
         $api->request = $requestMock;
 
         // Get mandates
-        $mandates = $api->customer('cst_test')->mandate()->all();
+        $mandates = $api->customer($customerMock->id)->mandate()->all();
 
         // Check the number of mandates returned
-        $this->assertEquals(count($johnDoeMandateList), count($mandates));
+        $this->assertEquals(count($mandateListMock), count($mandates));
+    }
 
-        // Get mandates through generator
-        $mandates = [];
+    /**
+     * Get customer for mandate object
+     */
+    public function testGetCustomerForMandate()
+    {
+        // Mock the mandate
+        $mandateMock = $this->getMandate();
 
-        foreach($api->customer('cst_test')->mandate()->yieldAll() as $mandate) {
-            $mandates[] = $mandate;
-        }
+        // Mock the customer
+        $customerMock = $this->getCustomer();
 
-        // Check the number of mandates returned
-        $this->assertEquals(count($johnDoeMandateList), count($mandates));
+        // Mock the request
+        $requestMock = $this->createMock(Request::class);
+
+        $requestMock
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->equalTo("/customers/{$customerMock->id}"))
+            ->will($this->returnValue($customerMock));
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+        $api->request = $requestMock;
+
+        // Get customer mandate
+        $mandate = new Mandate($api, $mandateMock);
+
+        // Get customer
+        $customer = $mandate->customer();
+        $this->assertCustomer($customer, $customerMock);
+    }
+
+    /**
+     * Get customer mandate without mandate ID
+     *
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage No mandate ID
+     */
+    public function testGetCustomerMandateWithoutID()
+    {
+        $api = new Mollie('test_testapikey');
+        $api->customer('cst_test')->mandate()->get();
+    }
+
+    /**
+     * Get customer mandate without customer ID
+     *
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage No customer ID
+     */
+    public function testGetCustomerMandateWithoutCustomerID()
+    {
+        $api = new Mollie('test_testapikey');
+        $api->customer()->mandate('mdt_test')->get();
+    }
+
+    /**
+     * Get customer mandate without any arguments (doh!)
+     *
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage No customer ID
+     */
+    public function testGetCustomerMandateWithoutAnything()
+    {
+        $api = new Mollie('test_testapikey');
+        $api->customer()->mandate()->get();
     }
 }
