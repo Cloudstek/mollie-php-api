@@ -1,11 +1,40 @@
 {
+    "name": "cloudstek/mollie-php-api",
+    "description": "Mollie API client library for PHP",
+    "version": "1.0.0",
+    "homepage": "https://github.com/cloudstek/mollie-php-api",
+    "license": "BSD-2-Clause",
+
+    "authors": [
+        {
+            "name": "Cloudstek",
+            "email": "info@cloudstek.nl"
+        }
+    ],
+
+    "keywords": [
+        "mollie", "payment", "service", "ideal", "creditcard", "mistercash", "bancontact", "sofort", "sofortbanking",
+        "sepa", "bitcoin", "paypal", "paysafecard", "podiumcadeaukaart", "banktransfer", "direct debit", "belfius",
+        "belfius direct net", "refunds", "api", "payments", "gateway", "subscriptions", "recurring", "charges", "client"
+    ],
+
     "autoload": {
         "psr-4": {
             "Mollie\\API\\": "src/",
             "Mollie\\API\\Tests\\": "tests/"
         }
     },
+
     "require": {
+        "php": ">=5.5",
+        "lib-curl": "*",
+        "lib-openssl": "*",
         "nategood/httpful": "^0.2.20"
+    },
+
+    "require-dev": {
+        "ext-xdebug": "*",
+        "phpunit/phpunit": "^5.4",
+        "codeclimate/php-test-reporter": "^0.3.2"
     }
 }
