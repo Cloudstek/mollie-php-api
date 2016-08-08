@@ -107,11 +107,15 @@ class InitTest extends ResourceTestCase
      * Invalid request handler
      *
      * Request handler should be of type RequestBase and should throw PHP error otherwise
-     *
-     * @expectedException PHPUnit_Framework_Error
      */
     public function testInvalidRequestHandler()
     {
+        if(PHP_MAJOR_VERSION >= 7) {
+            $this->expectException(\TypeException::class);
+        } else {
+            $this->expectException(\PHPUnit_Framework_Error::class);
+        }
+
         // Create invalid request handler
         $requestHandler = [];
 
