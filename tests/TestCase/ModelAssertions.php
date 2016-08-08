@@ -14,14 +14,14 @@ trait ModelAssertions
      */
     protected function assertModel(ModelBase $model, $reference, array $mapping)
     {
-        foreach($mapping as $k => $v) {
+        foreach ($mapping as $k => $v) {
             $k = is_int($k) ? $v : $k; // Handle non-associative arrays
 
-            if(is_array($reference)) {
+            if (is_array($reference)) {
                 $reference = (object) $reference;
             }
 
-            if(!property_exists($reference, $k)) {
+            if (!property_exists($reference, $k)) {
                 continue;
             }
 
@@ -39,13 +39,13 @@ trait ModelAssertions
             }
 
             // JSON metadata
-            if($k == 'metadata') {
+            if ($k == 'metadata') {
                 $this->assertEquals(json_decode($reference->$k), $model->$v);
                 continue;
             }
 
             // Amount
-            if(preg_match('/amount.*$/', $k) && !is_object($reference->$k)) {
+            if (preg_match('/amount.*$/', $k) && !is_object($reference->$k)) {
                 $this->assertTrue(is_float($model->$v) || is_integer($model->$v));
                 $this->assertEquals($reference->$k, $model->$v);
                 continue;
@@ -62,7 +62,7 @@ trait ModelAssertions
      */
     protected function assertModelMethods(ModelBase $model, array $methods)
     {
-        foreach($methods as $method) {
+        foreach ($methods as $method) {
             $this->assertTrue(method_exists($model, $method));
             $this->assertTrue(is_callable([$model, $method]));
         }

@@ -48,7 +48,7 @@ class CustomerSubscriptionTest extends ResourceTestCase
         // Prepare a list of subscriptions
         $subscriptionListMock = [];
 
-        for($i = 0; $i <= 15; $i++) {
+        for ($i = 0; $i <= 15; $i++) {
             $subscription = $this->getSubscription();
             $subscription->id .= "_{$i}";   // sub_test_1
 

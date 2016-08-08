@@ -44,7 +44,7 @@ class PaymentMethodTest extends ResourceTestCase
         // Prepare a list of methods
         $methodListMock = [];
 
-        for($i = 0; $i <= 15; $i++) {
+        for ($i = 0; $i <= 15; $i++) {
             $method = $this->getMethod();
             $methodListMock[] = $method;
         }

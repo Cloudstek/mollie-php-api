@@ -14,7 +14,7 @@ class CustomerPaymentTest extends ResourceTestCase
         // Prepare a list of payments
         $paymentListMock = [];
 
-        for($i = 0; $i <= 15; $i++) {
+        for ($i = 0; $i <= 15; $i++) {
             $payment = $this->getPayment();
             $paymentListMock[] = $payment;
         }

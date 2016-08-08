@@ -45,7 +45,7 @@ class CustomerTest extends ResourceTestCase
         // Prepare a list of customers
         $customerListMock = [];
 
-        for($i = 0; $i <= 15; $i++) {
+        for ($i = 0; $i <= 15; $i++) {
             $customer = $this->getCustomer();
 
             $customer->id .= "_{$i}";   // cst_test_1
@@ -154,7 +154,7 @@ class CustomerTest extends ResourceTestCase
         // Prepare a list of payments
         $paymentListMock = [];
 
-        for($i = 0; $i <= 15; $i++) {
+        for ($i = 0; $i <= 15; $i++) {
             $payment = $this->getPayment();
             $payment->id .= "_{$i}";   // tr_test_1
 

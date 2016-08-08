@@ -79,7 +79,7 @@ class IssuerTest extends ResourceTestCase
         // Prepare a list of issuers
         $issuerListMock = [];
 
-        for($i = 0; $i <= 15; $i++) {
+        for ($i = 0; $i <= 15; $i++) {
             $issuer = $this->getIssuer();
             $issuerListMock[] = $issuer;
         }

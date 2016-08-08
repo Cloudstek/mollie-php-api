@@ -377,9 +377,8 @@ class ResourceTestCase extends TestCase
                 $this->equalTo($nextLink)
             )
             ->will($this->returnCallback(
-                function($url) use($totalCount, $dataPageOne, $dataPageTwo, $nextLink)
-                {
-                    if($url == $nextLink) {
+                function ($url) use ($totalCount, $dataPageOne, $dataPageTwo, $nextLink) {
+                    if ($url == $nextLink) {
                         return (object)[
                             "totalCount"    => $totalCount,
                             "offset"        => count($dataPageOne),

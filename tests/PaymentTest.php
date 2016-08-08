@@ -45,7 +45,7 @@ class PaymentTest extends ResourceTestCase
         // Prepare a list of payments
         $paymentListMock = [];
 
-        for($i = 0; $i <= 15; $i++) {
+        for ($i = 0; $i <= 15; $i++) {
             $payment = $this->getPayment();
 
             $payment->id .= "_{$i}";   // tr_test_1
@@ -170,12 +170,12 @@ class PaymentTest extends ResourceTestCase
         // Check null status (all false)
         $payment->status = null;
 
-        foreach($statusses as $status => $cb) {
+        foreach ($statusses as $status => $cb) {
             $this->assertFalse($payment->$cb());
         }
 
         // Check all statusses
-        foreach($statusses as $status => $cb) {
+        foreach ($statusses as $status => $cb) {
             $payment->status = $status;
             $this->assertTrue($payment->$cb());
         }

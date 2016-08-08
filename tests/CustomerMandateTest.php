@@ -48,12 +48,12 @@ class CustomerMandateTest extends ResourceTestCase
         // Prepare a list of mandates for John Doe
         $mandateListMock = [];
 
-        for($i = 0; $i <= 15; $i++) {
+        for ($i = 0; $i <= 15; $i++) {
             $mandate = $this->getMandate();
             $mandate->id .= "_{$i}";   // mdt_test_1
 
             // Leave one valid mandate
-            if($i < 15) {
+            if ($i < 15) {
                 $mandate->status = "invalid";
             }
 

@@ -19,9 +19,6 @@
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="false">
             <directory suffix=".php">./src</directory>
-            <exclude>
-                <directory suffix=".php">./src/Base</directory>
-            </exclude>
         </whitelist>
     </filter>
     <logging>

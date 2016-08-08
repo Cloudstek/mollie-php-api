@@ -48,7 +48,7 @@ class PaymentRefundTest extends ResourceTestCase
         // Prepare a list of refunds
         $refundListMock = [];
 
-        for($i = 0; $i <= 15; $i++) {
+        for ($i = 0; $i <= 15; $i++) {
             $refund = $this->getRefund();
             $refund->id += "_{$i}";     // re_test_1
 
