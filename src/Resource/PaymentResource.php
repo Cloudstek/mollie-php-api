@@ -2,35 +2,18 @@
 
 namespace Mollie\API\Resource;
 
-use Mollie\API\Mollie;
 use Mollie\API\Model\Payment;
+use Mollie\API\Resource\Payment\RefundResource;
 
 class PaymentResource extends Base\PaymentResourceBase
 {
-    /** @var Payment\RefundResource */
-    public $refund;
-
-    /**
-     * Constructor
-     *
-     * @param string $api_key Mollie API key
-     * @param Payment|string $payment
-     */
-    public function __construct(Mollie $api, $payment = null)
-    {
-        // Payment resources
-        $this->refund = new Payment\RefundResource($api, $payment);
-
-        parent::__construct($api, $payment);
-    }
-
     /**
      * Get payment
      *
      * @param string $id Payment ID
      * @return Payment
      */
-    public function get($id)
+    public function get($id = null)
     {
         // Get payment ID
         $id = $this->_getPaymentID($id);
@@ -48,11 +31,18 @@ class PaymentResource extends Base\PaymentResourceBase
      */
     public function all()
     {
-        $items = $this->api->request->getAll("/payments");
+        $items = [];
 
-        foreach ($items as $item) {
-            yield new Payment($this->api, $item);
+        // Get all payments
+        $resp = $this->api->request->getAll("/payments");
+
+        if (!empty($resp) && is_array($resp)) {
+            foreach ($resp as $item) {
+                $items[] = new Payment($this->api, $item);
+            }
         }
+
+        return $items;
     }
 
     /**
@@ -66,41 +56,29 @@ class PaymentResource extends Base\PaymentResourceBase
      * @param string $method Payment method to use, leave blank to use payment method selection screen
      * @param array $methodParams Payment method specific parameters
      * @param array $metadata Metadata for this payment
-     * @param string $locale Allow you to preset the language to be used in the payment screens shown to the consumer.
      * @param string $recurringType
      * @return Payment
      */
-    public function create($amount, $description, $redirectUrl, $webhookUrl = null, $method = null, array $methodParams = null, array $metadata = null, $locale = null, $recurringType = null)
+    public function create($amount, $description, $redirectUrl, $webhookUrl = null, $method = null, array $methodParams = null, array $metadata = null, $recurringType = null)
     {
-        // Check payment method
-        if (!empty($method)) {
-            if (!in_array($method, Payment::methods)) {
-                throw new InvalidArgumentException("Invalid payment method '{$method}'. Please see https://www.mollie.com/nl/docs/reference/payments/create for available payment methods.");
-            }
-        }
-
         // Check recurring type
-        if (!empty($recurringType)) {
-            if ($recurringType != "first" && $recurringType != "recurring") {
-                throw new InvalidArgumentException("Invalid recurring type '{$recurringType}'. Recurring type must be 'first' or 'recurring'.");
-            }
+        if (!empty($recurringType) && $recurringType != "first" && $recurringType != "recurring") {
+            throw new \InvalidArgumentException("Invalid recurring type '{$recurringType}'. Recurring type must be 'first' or 'recurring'.");
         }
 
         // Convert metadata to JSON
-        if (!empty($metadata)) {
-            $metadata = json_encode($metadata);
-        }
+        $metadata = !empty($metadata) ? json_encode($metadata) : null;
 
         // Construct parameters
         $params = [
             'amount'        => $amount,
-            'description'    => $description,
-            'redirectUrl'    => $redirectUrl,
+            'description'   => $description,
+            'redirectUrl'   => $redirectUrl,
             'webhookUrl'    => $webhookUrl,
             'method'        => $method,
-            'metadata'        => $metadata,
-            'locale'        => $locale,
-            'recurringType'    => $recurringType
+            'metadata'      => $metadata,
+            'locale'        => $this->api->getLocale(),
+            'recurringType' => $recurringType
         ];
 
         // Append method parameters if defined
@@ -113,5 +91,20 @@ class PaymentResource extends Base\PaymentResourceBase
 
         // Return payment model
         return new Payment($this->api, $resp);
+    }
+
+    /**
+     * Payment refund resource
+     *
+     * @param Mollie\API\Model\Refund|string $refund
+     * @return RefundResource
+     */
+    public function refund($refund = null)
+    {
+        if (empty($this->payment)) {
+            throw new \BadMethodCallException("No payment ID was given");
+        }
+
+        return new RefundResource($this->api, $this->payment, $refund);
     }
 }

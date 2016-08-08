@@ -18,28 +18,13 @@ class PaymentResource extends CustomerResourceBase
         // Get all customer payments
         $resp = $this->api->request->getAll("/customers/{$this->customer}/payments");
 
-        if(!empty($resp) && is_array($resp)) {
+        if (!empty($resp) && is_array($resp)) {
             foreach ($resp as $item) {
                 $items[] = new Payment($this->api, $item);
             }
         }
 
         return $items;
-    }
-
-    /**
-     * Get all customer payments as generator
-     * @return Generator
-     */
-    public function yieldAll()
-    {
-        // Get all customer payments
-        $items = $this->api->request->getAll("/customers/{$this->customer}/payments");
-
-        // Yield all payments
-        foreach ($items as $item) {
-            yield new Payment($this->api, $item);
-        }
     }
 
     /**

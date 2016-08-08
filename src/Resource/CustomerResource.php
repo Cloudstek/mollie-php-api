@@ -2,7 +2,10 @@
 
 namespace Mollie\API\Resource;
 
-use Mollie\API\Model;
+use Mollie\API\Model\Customer;
+use Mollie\API\Resource\Customer\PaymentResource;
+use Mollie\API\Resource\Customer\MandateResource;
+use Mollie\API\Resource\Customer\SubscriptionResource;
 
 class CustomerResource extends Base\CustomerResourceBase
 {
@@ -10,7 +13,7 @@ class CustomerResource extends Base\CustomerResourceBase
      * Get customer
      *
      * @param Customer|string $id
-     * @return Model\Customer
+     * @return Customer
      */
     public function get($id = null)
     {
@@ -21,12 +24,12 @@ class CustomerResource extends Base\CustomerResourceBase
         $resp = $this->api->request->get("/customers/{$id}");
 
         // Return customer model
-        return new Model\Customer($this->api, $resp);
+        return new Customer($this->api, $resp);
     }
 
     /**
      * Get all customers
-     * @return Model\Customer[]
+     * @return Customer[]
      */
     public function all()
     {
@@ -35,30 +38,13 @@ class CustomerResource extends Base\CustomerResourceBase
         // Get all customers
         $resp = $this->api->request->getAll("/customers");
 
-        if(!empty($resp) && is_array($resp)) {
+        if (!empty($resp) && is_array($resp)) {
             foreach ($resp as $item) {
-                $items[] = new Model\Customer($this->api, $item);
+                $items[] = new Customer($this->api, $item);
             }
         }
 
         return $items;
-    }
-
-    /**
-     * Get all customers as generator
-     * @return Generator
-     */
-    public function yieldAll()
-    {
-        // Get all customers
-        $resp = $this->api->request->getAll("/customers");
-
-        // Yield all customers
-        if(!empty($resp) && is_array($resp)) {
-            foreach ($resp as $item) {
-                yield new Model\Customer($this->api, $item);
-            }
-        }
     }
 
     /**
@@ -69,7 +55,7 @@ class CustomerResource extends Base\CustomerResourceBase
      * @param string $email Customer email
      * @param string $locale Allow you to preset the language to be used in the payment screens shown to the consumer.
      * @param array $metadata Metadata for this customer
-     * @return Model\Customer
+     * @return Customer
      */
     public function create($name, $email, $locale = null, array $metadata = null)
     {
@@ -85,7 +71,7 @@ class CustomerResource extends Base\CustomerResourceBase
         ]);
 
         // Return customer model
-        return new Model\Customer($this->api, $resp);
+        return new Customer($this->api, $resp);
     }
 
     /**
@@ -98,13 +84,13 @@ class CustomerResource extends Base\CustomerResourceBase
             throw new \BadMethodCallException("No customer ID was given");
         }
 
-        return new Customer\PaymentResource($this->api, $this->customer);
+        return new PaymentResource($this->api, $this->customer);
     }
 
     /**
      * Customer mandate resource
      *
-     * @param Model\Mandate|string $mandate
+     * @param Mollie\API\Model\Mandate|string $mandate
      * @return Customer\MandateResource
      */
     public function mandate($mandate = null)
@@ -113,13 +99,13 @@ class CustomerResource extends Base\CustomerResourceBase
             throw new \BadMethodCallException("No customer ID was given");
         }
 
-        return new Customer\MandateResource($this->api, $this->customer, $mandate);
+        return new MandateResource($this->api, $this->customer, $mandate);
     }
 
     /**
      * Customer subscription resource
      *
-     * @param Model\Subscription|string $subscription
+     * @param Mollie\API\Model\Subscription|string $subscription
      * @return Customer\SubscriptionResource
      */
     public function subscription($subscription = null)
@@ -128,6 +114,6 @@ class CustomerResource extends Base\CustomerResourceBase
             throw new \BadMethodCallException("No customer ID was given");
         }
 
-        return new Customer\SubscriptionResource($this->api, $this->customer, $subscription);
+        return new SubscriptionResource($this->api, $this->customer, $subscription);
     }
 }

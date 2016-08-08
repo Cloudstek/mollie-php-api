@@ -2,8 +2,7 @@
 
 namespace Mollie\API\Resource;
 
-use Mollie\API\Mollie;
-use Mollie\API\Mollie\Model\Method;
+use Mollie\API\Model\Method;
 
 class MethodResource extends Base\ResourceBase
 {
@@ -16,7 +15,7 @@ class MethodResource extends Base\ResourceBase
     public function get($id = null)
     {
         // Get method ID
-        $id = $this->_getResourceID($id);
+        $id = $this->_getResourceID($id, Method::class);
 
         $resp = $this->api->request->get("/methods/{$id}");
 
@@ -26,14 +25,21 @@ class MethodResource extends Base\ResourceBase
 
     /**
      * Get all payment methods
-     * @return Generator|Method[]
+     * @return Method[]
      */
     public function all()
     {
-        $items = $this->api->request->getAll("/methods");
+        $items = [];
 
-        foreach ($items as $item) {
-            yield new Method($this->api, $item);
+        // Get all methods
+        $resp = $this->api->request->getAll("/methods");
+
+        if (!empty($resp) && is_array($resp)) {
+            foreach ($resp as $item) {
+                $items[] = new Method($this->api, $item);
+            }
         }
+
+        return $items;
     }
 }

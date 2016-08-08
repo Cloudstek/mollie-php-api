@@ -10,39 +10,55 @@ use Mollie\API\Model\Refund;
 class RefundResource extends PaymentResourceBase
 {
     /**
+     * Payment refund resource constructor
+     *
+     * @param Mollie $api API reference
+     * @param Payment|string $payment
+     * @param Refund|string $refund
+     */
+    public function __construct(Mollie $api, $payment, $refund = null)
+    {
+        parent::__construct($api, $payment);
+
+        if (isset($refund)) {
+            $this->refund = $this->_getRefundID($refund);
+        }
+    }
+
+    /**
      * Get payment refund
      *
-     * @param string $refund_id Refund ID
-     * @param Payment|string $payment
+     * @param Refund|string $id
      * @return Refund
      */
-    public function get($refund_id, $payment = null)
+    public function get($id = null)
     {
-        // Get payment ID
-        $payment_id = $this->_getPaymentID($payment);
+        // Get refund ID
+        $refund_id = $this->_getRefundID($id);
 
-        $resp = $this->api->request->get("/payments/{$payment_id}/refunds/{$refund_id}");
+        // Get refund
+        $resp = $this->api->request->get("/payments/{$this->payment}/refunds/{$refund_id}");
 
-        // Return payment model
+        // Return refund model
         return new Refund($this->api, $resp);
     }
 
     /**
      * Get all payment refunds
-     * @return Generator|Refund[]
+     * @return Refund[]
      */
-    public function all($payment = null)
+    public function all()
     {
-        // Get payment ID
-        $payment_id = $this->_getPaymentID($payment);
+        $items = [];
 
         // API request
-        $items = $this->api->request->getAll("/payments/{$payment_id}/refunds");
+        $resp = $this->api->request->getAll("/payments/{$this->payment}/refunds");
 
-        // Yield items
-        foreach ($items as $item) {
-            yield new Refund($this->api, $item);
+        foreach ($resp as $item) {
+            $items[] = new Refund($this->api, $item);
         }
+
+        return $items;
     }
 
     /**
@@ -50,20 +66,16 @@ class RefundResource extends PaymentResourceBase
      *
      * @see https://www.mollie.com/nl/docs/reference/refunds/create
      * @param double $amount The amount in EURO that you want to refund. Omit to refund full amount
-     * @param Payment|string $payment Payment object or id to refund
      * @return Refund
      */
-    public function create($amount = null, $payment = null)
+    public function create($amount = null)
     {
-        // Get payment ID
-        $payment_id = $this->_getPaymentID($payment);
-
         // API request
-        $resp = $this->api->request->post("/payments", [
+        $resp = $this->api->request->post("/payments/{$this->payment}/refunds", [
             'amount'        => $amount
         ]);
 
-        // Return payment model
+        // Return refund model
         return new Refund($this->api, $resp);
     }
 
@@ -71,16 +83,14 @@ class RefundResource extends PaymentResourceBase
      * Cancel payment refund
      *
      * @see https://www.mollie.com/nl/docs/reference/refunds/delete
-     * @param int $refund_id Refund ID
-     * @param Payment|string $payment Payment object or id to cancel refund for
-     * @return null
+     * @param Refund|string $id
      */
-    public function cancel($refund_id, $payment = null)
+    public function cancel($id = null)
     {
-        // Get payment ID
-        $payment_id = $this->_getPaymentID($payment);
+        // Get refund ID
+        $refund_id = $this->_getRefundID($id);
 
         // API request
-        $this->api->request->delete("/payments/{$payment_id}/refunds/{$refund_id}");
+        $this->api->request->delete("/payments/{$this->payment}/refunds/{$refund_id}");
     }
 }

@@ -13,12 +13,15 @@ class RefundResource extends Base\ResourceBase
      */
     public function all()
     {
-        // API request
-        $items = $this->api->request->getAll("/refunds");
+        $items = [];
 
-        // Yield items
-        foreach ($items as $item) {
-            yield new Refund($this->api, $item);
+        // API request
+        $resp = $this->api->request->getAll("/refunds");
+
+        foreach ($resp as $item) {
+            $items[] = new Refund($this->api, $item);
         }
+
+        return $items;
     }
 }

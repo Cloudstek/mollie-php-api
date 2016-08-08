@@ -8,9 +8,6 @@ use Mollie\API\Model\Subscription;
 
 class SubscriptionResource extends CustomerResourceBase
 {
-    /** @var string $subscription */
-    protected $subscription;
-
     /**
      * Subscription resource constructor
      *
@@ -22,7 +19,7 @@ class SubscriptionResource extends CustomerResourceBase
     {
         parent::__construct($api, $customer);
 
-        if(isset($subscription)) {
+        if (isset($subscription)) {
             $this->subscription = $this->_getSubscriptionID($subscription);
         }
     }
@@ -56,28 +53,13 @@ class SubscriptionResource extends CustomerResourceBase
         // Get all subscriptions
         $resp = $this->api->request->getAll("/customers/{$this->customer}/subscriptions");
 
-        if(!empty($resp) && is_array($resp)) {
+        if (!empty($resp) && is_array($resp)) {
             foreach ($resp as $item) {
                 $items[] = new Subscription($this->api, $item);
             }
         }
 
         return $items;
-    }
-
-    /**
-     * Get all customer subscriptions as generator
-     * @return Generator
-     */
-    public function yieldAll()
-    {
-        // Get all subscriptions
-        $items = $this->api->request->getAll("/customers/{$this->customer}/subscriptions");
-
-        // Yield all subscriptions
-        foreach ($items as $item) {
-            yield new Subscription($this->api, $item);
-        }
     }
 
     /**

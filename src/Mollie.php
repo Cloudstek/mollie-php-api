@@ -137,7 +137,7 @@ class Mollie
     /**
      * Issuer Resource
      *
-     * @param string $issuer Issuer ID
+     * @param Model\Issuer|string $issuer Issuer ID
      * @return Resource\IssuerResource
      */
     public function issuer($issuer = null)
@@ -148,7 +148,7 @@ class Mollie
     /**
      * Payment Method Resource
      *
-     * @param string $method Payment Method ID
+     * @param Model\Method|string $method Payment Method ID
      * @return Resource\MethodResource
      */
     public function method($method = null)
@@ -169,10 +169,12 @@ class Mollie
 
     /**
      * Refund Resource
+     *
+     * @param Model\Refund|string $refund Refund ID
      * @return Resource\RefundResource
      */
-    public function refund()
+    public function refund($refund = null)
     {
-        return new Resource\RefundResource($this);
+        return new Resource\RefundResource($this, $refund);
     }
 }

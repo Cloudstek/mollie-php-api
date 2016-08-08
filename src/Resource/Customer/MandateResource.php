@@ -4,14 +4,10 @@ namespace Mollie\API\Resource\Customer;
 
 use Mollie\API\Mollie;
 use Mollie\API\Resource\Base\CustomerResourceBase;
-use Mollie\API\Model\Customer;
 use Mollie\API\Model\Mandate;
 
 class MandateResource extends CustomerResourceBase
 {
-    /** @var string $mandate */
-    protected $mandate;
-
     /**
      * Mandate resource constructor
      *
@@ -23,7 +19,7 @@ class MandateResource extends CustomerResourceBase
     {
         parent::__construct($api, $customer);
 
-        if(isset($mandate)) {
+        if (isset($mandate)) {
             $this->mandate = $this->_getMandateID($mandate);
         }
     }
@@ -40,7 +36,7 @@ class MandateResource extends CustomerResourceBase
         $mandate_id = $this->_getMandateID($id);
 
         // Get mandate
-        $resp = $this->api->request->get("/customer/{$this->customer}/mandates/{$mandate_id}");
+        $resp = $this->api->request->get("/customers/{$this->customer}/mandates/{$mandate_id}");
 
         // Return mandate model
         return new Mandate($this->api, $resp);
@@ -55,29 +51,14 @@ class MandateResource extends CustomerResourceBase
         $items = [];
 
         // Get all customer mandates
-        $resp = $this->api->request->getAll("/customer/{$this->customer}/mandates");
+        $resp = $this->api->request->getAll("/customers/{$this->customer}/mandates");
 
-        if(!empty($resp) && is_array($resp)) {
+        if (!empty($resp) && is_array($resp)) {
             foreach ($resp as $item) {
                 $items[] = new Mandate($this->api, $item);
             }
         }
 
         return $items;
-    }
-
-    /**
-     * Get all customer mandates as generator
-     * @return Generator
-     */
-    public function yieldAll()
-    {
-        // Get all mandates
-        $items = $this->api->request->getAll("/customer/{$this->customer}/mandates");
-
-        // Yield all mandates
-        foreach ($items as $item) {
-            yield new Mandate($this->api, $item);
-        }
     }
 }
