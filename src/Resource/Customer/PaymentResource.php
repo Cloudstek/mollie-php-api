@@ -75,4 +75,63 @@ class PaymentResource extends CustomerResourceBase
         // Return payment model
         return new Payment($this->api, $resp);
     }
+
+    /**
+     * Create mandate for recurring payments
+     *
+     * This is essentially the same as calling create() with the optional parameter 'recurringType' set to 'recurring'.
+     * A valid mandate is required to make the recurring payment.
+     *
+     * @see \Mollie\API\Resource\Customer\MandateResource::create
+     * @see https://www.mollie.com/nl/docs/reference/customers/create-payment
+     * @param double $amount The amount in EURO that you want to charge
+     * @param string $description The description of the payment you're creating
+     * @param string $redirectUrl The URL the consumer will be redirected to after the payment process
+     * @param array $metadata Metadata for this payment
+     * @param array $opts
+     *                  [webhookUrl]    string  Webhook URL for this payment onlyb
+     *                  [method]        string  Payment method
+     *                  [recurringType] string  Recurring payment type, first or recurring
+     * @return Payment
+     */
+    public function createFirstRecurring($amount, $description, $redirectUrl, array $metadata = [], array $opts = [])
+    {
+        // Convert metadata to JSON
+        $metadata = !empty($metadata) ? json_encode($metadata) : null;
+
+        // Set recurring type to recurring
+        $opts['recurringType'] = 'first';
+
+        // Create recurring payment
+        return $this->create($amount, $description, $redirectUrl, $metadata, $opts);
+    }
+
+    /**
+     * Create recurring payment for customer
+     *
+     * This is essentially the same as calling create() with the optional parameter 'recurringType' set to 'recurring'.
+     * A valid mandate is required to make the recurring payment.
+     *
+     * @see \Mollie\API\Resource\Customer\MandateResource::create
+     * @see https://www.mollie.com/nl/docs/reference/customers/create-payment
+     * @param double $amount The amount in EURO that you want to charge
+     * @param string $description The description of the payment you're creating
+     * @param array $metadata Metadata for this payment
+     * @param array $opts
+     *                  [webhookUrl]    string  Webhook URL for this payment only
+     *                  [method]        string  Payment method
+     *                  [recurringType] string  Recurring payment type, first or recurring
+     * @return Payment
+     */
+    public function createRecurring($amount, $description, array $metadata = [], array $opts = [])
+    {
+        // Convert metadata to JSON
+        $metadata = !empty($metadata) ? json_encode($metadata) : null;
+
+        // Set recurring type to recurring
+        $opts['recurringType'] = 'recurring';
+
+        // Create recurring payment
+        return $this->create($amount, $description, null, $metadata, $opts);
+    }
 }
