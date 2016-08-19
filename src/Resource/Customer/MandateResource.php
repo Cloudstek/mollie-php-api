@@ -61,4 +61,52 @@ class MandateResource extends CustomerResourceBase
 
         return $items;
     }
+
+    /**
+     * Create SEPA direct debit mandate
+     *
+     * @param string $method Payment method of the mandate. Currently only directdebit is supported
+     * @param string $name Consumer name
+     * @param string $account Consumer IBAN account number
+     * @param array  $opts
+     *                  [bic]           string      Consumer BIC
+     *                  [signatureDate] DateTime    Signature date
+     *                  [reference]     string      Custom reference
+     * @return Mandate
+     */
+    public function create($method, $name, $account, array $opts = [])
+    {
+        // Construct parameters
+        $params = [
+            'method' => $method,
+            'consumerName' => $name,
+            'consumerAccount' => $account,
+            'consumerBic' => $opts['bic'] ?: null,
+            'signatureDate' => $opts['signatureDate'] ?: null,
+            'mandateReference' => $opts['reference'] ?: null
+        ];
+
+        // Create mandate
+        $resp = $this->api->request->post("/customers/{$this->customer}/mandates", $params);
+
+        // Return mandate model
+        return new Mandate($this->api, $resp);
+    }
+
+    /**
+     * Check if customer has any valid mandates
+     * @return boolean
+     */
+    public function hasValid()
+    {
+        $mandates = $this->all();
+
+        foreach($mandates as $mandate) {
+            if($mandate->isValid()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
