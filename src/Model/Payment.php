@@ -154,6 +154,17 @@ class Payment extends Base\ModelBase
     }
 
     /**
+     * Redirect customer to payment page
+     */
+    public function gotoPaymentPage()
+    {
+        if(!empty($this->links->paymentUrl)) {
+            header('Location:' . $this->links->paymentUrl);
+            exit;
+        }
+    }
+
+    /**
      * Profile the payment was created on
      * @return Profile
      */

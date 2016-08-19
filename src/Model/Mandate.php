@@ -26,6 +26,22 @@ class Mandate extends Base\ModelBase
     public $createdDatetime;
 
     /**
+     * Check if mandate is valid
+     */
+    public function isValid()
+    {
+        return $this->status === 'valid';
+    }
+
+    /**
+     * Check if mandate is invalid
+     */
+    public function isInvalid()
+    {
+        return $this->status === 'invalid';
+    }
+
+    /**
      * Mandate customer
      * @return Customer
      */
