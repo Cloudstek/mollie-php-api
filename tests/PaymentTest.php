@@ -103,7 +103,6 @@ class PaymentTest extends ResourceTestCase
                     'method'        => $paymentMock->method,
                     'metadata'      => $paymentMock->metadata,
                     'locale'        => $api->getLocale(),
-                    'recurringType' => 'first',
                     'issuer'        => $issuerMock->id
                 ])
             )
@@ -117,11 +116,14 @@ class PaymentTest extends ResourceTestCase
             $paymentMock->amount,
             $paymentMock->description,
             $paymentMock->links->redirectUrl,
-            $paymentMock->links->webhookUrl,
-            $paymentMock->method,
-            ['issuer' => $issuerMock->id],
             json_decode($paymentMock->metadata, true),
-            'first'
+            [
+                'webhookUrl' => $paymentMock->links->webhookUrl,
+                'method' => $paymentMock->method,
+                'methodParams' => [
+                    'issuer' => $issuerMock->id
+                ]
+            ]
         );
 
         // Check if we have the correct payment
@@ -247,41 +249,6 @@ class PaymentTest extends ResourceTestCase
         // Check refund
         $this->assertEquals($refund, $refund2);
         $this->assertRefund($refund, $refundMock, $paymentMock);
-    }
-
-    /**
-     * Create invalid recurring payment
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid recurring type
-     */
-    public function testCreateInvalidRecurringPayment()
-    {
-        // Mock the payment
-        $paymentMock = $this->getPayment();
-
-        // Mock the request
-        $requestMock = $this->createMock(Request::class);
-
-        $requestMock
-            ->expects($this->never())
-            ->method('post');
-
-        // Create API instance
-        $api = new Mollie('test_testapikey');
-        $api->request = $requestMock;
-
-        // Create payment
-        $payment = $api->payment()->create(
-            $paymentMock->amount,
-            $paymentMock->description,
-            $paymentMock->links->redirectUrl,
-            $paymentMock->links->webhookUrl,
-            $paymentMock->method,
-            null,
-            json_decode($paymentMock->metadata, true),
-            'woopwoop'  // Invalid recurring parameter!
-        );
     }
 
     /**

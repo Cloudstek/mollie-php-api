@@ -89,7 +89,7 @@ class CustomerTest extends ResourceTestCase
                 $this->equalTo([
                     'name'      => $customerMock->name,
                     'email'     => $customerMock->email,
-                    'locale'    => $customerMock->locale,
+                    'locale'    => null,
                     'metadata'  => $customerMock->metadata
                 ])
             )
@@ -100,7 +100,7 @@ class CustomerTest extends ResourceTestCase
         $api->request = $requestMock;
 
         // Create customer
-        $customer = $api->customer()->create($customerMock->name, $customerMock->email, $customerMock->locale, json_decode($customerMock->metadata, true));
+        $customer = $api->customer()->create($customerMock->name, $customerMock->email, json_decode($customerMock->metadata, true));
 
         // Check if we have the correct customer
         $this->assertCustomer($customer, $customerMock);
