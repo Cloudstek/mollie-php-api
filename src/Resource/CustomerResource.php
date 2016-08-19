@@ -53,11 +53,10 @@ class CustomerResource extends Base\CustomerResourceBase
      * @see https://www.mollie.com/nl/docs/reference/customers/create
      * @param string $name Customer name
      * @param string $email Customer email
-     * @param string $locale Allow you to preset the language to be used in the payment screens shown to the consumer.
      * @param array $metadata Metadata for this customer
      * @return Customer
      */
-    public function create($name, $email, $locale = null, array $metadata = null)
+    public function create($name, $email, array $metadata = null)
     {
         // Convert metadata to JSON
         $metadata = !empty($metadata) ? json_encode($metadata) : null;
@@ -66,7 +65,7 @@ class CustomerResource extends Base\CustomerResourceBase
         $resp = $this->api->request->post("/customers", [
             'name'      => $name,
             'email'     => $email,
-            'locale'    => $locale,
+            'locale'    => $this->api->getLocale(),
             'metadata'  => $metadata,
         ]);
 

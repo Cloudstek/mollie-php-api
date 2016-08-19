@@ -52,20 +52,15 @@ class PaymentResource extends Base\PaymentResourceBase
      * @param double $amount The amount in EURO that you want to charge
      * @param string $description The description of the payment you're creating.
      * @param string $redirectUrl The URL the consumer will be redirected to after the payment process.
-     * @param string $webhookUrl Use this parameter to set a webhook URL for this payment only.
-     * @param string $method Payment method to use, leave blank to use payment method selection screen
-     * @param array $methodParams Payment method specific parameters
      * @param array $metadata Metadata for this payment
-     * @param string $recurringType
+     * @param array $opts
+     *                  [webhookUrl]    string Webhook URL for this payment only
+     *                  [method]        string Payment method
+     *                  [methodParams]  array  Payment method specific options (see documentation)
      * @return Payment
      */
-    public function create($amount, $description, $redirectUrl, $webhookUrl = null, $method = null, array $methodParams = null, array $metadata = null, $recurringType = null)
+    public function create($amount, $description, $redirectUrl, array $metadata = [], array $opts = [])
     {
-        // Check recurring type
-        if (!empty($recurringType) && $recurringType != "first" && $recurringType != "recurring") {
-            throw new \InvalidArgumentException("Invalid recurring type '{$recurringType}'. Recurring type must be 'first' or 'recurring'.");
-        }
-
         // Convert metadata to JSON
         $metadata = !empty($metadata) ? json_encode($metadata) : null;
 
@@ -74,16 +69,15 @@ class PaymentResource extends Base\PaymentResourceBase
             'amount'        => $amount,
             'description'   => $description,
             'redirectUrl'   => $redirectUrl,
-            'webhookUrl'    => $webhookUrl,
-            'method'        => $method,
+            'webhookUrl'    => $opts['webhookUrl'] ?: null,
+            'method'        => $opts['method'] ?: null,
             'metadata'      => $metadata,
-            'locale'        => $this->api->getLocale(),
-            'recurringType' => $recurringType
+            'locale'        => $this->api->getLocale()
         ];
 
         // Append method parameters if defined
-        if (!empty($methodParams) && !empty($method)) {
-            $params = array_merge($params, $methodParams);
+        if (!empty($opts['method']) && !empty($opts['methodParams'])) {
+            $params = array_merge($params, $opts['methodParams']);
         }
 
         // API request

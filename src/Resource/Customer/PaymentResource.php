@@ -30,24 +30,23 @@ class PaymentResource extends CustomerResourceBase
     /**
      * Create customer payment
      *
-     * @see https://www.mollie.com/nl/docs/reference/payments/create
      * @see https://www.mollie.com/nl/docs/reference/customers/create-payment
      * @param double $amount The amount in EURO that you want to charge
-     * @param string $description The description of the payment you're creating.
-     * @param string $redirectUrl The URL the consumer will be redirected to after the payment process.
-     * @param string $webhookUrl Use this parameter to set a webhook URL for this payment only.
-     * @param string $method Payment method to use, leave blank to use payment method selection screen
-     * @param array $methodParams Payment method specific parameters
+     * @param string $description The description of the payment you're creating
+     * @param string $redirectUrl The URL the consumer will be redirected to after the payment process
      * @param array $metadata Metadata for this payment
-     * @param string $recurringType
-     * @throws \InvalidArgumentException
+     * @param array $opts
+     *                  [webhookUrl]    string Webhook URL for this payment only
+     *                  [method]        string Payment method
+     *                  [methodParams]  array  Payment method specific options (see documentation)
+     *                  [recurringType] string Recurring payment type, first or recurring
      * @return Payment
      */
-    public function create($amount, $description, $redirectUrl, $webhookUrl = null, $method = null, array $methodParams = null, array $metadata = null, $recurringType = null)
+    public function create($amount, $description, $redirectUrl, array $metadata = [], array $opts = [])
     {
         // Check recurring type
-        if (!empty($recurringType) && $recurringType != "first" && $recurringType != "recurring") {
-            throw new \InvalidArgumentException("Invalid recurring type '{$recurringType}'. Recurring type must be 'first' or 'recurring'.");
+        if (!empty($opts['recurringType']) && $opts['recurringType'] != "first" && $opts['recurringType'] != "recurring") {
+            throw new \InvalidArgumentException(sprintf("Invalid recurring type '%s'. Recurring type must be 'first' or 'recurring'.", $opts['recurringType']));
         }
 
         // Convert metadata to JSON
@@ -58,16 +57,16 @@ class PaymentResource extends CustomerResourceBase
             'amount'        => $amount,
             'description'   => $description,
             'redirectUrl'   => $redirectUrl,
-            'webhookUrl'    => $webhookUrl,
-            'method'        => $method,
+            'webhookUrl'    => $opts['webhookUrl'] ?: null,
+            'method'        => $opts['method'] ?: null,
             'metadata'      => $metadata,
             'locale'        => $this->api->getLocale(),
-            'recurringType' => $recurringType
+            'recurringType' => $opts['recurringType'] ?: null
         ];
 
         // Append method parameters if defined
-        if (!empty($methodParams) && !empty($method)) {
-            $params = array_merge($params, $methodParams);
+        if (!empty($opts['method']) && !empty($opts['methodParams'])) {
+            $params = array_merge($params, $opts['methodParams']);
         }
 
         // Create payment
