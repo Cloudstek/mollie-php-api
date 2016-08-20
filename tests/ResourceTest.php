@@ -123,7 +123,7 @@ class ResourceTest extends ResourceTestCase
      * Fill model with data that contains invalid date
      *
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Property createdDatetime does not contain
+     * @expectedExceptionMessage Property createdDatetime is not a valid ISO 8601
      */
     public function testFillModelInvalidDate()
     {
@@ -142,7 +142,7 @@ class ResourceTest extends ResourceTestCase
      * Fill model with data that contains invalid duration
      *
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Property expiryPeriod does not contain
+     * @expectedExceptionMessage Property expiryPeriod is not a valid ISO 8601
      */
     public function testFillModelInvalidDuration()
     {
