@@ -79,7 +79,7 @@ class ResourceTestCase extends TestCase
      */
     protected function getMandate($status = 'valid', $method = 'creditcard', array $details = null)
     {
-        if(empty($details)) {
+        if (empty($details)) {
             $details = [
                 "cardHolder" => "John Doe",
                 "cardNumber" => "1234",

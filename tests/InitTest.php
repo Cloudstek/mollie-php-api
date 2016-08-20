@@ -110,7 +110,7 @@ class InitTest extends ResourceTestCase
      */
     public function testInvalidRequestHandler()
     {
-        if(PHP_MAJOR_VERSION >= 7) {
+        if (PHP_MAJOR_VERSION >= 7) {
             $this->expectException(\TypeError::class);
         } else {
             $this->expectException(\PHPUnit_Framework_Error::class);

@@ -68,12 +68,12 @@ trait ModelAssertions
         $numModels = count($models);
 
         // Check number of references
-        if($numModels !== count($references)) {
+        if ($numModels !== count($references)) {
             throw new \InvalidArgumentException("Number of models to test must equal number of references.");
         }
 
         // Test all models
-        for($i = 0; $i < $numModels; $i++) {
+        for ($i = 0; $i < $numModels; $i++) {
             call_user_func_array($callback, array($models[$i], $references[$i]));
         }
     }
@@ -91,5 +91,4 @@ trait ModelAssertions
             $this->assertTrue(is_callable([$model, $method]));
         }
     }
-
 }
