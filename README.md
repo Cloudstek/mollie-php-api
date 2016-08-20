@@ -1,6 +1,6 @@
 # Mollie PHP API client
 
-[![Build Status](https://travis-ci.org/Cloudstek/mollie-php-api.svg?branch=master)](https://travis-ci.org/Cloudstek/mollie-php-api) [![Code Climate](https://codeclimate.com/github/Cloudstek/mollie-api-php/badges/gpa.svg)](https://codeclimate.com/github/Cloudstek/mollie-api-php) [![Test Coverage](https://codeclimate.com/github/Cloudstek/mollie-api-php/badges/coverage.svg)](https://codeclimate.com/github/Cloudstek/mollie-api-php/coverage)
+[![Build Status](https://travis-ci.org/Cloudstek/mollie-php-api.svg?branch=master)](https://travis-ci.org/Cloudstek/mollie-php-api) [![Code Climate](https://codeclimate.com/github/Cloudstek/mollie-php-api/badges/gpa.svg)](https://codeclimate.com/github/Cloudstek/mollie-php-api) [![Test Coverage](https://codeclimate.com/github/Cloudstek/mollie-php-api/badges/coverage.svg)](https://codeclimate.com/github/Cloudstek/mollie-php-api/coverage)
 
 Simple to use, modern and well-tested PHP API client for [Mollie](https://www.mollie.com/nl/docs/overview).
 

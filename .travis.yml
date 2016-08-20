@@ -14,7 +14,7 @@ matrix:
 
 addons:
   code_climate:
-    repo_token: 17b808b7927d3459ad9c780083bea52528879b3ebabc6e68e1d3f98dd6c42920
+    repo_token: fe948b17371965aadeb7ccbe7001143e1cee714fa19a5a57eef3989f588ea185
 
 cache:
   directories:

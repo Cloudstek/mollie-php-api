@@ -5,8 +5,12 @@ engines:
       standard: "PSR1,PSR2"
   phpmd:
     enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - php
 
 ratings:
   paths:
     - "src/**/*.php"
-    - "tests/**/*.php"
