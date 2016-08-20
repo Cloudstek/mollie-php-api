@@ -20,7 +20,12 @@
 
     "autoload": {
         "psr-4": {
-            "Mollie\\API\\": "src/",
+            "Mollie\\API\\": "src/"
+        }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
             "Mollie\\API\\Tests\\": "tests/"
         }
     },
