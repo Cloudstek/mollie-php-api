@@ -2,8 +2,6 @@
 
 namespace Mollie\API;
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 use Mollie\API\Base\RequestBase;
 
 class Mollie

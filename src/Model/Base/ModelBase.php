@@ -33,20 +33,20 @@ abstract class ModelBase
     /**
      * Fill model with data
      *
-     * @param array|object $data
+     * @param array|object|\Traversable $data
      * @throws InvalidArgumentException
      */
     protected function fill($data)
     {
         // Check data type
         if (!is_object($data) && !is_array($data) && !$data instanceof \Traversable) {
-            throw new \InvalidArgumentException("Model data should either be an object, array or any other traversable object.");
+            throw new \InvalidArgumentException("Model data should be an array, object or traversable object.");
         }
 
         // Fill model
         foreach ($data as $k => $v) {
             if (property_exists($this, $k)) {
-                $this->$k = $this->_parseData($k, $v);
+                $this->$k = $this->parseData($k, $v);
             }
         }
 
@@ -55,22 +55,21 @@ abstract class ModelBase
     }
 
     /**
-     * Parse data and convert it's value when needed e.g. parse dates into their respective objects (DateTime or DateInterval)
+     * Parse data and convert it's value when needed e.g. parse dates into their respective objects
      *
      * @param string $name Variable name
      * @param mixed $value
      * @return mixed
      */
-    protected function _parseData($name, $value)
+    protected function parseData($name, $value)
     {
         if (!empty($value) && is_string($value)) {
-
             // ISO 8601 Date
             if (preg_match('/.+(Datetime|Date)$/', $name)) {
                 try {
                     return new \DateTime($value);
                 } catch (\Exception $ex) {
-                    throw new \InvalidArgumentException("Property {$name} does not contain a valid ISO 8601 date/time string.");
+                    throw new \InvalidArgumentException("Property {$name} is not a valid ISO 8601 date/time string.");
                 }
             }
 
@@ -79,7 +78,7 @@ abstract class ModelBase
                 try {
                     return new \DateInterval($value);
                 } catch (\Exception $ex) {
-                    throw new \InvalidArgumentException("Property {$name} does not contain a valid ISO 8601 duration string.");
+                    throw new \InvalidArgumentException("Property {$name} is not a valid ISO 8601 duration string.");
                 }
             }
 
@@ -91,7 +90,7 @@ abstract class ModelBase
                     throw new \InvalidArgumentException("Property {$name} does not contain valid JSON metadata.");
                 }
 
-                return $value;                
+                return $value;
             }
 
             // Amount

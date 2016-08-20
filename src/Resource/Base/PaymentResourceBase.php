@@ -26,7 +26,7 @@ abstract class PaymentResourceBase extends ResourceBase
         parent::__construct($api);
 
         // Store payment ID, if any
-        $this->payment = isset($payment) ? $this->_getPaymentID($payment) : null;
+        $this->payment = isset($payment) ? $this->getPaymentID($payment) : null;
     }
 
     /**
@@ -46,9 +46,9 @@ abstract class PaymentResourceBase extends ResourceBase
      * @throws InvalidArgumentException
      * @return string
      */
-    protected function _getPaymentID($payment)
+    protected function getPaymentID($payment)
     {
-        return $this->_getResourceID($payment, Payment::class, $this->payment);
+        return $this->getResourceID($payment, Payment::class, $this->payment);
     }
 
     /**
@@ -68,8 +68,8 @@ abstract class PaymentResourceBase extends ResourceBase
      * @throws InvalidArgumentException
      * @return string
      */
-    protected function _getRefundID($refund)
+    protected function getRefundID($refund)
     {
-        return $this->_getResourceID($refund, Refund::class, $this->refund);
+        return $this->getResourceID($refund, Refund::class, $this->refund);
     }
 }

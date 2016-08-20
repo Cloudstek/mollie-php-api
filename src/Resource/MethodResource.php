@@ -15,7 +15,7 @@ class MethodResource extends Base\ResourceBase
     public function get($id = null)
     {
         // Get method ID
-        $id = $this->_getResourceID($id, Method::class);
+        $id = $this->getResourceID($id, Method::class);
 
         $resp = $this->api->request->get("/methods/{$id}");
 

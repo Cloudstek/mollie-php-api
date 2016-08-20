@@ -73,7 +73,6 @@ class Request extends Base\RequestBase
 
         // Get next pages (if any)
         while (!empty($next)) {
-
             // Request page data
             $resp = $this->get($next);
 

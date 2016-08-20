@@ -18,7 +18,7 @@ class CustomerResource extends Base\CustomerResourceBase
     public function get($id = null)
     {
         // Get customer ID
-        $id = $this->_getCustomerID($id);
+        $id = $this->getCustomerID($id);
 
         // Get customer
         $resp = $this->api->request->get("/customers/{$id}");

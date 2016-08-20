@@ -41,7 +41,7 @@ abstract class ResourceBase
      * @param string $property Resource ID property for resource
      * @return string
      */
-    protected function _getResourceID($resource, $type, &$property = null)
+    protected function getResourceID($resource, $type, &$property = null)
     {
         // Get short class name
         $name = strtolower(substr($type, strrpos($type, '\\') + 1));
@@ -50,18 +50,15 @@ abstract class ResourceBase
             // Check local resource ID
             if ($resource instanceof $type) {
                 return $resource->id;
-            }
-            elseif (is_string($resource)) {
+            } elseif (is_string($resource)) {
                 return $resource;
             }
 
             throw new \InvalidArgumentException(sprintf("%s argument must either be a %s object or an ID as string.", ucfirst($name), $type));
-        }
-        elseif (isset($property) && !empty($property)) {
+        } elseif (isset($property) && !empty($property)) {
             // Return global resource ID
             return $property;
-        }
-        elseif (!empty($this->id)) {
+        } elseif (!empty($this->id)) {
             // Return global resource ID
             return $this->id;
         }

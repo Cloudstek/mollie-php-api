@@ -16,7 +16,7 @@ class PaymentResource extends Base\PaymentResourceBase
     public function get($id = null)
     {
         // Get payment ID
-        $id = $this->_getPaymentID($id);
+        $id = $this->getPaymentID($id);
 
         // API request
         $resp = $this->api->request->get("/payments/{$id}");
@@ -69,8 +69,8 @@ class PaymentResource extends Base\PaymentResourceBase
             'amount'        => $amount,
             'description'   => $description,
             'redirectUrl'   => $redirectUrl,
-            'webhookUrl'    => $opts['webhookUrl'] ?: null,
-            'method'        => $opts['method'] ?: null,
+            'webhookUrl'    => !empty($opts['webhookUrl']) ? $opts['webhookUrl'] : null,
+            'method'        => !empty($opts['method']) ? $opts['method'] : null,
             'metadata'      => $metadata,
             'locale'        => $this->api->getLocale()
         ];

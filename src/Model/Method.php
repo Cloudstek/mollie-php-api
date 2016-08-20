@@ -17,13 +17,13 @@ class Method extends Base\ModelBase
     public $image;
 
     /**
-     * Parse data and convert it's value when needed e.g. parse dates into their respective objects (DateTime or DateInterval)
+     * Parse data and convert it's value when needed e.g. parse dates into their respective objects
      *
      * @param string $name Variable name
      * @param mixed $value
      * @return mixed
      */
-    protected function _parseData($name, $value)
+    protected function parseData($name, $value)
     {
         if ($name == 'amount' && !empty($value) && is_object($value)) {
             $value->minimum += 0;

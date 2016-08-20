@@ -20,7 +20,7 @@ class MandateResource extends CustomerResourceBase
         parent::__construct($api, $customer);
 
         if (isset($mandate)) {
-            $this->mandate = $this->_getMandateID($mandate);
+            $this->mandate = $this->getMandateID($mandate);
         }
     }
 
@@ -33,7 +33,7 @@ class MandateResource extends CustomerResourceBase
     public function get($id = null)
     {
         // Get mandate ID
-        $mandate_id = $this->_getMandateID($id);
+        $mandate_id = $this->getMandateID($id);
 
         // Get mandate
         $resp = $this->api->request->get("/customers/{$this->customer}/mandates/{$mandate_id}");
@@ -65,7 +65,6 @@ class MandateResource extends CustomerResourceBase
     /**
      * Create SEPA direct debit mandate
      *
-     * @param string $method Payment method of the mandate. Currently only directdebit is supported
      * @param string $name Consumer name
      * @param string $account Consumer IBAN account number
      * @param array  $opts
@@ -74,16 +73,24 @@ class MandateResource extends CustomerResourceBase
      *                  [reference]     string      Custom reference
      * @return Mandate
      */
-    public function create($method, $name, $account, array $opts = [])
+    public function create($name, $account, array $opts = [])
     {
+        if (!empty($opts['signatureDate'])) {
+            if (!($opts['signatureDate'] instanceof \DateTime)) {
+                throw new \InvalidArgumentException("Argument signatureDate must be of type DateTime.");
+            }
+
+            $opts['signatureDate'] = $opts['signatureDate']->format('c');
+        }
+
         // Construct parameters
         $params = [
-            'method' => $method,
+            'method' => 'directdebit',
             'consumerName' => $name,
             'consumerAccount' => $account,
-            'consumerBic' => $opts['bic'] ?: null,
-            'signatureDate' => $opts['signatureDate'] ?: null,
-            'mandateReference' => $opts['reference'] ?: null
+            'consumerBic' => !empty($opts['bic']) ? $opts['bic'] : null,
+            'signatureDate' => !empty($opts['signatureDate']) ? $opts['signatureDate'] : null,
+            'mandateReference' => !empty($opts['reference']) ? $opts['reference'] : null
         ];
 
         // Create mandate
@@ -101,8 +108,8 @@ class MandateResource extends CustomerResourceBase
     {
         $mandates = $this->all();
 
-        foreach($mandates as $mandate) {
-            if($mandate->isValid()) {
+        foreach ($mandates as $mandate) {
+            if ($mandate->isValid()) {
                 return true;
             }
         }

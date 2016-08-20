@@ -30,7 +30,7 @@ abstract class CustomerResourceBase extends ResourceBase
         parent::__construct($api);
 
         // Store customer ID (if any)
-        $this->customer = isset($customer) ? $this->_getCustomerID($customer) : null;
+        $this->customer = isset($customer) ? $this->getCustomerID($customer) : null;
     }
 
     /**
@@ -40,17 +40,17 @@ abstract class CustomerResourceBase extends ResourceBase
      * <code>
      * <?php
      *      $mollie = new Mollie('api_key');
-     *      $customer = $mollie->customer('cst_test')->get()    // call using global defined customer
-     *      $customer = $mollie->customer()->get('cst_test')    // call using local defined customer
-     *      $customer = $mollie->customer()->get()              // Error! No global or local customer defined
+     *      $customer = $mollie->customer('cst_test')->get() // call using global defined customer
+     *      $customer = $mollie->customer()->get('cst_test') // call using local defined customer
+     *      $customer = $mollie->customer()->get()           // No global or local customer defined
      * ?>
      * </code>
      * @param Customer|string $customer
      * @return string
      */
-    protected function _getCustomerID($customer = null)
+    protected function getCustomerID($customer = null)
     {
-        return $this->_getResourceID($customer, Customer::class, $this->customer);
+        return $this->getResourceID($customer, Customer::class, $this->customer);
     }
 
     /**
@@ -60,17 +60,17 @@ abstract class CustomerResourceBase extends ResourceBase
      * <code>
      * <?php
      *      $mollie = new Mollie('api_key');
-     *      $mandate = $mollie->customer('cst_test')->mandate('mdt_test')->get()    // call using global defined mandate
-     *      $mandate = $mollie->customer('cst_test')->mandate()->get('cst_test')    // call using local defined mandate
-     *      $mandate = $mollie->customer('cst_test')->mandate()->get()              // Error! No global or local mandate defined
+     *      $mandate = $mollie->customer('cst_test')->mandate('mdt_test')->get() // call using global defined mandate
+     *      $mandate = $mollie->customer('cst_test')->mandate()->get('cst_test') // call using local defined mandate
+     *      $mandate = $mollie->customer('cst_test')->mandate()->get()           // No global or local mandate defined!
      * ?>
      * </code>
      * @param Mandate|string $mandate
      * @return string
      */
-    protected function _getMandateID($mandate = null)
+    protected function getMandateID($mandate = null)
     {
-        return $this->_getResourceID($mandate, Mandate::class, $this->mandate);
+        return $this->getResourceID($mandate, Mandate::class, $this->mandate);
     }
 
     /**
@@ -80,16 +80,16 @@ abstract class CustomerResourceBase extends ResourceBase
      * <code>
      * <?php
      *      $mollie = new Mollie('api_key');
-     *      $subscription = $mollie->customer('cst_test')->subscription('mdt_test')->get()  // call using global defined subscription
-     *      $subscription = $mollie->customer('cst_test')->subscription()->get('cst_test')  // call using local defined subscription
-     *      $subscription = $mollie->customer('cst_test')->subscription()->get()            // Error! No global or local subscription defined
+     *      $subscription = $mollie->customer('cst_test')->subscription('mdt_test')->get() // call using global defined subscription
+     *      $subscription = $mollie->customer('cst_test')->subscription()->get('cst_test') // call using local defined subscription
+     *      $subscription = $mollie->customer('cst_test')->subscription()->get()           // No global or local subscription defined
      * ?>
      * </code>
      * @param Subscription|string $subscription
      * @return string
      */
-    protected function _getSubscriptionID($subscription = null)
+    protected function getSubscriptionID($subscription = null)
     {
-        return $this->_getResourceID($subscription, Subscription::class, $this->subscription);
+        return $this->getResourceID($subscription, Subscription::class, $this->subscription);
     }
 }

@@ -21,7 +21,7 @@ class RefundResource extends PaymentResourceBase
         parent::__construct($api, $payment);
 
         if (isset($refund)) {
-            $this->refund = $this->_getRefundID($refund);
+            $this->refund = $this->getRefundID($refund);
         }
     }
 
@@ -34,7 +34,7 @@ class RefundResource extends PaymentResourceBase
     public function get($id = null)
     {
         // Get refund ID
-        $refund_id = $this->_getRefundID($id);
+        $refund_id = $this->getRefundID($id);
 
         // Get refund
         $resp = $this->api->request->get("/payments/{$this->payment}/refunds/{$refund_id}");
@@ -88,7 +88,7 @@ class RefundResource extends PaymentResourceBase
     public function cancel($id = null)
     {
         // Get refund ID
-        $refund_id = $this->_getRefundID($id);
+        $refund_id = $this->getRefundID($id);
 
         // API request
         $this->api->request->delete("/payments/{$this->payment}/refunds/{$refund_id}");

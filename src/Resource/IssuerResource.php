@@ -16,7 +16,7 @@ class IssuerResource extends ResourceBase
     public function get($id = null)
     {
         // Get issuer ID
-        $id = $this->_getResourceID($id, Issuer::class);
+        $id = $this->getResourceID($id, Issuer::class);
 
         // Get issuer
         $resp = $this->api->request->get("/issuers/{$id}");

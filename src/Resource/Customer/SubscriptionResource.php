@@ -20,7 +20,7 @@ class SubscriptionResource extends CustomerResourceBase
         parent::__construct($api, $customer);
 
         if (isset($subscription)) {
-            $this->subscription = $this->_getSubscriptionID($subscription);
+            $this->subscription = $this->getSubscriptionID($subscription);
         }
     }
 
@@ -33,7 +33,7 @@ class SubscriptionResource extends CustomerResourceBase
     public function get($id = null)
     {
         // Get subscription ID
-        $subscription_id = $this->_getSubscriptionID($id);
+        $subscription_id = $this->getSubscriptionID($id);
 
         // Get subscription
         $resp = $this->api->request->get("/customers/{$this->customer}/subscriptions/{$subscription_id}");
@@ -106,7 +106,7 @@ class SubscriptionResource extends CustomerResourceBase
     public function cancel($id = null)
     {
         // Get subscription ID
-        $subscription_id = $this->_getSubscriptionID($id);
+        $subscription_id = $this->getSubscriptionID($id);
 
         // API request
         $resp = $this->api->request->delete("/customers/{$this->customer}/subscriptions/{$subscription_id}");
