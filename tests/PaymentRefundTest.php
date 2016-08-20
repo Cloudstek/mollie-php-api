@@ -72,6 +72,9 @@ class PaymentRefundTest extends ResourceTestCase
 
         // Check the number of refunds returned
         $this->assertEquals(count($refundListMock), count($refunds));
+
+        // Check all refunds
+        $this->assertRefunds($refunds, $refundListMock);
     }
 
     /**

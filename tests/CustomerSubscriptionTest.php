@@ -73,6 +73,9 @@ class CustomerSubscriptionTest extends ResourceTestCase
 
         // Check the number of subscriptions returned
         $this->assertEquals(count($subscriptionListMock), count($subscriptions));
+
+        // Check all subscriptions
+        $this->assertSubscriptions($subscriptions, $subscriptionListMock);
     }
 
     /**

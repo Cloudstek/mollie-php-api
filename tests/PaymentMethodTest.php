@@ -63,6 +63,9 @@ class PaymentMethodTest extends ResourceTestCase
 
         // Check the number of methods returned
         $this->assertEquals(count($methodListMock), count($methods));
+
+        // Check all payment methods
+        $this->assertMethods($methods, $methodListMock);
     }
 
     /**

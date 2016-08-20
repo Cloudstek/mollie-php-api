@@ -49,13 +49,8 @@ class CustomerMandateTest extends ResourceTestCase
         $mandateListMock = [];
 
         for ($i = 0; $i <= 15; $i++) {
-            $mandate = $this->getMandate();
+            $mandate = $this->getMandate($i < 15 ? "invalid" : "valid");
             $mandate->id .= "_{$i}";   // mdt_test_1
-
-            // Leave one valid mandate
-            if ($i < 15) {
-                $mandate->status = "invalid";
-            }
 
             // Add mandate to list
             $mandateListMock[] = $mandate;
@@ -78,6 +73,9 @@ class CustomerMandateTest extends ResourceTestCase
 
         // Check the number of mandates returned
         $this->assertEquals(count($mandateListMock), count($mandates));
+
+        // Check all mandates
+        $this->assertMandates($mandates, $mandateListMock);
     }
 
     /**
@@ -110,6 +108,31 @@ class CustomerMandateTest extends ResourceTestCase
         // Get customer
         $customer = $mandate->customer();
         $this->assertCustomer($customer, $customerMock);
+    }
+
+    /**
+     * Get mandate status
+     */
+    public function testCustomerMandateStatus()
+    {
+        // Mock the mandate
+        $mandateMock = $this->getMandate();
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+
+        // Get mandate
+        $mandate = new Mandate($api, $mandateMock);
+
+        // Check valid status
+        $mandate->status = "valid";
+        $this->assertFalse($mandate->isInvalid());
+        $this->assertTrue($mandate->isValid());
+
+        // Check invalid status
+        $mandate->status = "invalid";
+        $this->assertTrue($mandate->isInvalid());
+        $this->assertFalse($mandate->isValid());
     }
 
     /**

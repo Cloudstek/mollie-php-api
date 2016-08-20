@@ -8,6 +8,7 @@ trait ModelAssertions
 {
     /**
      * Check model against response object
+     *
      * @param ModelBase $model Resource model to validate
      * @param array|object $reference Reference object (raw response)
      * @param array $mapping Field mapping between resource and reference object
@@ -56,7 +57,30 @@ trait ModelAssertions
     }
 
     /**
+     * Check multiple models against response objects
+     *
+     * @param Mollie\API\Model\Base\ModelBase[] $models Resource models to validate
+     * @param object[] $references Reference objects (raw responses)
+     * @param callable $callback Method to use for validating models
+     */
+    protected function assertModels(array $models, array $references, callable $callback)
+    {
+        $numModels = count($models);
+
+        // Check number of references
+        if($numModels !== count($references)) {
+            throw new \InvalidArgumentException("Number of models to test must equal number of references.");
+        }
+
+        // Test all models
+        for($i = 0; $i < $numModels; $i++) {
+            call_user_func_array($callback, array($models[$i], $references[$i]));
+        }
+    }
+
+    /**
      * Check model methods
+     *
      * @param ModelBase $model Resource model to validate
      * @param array $methods Methods that must be available and callable
      */
@@ -67,4 +91,5 @@ trait ModelAssertions
             $this->assertTrue(is_callable([$model, $method]));
         }
     }
+
 }

@@ -71,6 +71,9 @@ class PaymentTest extends ResourceTestCase
 
         // Check the number of payments returned
         $this->assertEquals(count($paymentListMock), count($payments));
+
+        // Check all payments
+        $this->assertPayments($payments, $paymentListMock);
     }
 
     /**
@@ -181,6 +184,24 @@ class PaymentTest extends ResourceTestCase
             $payment->status = $status;
             $this->assertTrue($payment->$cb());
         }
+    }
+
+    /**
+     * Check payment page redirection
+     */
+    public function testPaymentRedirect()
+    {
+        // Mock the payment
+        $paymentMock = $this->getPayment();
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+
+        // Get payment
+        $payment = new Payment($api, $paymentMock);
+
+        // Make sure function returns false if no payment URL is set
+        $this->assertFalse($payment->gotoPaymentPage());
     }
 
     /**

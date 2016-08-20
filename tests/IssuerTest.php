@@ -98,6 +98,9 @@ class IssuerTest extends ResourceTestCase
 
         // Check the number of issuers returned
         $this->assertEquals(count($issuerListMock), count($issuers));
+
+        // Check all issuers
+        $this->assertIssuers($issuers, $issuerListMock);
     }
 
     /**

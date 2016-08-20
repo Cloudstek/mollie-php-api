@@ -68,6 +68,9 @@ class CustomerTest extends ResourceTestCase
 
         // Check the number of customers returned
         $this->assertEquals(count($customerListMock), count($customers));
+
+        // Check all customers
+        $this->assertcustomers($customers, $customerListMock);
     }
 
     /**

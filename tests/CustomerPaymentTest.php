@@ -36,6 +36,9 @@ class CustomerPaymentTest extends ResourceTestCase
 
         // Check the number of payments returned
         $this->assertEquals(count($paymentListMock), count($payments));
+
+        // Check all payments
+        $this->assertPayments($payments, $paymentListMock);
     }
 
     /**

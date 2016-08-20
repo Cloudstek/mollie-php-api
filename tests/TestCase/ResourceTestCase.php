@@ -37,8 +37,9 @@ class ResourceTestCase extends TestCase
 
     /**
      * Check customer object
+     *
      * @param Mollie\API\Model\Customer $customer
-     * @param object $reference
+     * @param object $reference Reference object (raw response)
      */
     protected function assertCustomer($customer, $reference)
     {
@@ -58,15 +59,26 @@ class ResourceTestCase extends TestCase
     }
 
     /**
+     * Check multiple customer objects
+     *
+     * @param Mollie\API\Model\Customer[] $customers
+     * @param object[] $references Reference object (raw response)
+     */
+    protected function assertCustomers(array $customers, array $references)
+    {
+        $this->assertModels($customers, $references, [$this, 'assertCustomer']);
+    }
+
+    /**
      * Get mocked customer mandate
      * @return object Customer mandate response object
      */
-    protected function getMandate()
+    protected function getMandate($status = 'valid')
     {
         return (object) [
             "resource" => "mandate",
             "id" => "mdt_test",
-            "status" => "valid",
+            "status" => $status,
             "method" => "creditcard",
             "customerId" => "cst_test",
             "details" => (object) [
@@ -82,8 +94,9 @@ class ResourceTestCase extends TestCase
 
     /**
      * Check customer mandate object
+     *
      * @param Mollie\API\Model\Mandate $mandate
-     * @param object $reference
+     * @param object $reference Reference object (raw response)
      */
     protected function assertMandate($mandate, $reference)
     {
@@ -98,6 +111,17 @@ class ResourceTestCase extends TestCase
             'details',
             'createdDatetime'
         ]);
+    }
+
+    /**
+     * Check multiple customer mandate objects
+     *
+     * @param Mollie\API\Model\Mandate[] $mandates
+     * @param object[] $references Reference object (raw response)
+     */
+    protected function assertMandates(array $mandates, array $references)
+    {
+        $this->assertModels($mandates, $references, [$this, 'assertMandate']);
     }
 
     /**
@@ -127,6 +151,7 @@ class ResourceTestCase extends TestCase
 
     /**
      * Check customer subscription object
+     *
      * @param Mollie\API\Model\Subscription $subscription
      * @param object $reference
      */
@@ -149,6 +174,17 @@ class ResourceTestCase extends TestCase
             'cancelledDatetime',
             'links'
         ]);
+    }
+
+    /**
+     * Check multiple subscription objects
+     *
+     * @param Mollie\API\Model\Subscription[] $subscriptions
+     * @param object[] $references Reference object (raw response)
+     */
+    protected function assertSubscriptions(array $subscriptions, array $references)
+    {
+        $this->assertModels($subscriptions, $references, [$this, 'assertSubscription']);
     }
 
     /**
@@ -185,6 +221,7 @@ class ResourceTestCase extends TestCase
 
     /**
      * Check payment object
+     *
      * @param Mollie\API\Model\Payment $payment
      * @param object $reference
      */
@@ -217,6 +254,17 @@ class ResourceTestCase extends TestCase
     }
 
     /**
+     * Check multiple payment objects
+     *
+     * @param Mollie\API\Model\Payment[] $payments
+     * @param object[] $references Reference object (raw response)
+     */
+    protected function assertPayments(array $payments, array $references)
+    {
+        $this->assertModels($payments, $references, [$this, 'assertPayment']);
+    }
+
+    /**
      * Get mocked issuer
      * @return object Issuer response object
      */
@@ -232,6 +280,7 @@ class ResourceTestCase extends TestCase
 
     /**
      * Check issuer object
+     *
      * @param Mollie\API\Model\Issuer $issuer
      * @param object $reference
      */
@@ -245,6 +294,17 @@ class ResourceTestCase extends TestCase
             'name',
             'method'
         ]);
+    }
+
+    /**
+     * Check multiple issuer objects
+     *
+     * @param Mollie\API\Model\Issuer[] $issuers
+     * @param object[] $references Reference object (raw response)
+     */
+    protected function assertIssuers(array $issuers, array $references)
+    {
+        $this->assertModels($issuers, $references, [$this, 'assertIssuer']);
     }
 
     /**
@@ -269,6 +329,7 @@ class ResourceTestCase extends TestCase
 
     /**
      * Check method object
+     *
      * @param Mollie\API\Model\Method $method
      * @param object $reference
      */
@@ -306,6 +367,17 @@ class ResourceTestCase extends TestCase
     }
 
     /**
+     * Check multiple method objects
+     *
+     * @param Mollie\API\Model\Method[] $methods
+     * @param object[] $references Reference object (raw response)
+     */
+    protected function assertMethods(array $methods, array $references)
+    {
+        $this->assertModels($methods, $references, [$this, 'assertMethod']);
+    }
+
+    /**
      * Get mocked refund
      *
      * @param object $payment Payment response object
@@ -325,6 +397,7 @@ class ResourceTestCase extends TestCase
 
     /**
      * Check refund object
+     *
      * @param Mollie\API\Model\Refund $refund
      * @param object $reference
      */
@@ -343,6 +416,17 @@ class ResourceTestCase extends TestCase
         // Payment
         $this->assertInstanceOf(Model\Payment::class, $refund->payment());
         $this->assertPayment($refund->payment(), $reference->payment);
+    }
+
+    /**
+     * Check multiple refund objects
+     *
+     * @param Mollie\API\Model\Refund[] $refunds
+     * @param object[] $references Reference object (raw response)
+     */
+    protected function assertRefunds(array $refunds, array $references)
+    {
+        $this->assertModels($refunds, $references, [$this, 'assertRefund']);
     }
 
     /**
