@@ -155,6 +155,7 @@ class Payment extends Base\ModelBase
 
     /**
      * Redirect customer to payment page
+     * @return boolean Returns false if no payment URL is available
      */
     public function gotoPaymentPage()
     {
@@ -162,6 +163,8 @@ class Payment extends Base\ModelBase
             header('Location:' . $this->links->paymentUrl);
             exit;
         }
+
+        return false;
     }
 
     /**

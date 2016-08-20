@@ -87,11 +87,11 @@ abstract class ModelBase
             if ($name == 'metadata') {
                 $value = json_decode($value);
 
-                if (json_last_error() === JSON_ERROR_NONE) {
-                    return $value;
-                } else {
+                if (json_last_error() !== JSON_ERROR_NONE) {
                     throw new \InvalidArgumentException("Property {$name} does not contain valid JSON metadata.");
                 }
+
+                return $value;                
             }
 
             // Amount

@@ -46,24 +46,27 @@ abstract class ResourceBase
         // Get short class name
         $name = strtolower(substr($type, strrpos($type, '\\') + 1));
 
-        // Check local resource ID
         if (!empty($resource)) {
+            // Check local resource ID
             if ($resource instanceof $type) {
                 return $resource->id;
-            } elseif (is_string($resource)) {
-                return $resource;
-            } else {
-                throw new \InvalidArgumentException(sprintf("%s argument must either be a %s object or an ID as string.", ucfirst($name), $type));
             }
-        } elseif (isset($property) && !empty($property)) {
+            elseif (is_string($resource)) {
+                return $resource;
+            }
+
+            throw new \InvalidArgumentException(sprintf("%s argument must either be a %s object or an ID as string.", ucfirst($name), $type));
+        }
+        elseif (isset($property) && !empty($property)) {
             // Return global resource ID
             return $property;
-        } elseif (!empty($this->id)) {
+        }
+        elseif (!empty($this->id)) {
             // Return global resource ID
             return $this->id;
-        } else {
-            // No local or global resource ID
-            throw new \BadMethodCallException("No {$name} ID was given");
         }
+
+        // No local or global resource ID
+        throw new \BadMethodCallException("No {$name} ID was given");
     }
 }
