@@ -57,11 +57,11 @@ class PaymentResource extends CustomerResourceBase
             'amount'        => $amount,
             'description'   => $description,
             'redirectUrl'   => $redirectUrl,
-            'webhookUrl'    => $opts['webhookUrl'] ?: null,
-            'method'        => $opts['method'] ?: null,
+            'webhookUrl'    => !empty($opts['webhookUrl']) ? $opts['webhookUrl'] : null,
+            'method'        => !empty($opts['method']) ? $opts['method'] : null,
             'metadata'      => $metadata,
             'locale'        => $this->api->getLocale(),
-            'recurringType' => $opts['recurringType'] ?: null
+            'recurringType' => !empty($opts['recurringType']) ? $opts['recurringType'] : null
         ];
 
         // Append method parameters if defined
@@ -96,9 +96,6 @@ class PaymentResource extends CustomerResourceBase
      */
     public function createFirstRecurring($amount, $description, $redirectUrl, array $metadata = [], array $opts = [])
     {
-        // Convert metadata to JSON
-        $metadata = !empty($metadata) ? json_encode($metadata) : null;
-
         // Set recurring type to recurring
         $opts['recurringType'] = 'first';
 
@@ -125,9 +122,6 @@ class PaymentResource extends CustomerResourceBase
      */
     public function createRecurring($amount, $description, array $metadata = [], array $opts = [])
     {
-        // Convert metadata to JSON
-        $metadata = !empty($metadata) ? json_encode($metadata) : null;
-
         // Set recurring type to recurring
         $opts['recurringType'] = 'recurring';
 
