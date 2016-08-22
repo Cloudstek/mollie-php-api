@@ -87,7 +87,8 @@ Below are a few common examples on how to use the Mollie PHP API client. For adv
   // Alternatively you can also specify a locale and/or metadata.
   // In the following example we'll create the same customer with some metadata
   $customer = $mollie->customer()->create(
-    'John Doe', 'john.doe@example.org', 
+    'John Doe', 
+    'john.doe@example.org', 
     array(
       'user_id' => 11, 
       'group' => 'regular_customers'
@@ -110,7 +111,11 @@ Below are a few common examples on how to use the Mollie PHP API client. For adv
   $mollie = new Mollie('test_yourapikeyhere');
 
   // Create new payment
-  $payment = $mollie->payment()->create(10.00, 'Expensive cup of coffee', 'https://example.org/order/101');
+  $payment = $mollie->payment()->create(
+    10.00, 
+    'Expensive cup of coffee', 
+    'https://example.org/order/101'
+  );
 
   // Redirect user to payment page
   $payment->gotoPaymentPage();
@@ -133,10 +138,15 @@ According to the Mollie API documentation, Linking customers to payments enables
   $mollie = new Mollie('test_yourapikeyhere');
 
   // Create new payment
-  $payment = $mollie->customer('cst_test')->payment()->create(10.00, 'Expensive cup of coffee', 'https://example.org/order/101');
+  $payment = $mollie->customer('cst_test')->payment()->create(
+    10.00, 
+    'Expensive cup of coffee', 
+    'https://example.org/order/101'
+  );
 
   // Redirect user to payment page
   $payment->gotoPaymentPage();
+  exit; // Do redirect immediately
 ```
 ### Recurring payments
 
@@ -157,7 +167,11 @@ According to the Mollie API documentation, Linking customers to payments enables
     // Create mandate by issueing the first recurring payment. 
     // This is usually a small amount like a few cents as it's only used to confirm 
     // the payment details.
-    $customer->mandate()->createFirstRecurring(0.01, 'Recurring payment mandate confirmation', 'https://example.org/account');
+    $customer->mandate()->createFirstRecurring(
+      0.01, 
+      'Recurring payment mandate confirmation', 
+      'https://example.org/account'
+    );
   }
 ```
 
