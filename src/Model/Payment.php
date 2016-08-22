@@ -160,8 +160,7 @@ class Payment extends Base\ModelBase
     public function gotoPaymentPage()
     {
         if (!empty($this->links->paymentUrl)) {
-            header('Location:' . $this->links->paymentUrl);
-            exit;
+            header('Location: ' . $this->links->paymentUrl);
         }
 
         return false;

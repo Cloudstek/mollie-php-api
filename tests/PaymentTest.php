@@ -188,6 +188,9 @@ class PaymentTest extends ResourceTestCase
 
     /**
      * Check payment page redirection
+     *
+     * @runInSeparateProcess
+     * @requires extension xdebug
      */
     public function testPaymentRedirect()
     {
@@ -199,9 +202,18 @@ class PaymentTest extends ResourceTestCase
 
         // Get payment
         $payment = new Payment($api, $paymentMock);
+        $payment->links->paymentUrl = null;
 
         // Make sure function returns false if no payment URL is set
         $this->assertFalse($payment->gotoPaymentPage());
+        $this->assertNotContains("http://example.com/pay", headers_list());
+
+        // Set payment URL
+        $payment->links->paymentUrl = "http://example.com/pay";
+
+        // Make sure the function redirects to the correct URL
+        $payment->gotoPaymentPage();
+        $this->assertContains("Location: http://example.com/pay", xdebug_get_headers());
     }
 
     /**
