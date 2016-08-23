@@ -50,7 +50,7 @@ class PaymentRefundTest extends ResourceTestCase
 
         for ($i = 0; $i <= 15; $i++) {
             $refund = $this->getRefund();
-            $refund->id += "_{$i}";     // re_test_1
+            $refund->id .= "_{$i}";     // re_test_1
 
             $refundListMock[] = $refund;
         }
