@@ -1,0 +1,30 @@
+language: php
+
+php:
+  - '5.6'
+  - '7.0'
+  - hhvm
+  - nightly
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: nightly
+    - php: hhvm
+
+addons:
+  code_climate:
+    repo_token: fe948b17371965aadeb7ccbe7001143e1cee714fa19a5a57eef3989f588ea185
+
+cache:
+  directories:
+    - vendor
+
+install:
+  - composer install
+
+script:
+  - vendor/bin/phpunit
+
+after_script:
+  - vendor/bin/test-reporter

@@ -2,131 +2,177 @@
 
 namespace Mollie\API;
 
-require_once __DIR__ . '/../vendor/composer/autoload.php';
+use Mollie\API\Base\RequestBase;
 
-class Mollie {
+class Mollie
+{
+    /** @var string API Key */
+    private $api_key;
 
-	/**
-	 * API key
-	 * @var string
-	 */
-	private $api_key;
+    /** @var string API Endpoint */
+    private $api_endpoint = "https://api.mollie.nl/v1";
 
-	/**
-	 * API endpoint
-	 * @var string
-	 */
-	private $api_endpoint = "https://api.mollie.nl/v1";
+    /** @var string Locale */
+    private $api_locale;
 
-	/**
-	 * Request handler
-	 * @var RequestInterface
-	 */
-	private $request;
+    /** @var RequestBase Request Handler */
+    public $request;
 
-	/**
-	 * Locales
-	 * @var array
-	 */
-	public static $locales = ['de', 'en', 'es', 'fr', 'be', 'be-fr', 'nl'];
+    /**
+     * Mollie API constructor
+     *
+     * @param string|null $api_key Mollie API key
+     * @param string|null $api_ep Mollie API endpoint URL
+     * @param RequestBase|null $requestHandler Request handler
+     */
+    public function __construct($api_key = null, $api_ep = null, RequestBase $requestHandler = null)
+    {
+        // API Key
+        if (!empty($api_key)) {
+            $this->setApiKey($api_key);
+        }
 
-	/**
-	 * @var Resource\PaymentResource
-	 */
-	public $payment;
+        // API endpoint URL
+        if (!empty($api_ep)) {
+            $this->setApiEndpoint($api_ep);
+        }
 
-	/**
-	 * @var Resource\RefundResource
-	 */
-	public $refund;
+        // Request handler
+        $this->request = isset($requestHandler) ? $requestHandler : new Request($this);
+    }
 
-	/**
-	 * Mollie API constructor
-	 * @param string $api_key Mollie API key
-	 * @param string $api_ep Mollie API endpoint URL
-	 */
-	public function __construct($api_key = null, $api_ep = null) {
+    /**
+     * Get API key
+     * @return string
+     */
+    public function getApiKey()
+    {
+        return $this->api_key;
+    }
 
-		// API Key
-		if(!empty($api_key)) {
-			$this->setApiKey($api_key);
-		}
+    /**
+     * Set API key
+     * @param string $api_key Mollie API key
+     */
+    public function setApiKey($api_key)
+    {
+        $api_key = trim($api_key);
 
-		// API endpoint URL
-		if(!empty($api_ep)) {
-			$this->setApiEndpoint($api_ep);
-		}
+        if (!preg_match('/^(live|test)_\w+$/', $api_key)) {
+            throw new \InvalidArgumentException("Invalid Mollie API key: {$api_key}.");
+        }
 
-		// Request handler
-		$this->request = new Request($this);
+        $this->api_key = $api_key;
+    }
 
-		// Resources
-		$this->payment = new Resource\PaymentResource($this);
-		$this->refund = new Resource\RefundResource($this);
-	}
+    /**
+     * Get API endppoint URL
+     *
+     * @param string $uri Endpoint URI like /customers
+     * @param string[] $params URI parameters
+     * @return string Complete endpoint URL to make requests to
+     */
+    public function getApiEndpoint($uri = null, $params = [])
+    {
+        $url = $this->api_endpoint;
 
-	/**
-	 * Get API key
-	 * @return string
-	 */
-	public function getApiKey() {
-		return $this->api_key;
-	}
+        if (!empty($uri)) {
+            $url .= "/" . trim(trim($uri), '/');
+        }
 
-	/**
-	 * Set API key
-	 * @param string $api_key Mollie API key
-	 */
-	public function setApiKey($api_key) {
-		$api_key = trim($api_key);
+        // Build uri parameters
+        if (!empty($params)) {
+            $url .= "/?" . http_build_query($params);
+        }
 
-		if(!preg_match('/^(live|test)_\w+$/', $api_key)) {
-			throw new Exception("Invalid Mollie API key: {$api_key}.");
-		}
+        return $url;
+    }
 
-		$this->api_key = $api_key;
-	}
+    /**
+     * Set API endpoint URL
+     * @param string $ep API endpoint URL (without trailing slash)
+     */
+    public function setApiEndpoint($ep)
+    {
+        if (!preg_match('/^https?\:\/\//', $ep)) {
+            throw new \InvalidArgumentException("Invalid Mollie API endpoint: {$ep}. Must be a valid http(s) url starting with http:// or https://.");
+        }
 
-	/**
-	 * Get API endppoint URL
-	 * @return string
-	 */
-	public function getApiEndpoint($uri = null) {
-		$url = $this->api_endpoint;
+        $ep = trim(rtrim($ep, '/'));
 
-		if(!empty($uri)) {
-			$url .= "/" . trim(ltrim($uri, '/'));
-		}
+        $this->api_endpoint = $ep;
+    }
 
-		return $url;
-	}
+    /**
+     * Get API locale
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->api_locale;
+    }
 
-	/**
-	 * Set API endpoint URL
-	 * @param string $ep API endpoint URL (without trailing slash)
-	 */
-	public function setApiEndpoint($ep) {
-		$ep = trim(rtrim($ep, '/'));
+    /**
+     * Set API locale
+     * @param string $locale
+     */
+    public function setLocale($locale)
+    {
+        $this->api_locale = $locale;
+    }
 
-		$this->api_endpoint = $ep;
-	}
+    /**
+     * Customer Resource
+     *
+     * @param Model\Customer|string $customer Customer ID
+     * @return Resource\CustomerResource
+     */
+    public function customer($customer = null)
+    {
+        return new Resource\CustomerResource($this, $customer);
+    }
 
-	/**
-	 * Set request handler
-	 * @param RequestInterface $handler
-	 */
-	public function setRequestHandler(RequestInterface $handler) {
-		$this->request = $handler;
-	}
+    /**
+     * Issuer Resource
+     *
+     * @param Model\Issuer|string $issuer Issuer ID
+     * @return Resource\IssuerResource
+     */
+    public function issuer($issuer = null)
+    {
+        return new Resource\IssuerResource($this, $issuer);
+    }
 
-	/**
-	 * Magic method for direct access to request functions
-	 */
-	public function __call($name, $args) {
+    /**
+     * Payment Method Resource
+     *
+     * @param Model\Method|string $method Payment Method ID
+     * @return Resource\MethodResource
+     */
+    public function method($method = null)
+    {
+        return new Resource\MethodResource($this, $method);
+    }
 
-		// Check if called function is defined in request handler (and thus in RequestInterface)
-		if(method_exists($this->request, $name)) {
-			call_user_func_array([$this->request, $name], $args);
-		}
-	}
+    /**
+     * Payment Resource
+     *
+     * @param Model\Payment|string $payment Payment ID
+     * @return Resource\PaymentResource
+     */
+    public function payment($payment = null)
+    {
+        return new Resource\PaymentResource($this, $payment);
+    }
+
+    /**
+     * Refund Resource
+     *
+     * @param Model\Refund|string $refund Refund ID
+     * @return Resource\RefundResource
+     */
+    public function refund($refund = null)
+    {
+        return new Resource\RefundResource($this, $refund);
+    }
 }

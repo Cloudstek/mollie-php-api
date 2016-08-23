@@ -2,40 +2,55 @@
 
 namespace Mollie\API\Exception;
 
-class RequestException extends \Exception {
+class RequestException extends \Exception
+{
+    /** @var mixed $response */
+    private $response;
 
-	/**
-	 * Response
-	 * @var mixed
-	 */
-	private $response;
+    /**
+     * Request exception constructor
+     *
+     * @param string $message
+     * @param int $code
+     * @param string|null $url
+     * @param mixed|null $response
+     */
+    public function __construct($message, $code = 0, $url = "", $response = null)
+    {
+        // Save original response
+        $this->response = $response;
 
-	/**
-	 * Request exception constructor
-	 * @param string $message
-	 * @param int $code
-	 * @param string $url
-	 * @param string $response
-	 */
-	public function __construct($message, $code = 0, $url = "", $response = null) {
-		$this->response = $response;
+        // New exception message
+        $newMessage = "";
 
-		if(!empty($url)) {
-			$message .= ": [{$code}][{$url}]";
-		}
+        // Add code
+        if ($code <> 0) {
+            $newMessage = "[{$code}]";
+        }
 
-		if(!empty($response) && !empty($response->body->error)) {
-			$message .= ": {$response->body->error->message}.";
-		}
+        // Add url
+        if (!empty($url)) {
+            $newMessage .= "[{$url}]: ";
+        }
 
-		parent::__construct($message, $code);
-	}
+        // Add message
+        $newMessage .= $message;
 
-	/**
-	 * Get response
-	 * @return mixed
-	 */
-	public function getResponse() {
-		return $this->response;
-	}
+        // Add error message from response
+        if (!empty($response) && !empty($response->body->error)) {
+            $newMessage .= ": {$response->body->error->message}.";
+        }
+
+        // Construct exception
+        parent::__construct($newMessage, $code);
+    }
+
+    /**
+     * Get response that threw the exception
+     * @return mixed|null
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
 }

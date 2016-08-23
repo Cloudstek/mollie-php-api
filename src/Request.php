@@ -5,168 +5,159 @@ namespace Mollie\API;
 use Httpful\Request as HttpRequest;
 use Mollie\API\Exception\RequestException;
 
-class Request implements RequestInterface {
+class Request extends Base\RequestBase
+{
+    /** @var Mollie API Instance*/
+    private $api;
 
-	/**
-	 * API Instance
-	 * @var Mollie
-	 */
-	private $api;
+    /**
+     * API Request constructor
+     * @param Mollie $api API instance
+     */
+    public function __construct(Mollie $api)
+    {
+        $this->api = $api;
+    }
 
-	/**
-	 * API Request constructor
-	 * @param Mollie $api API instance
-	 */
-	public function __construct(Mollie $api) {
-		$this->api = $api;
-	}
+    /**
+     * GET Request
+     *
+     * @param string $uri Request URI e.g. /customer/1
+     * @param array $params Request parameters
+     * @throws RequestException
+     * @return object
+     */
+    public function get($uri, array $params = [])
+    {
+        // API key
+        $api_key = $this->api->getApiKey();
 
-	/**
-	 * Check configuration before doing a request
-	 * @throws RequestException
-	 */
-	private function _checkConfig() {
-		if(empty($this->api->getApiKey())) {
-			throw new RequestException('No API key entered');
-		}
+        if (empty($api_key)) {
+            throw new RequestException('No API key entered');
+        }
 
-		if(empty($this->api->getApiEndpoint())) {
-			throw new RequestException('No API endpoint defined');
-		}
-	}
+        // Endpoint
+        $url = $this->api->getApiEndpoint($uri, $params);
 
-	/**
-	 * GET Request
-	 * @param string $uri Request URI e.g. /customer/1
-	 * @param array $params Request parameters
-	 * @throws RequestException
-	 * @return object
-	 */
-	public function get($uri, array $params = []) {
-		$this->_checkConfig();
+        // Do request
+        $resp = HttpRequest::get($url)
+            ->expectsJson()
+            ->withAuthorization("Bearer {$api_key}")
+            ->send();
 
-		// API key
-		$api_key = $this->api->getApiKey();
+        // Check response code
+        if ($resp->code != 200) {
+            throw new RequestException("Mollie API GET request failed", $resp->code, $url, $resp);
+        }
 
-		// Endpoint
-		$url = $this->api->getApiEndpoint($uri);
+        // Return response body
+        if ($resp->hasBody()) {
+            return $resp->body;
+        }
+    }
 
-		// Build uri parameters
-		if(!empty($params)) {
-			$url .= "/?" . http_build_query($params);
-		}
+    /**
+     * GET Request for retuning all items from a paginated response
+     *
+     * @param string $uri Request URI e.g. /customer/1
+     * @return array
+     */
+    public function getAll($uri)
+    {
+        // Do request
+        $resp = $this->get($uri);
 
-		// Do request
-		$resp = HttpRequest::get($url)
-			->expectsJson()
-			->withAuthorization("Bearer {$api_key}")
-			->send();
+        // Data
+        $data = !empty($resp->data) ? $resp->data : [];
+        $next = !empty($resp->links->next) ? $resp->links->next : null;
 
-		// Check response code
-		if($resp->code != 200) {
-			throw new RequestException("Mollie API GET request failed", $resp->code, $url, $resp);
-		}
+        // Get next pages (if any)
+        while (!empty($next)) {
+            // Request page data
+            $resp = $this->get($next);
 
-		// Return response body
-		if($resp->hasBody()) {
-			return $resp->body;
-		}
-	}
+            // Append page items
+            $data = array_merge($data, $resp->data);
 
-	/**
-	 * GET Request for retuning all items from a paginated response
-	 * @param string $uri Request URI e.g. /customer/1
-	 * @return array
-	 */
-	public function getAll($uri) {
+            // Get next page link
+            $next = !empty($resp->links->next) ? $resp->links->next : null;
+        }
 
-		// Do request
-		$resp = $this->get($uri);
+        return $data;
+    }
 
-		// Data
-		$data = $resp->data;
-		$next = isset($resp->links) ? $resp->links->next : null;
+    /**
+     * POST Request
+     *
+     * @param string $uri Request URI e.g. /customer/1
+     * @param array $data POST data
+     * @throws RequestException
+     * @return object
+     */
+    public function post($uri, $data)
+    {
+        // API key
+        $api_key = $this->api->getApiKey();
 
-		// Get next pages (if any)
-		while(!empty($next)) {
+        if (empty($api_key)) {
+            throw new RequestException('No API key entered');
+        }
 
-			// Request page data
-			$pageResp = $this->get($next);
+        // Endpoint
+        $url = $this->api->getApiEndpoint($uri);
 
-			// Append page items
-			$data = array_merge($data, $pageResp->data);
+        // Do request
+        $resp = HttpRequest::post($url)
+            ->expectsJson()
+            ->sendsType(\Httpful\MIME::FORM)
+            ->withAuthorization("Bearer {$api_key}")
+            ->body($data)
+            ->send();
 
-			// Get next page link
-			$next = isset($resp->links) ? $resp->links->next : null;
-		}
+        // Check response code
+        if ($resp->code != 201) {
+            throw new RequestException("Mollie API POST request failed", $resp->code, $url, $resp);
+        }
 
-		return $data;
-	}
+        // Return response body
+        if ($resp->hasBody()) {
+            return $resp->body;
+        }
+    }
 
-	/**
-	 * POST Request
-	 * @param string $uri Request URI e.g. /customer/1
-	 * @param array $data POST data
-	 * @throws RequestException
-	 * @return object
-	 */
-	public function post($uri, $data) {
-		$this->_checkConfig();
+    /**
+     * DELETE Request
+     *
+     * @param string $uri Request URI e.g. /customer/1
+     * @throws RequestException
+     * @return object|null
+     */
+    public function delete($uri)
+    {
+        // API key
+        $api_key = $this->api->getApiKey();
 
-		// API key
-		$api_key = $this->api->getApiKey();
+        if (empty($api_key)) {
+            throw new RequestException('No API key entered');
+        }
 
-		// Endpoint
-		$url = $this->api->getApiEndpoint($uri);
+        // Endpoint
+        $url = $this->api->getApiEndpoint($uri);
 
-		// Do request
-		$resp = HttpRequest::post($url)
-			->expectsJson()
-			->sendsType(\Httpful\MIME::FORM)
-			->withAuthorization("Bearer {$api_key}")
-			->body($data)
-			->send();
+        // Do request
+        $resp = HttpRequest::delete($url)
+            ->expectsJson()
+            ->withAuthorization("Bearer {$api_key}")
+            ->send();
 
-		// Check response code
-		if($resp->code != 201) {
-			throw new RequestException("Mollie API POST request failed", $resp->code, $url, $resp);
-		}
+        // Check response code
+        if ($resp->code != 200 || $resp->code != 204) {
+            throw new RequestException("Mollie API DELETE request failed", $resp->code, $url, $resp);
+        }
 
-		// Return response body
-		if($resp->hasBody()) {
-			return $resp->body;
-		}
-	}
-
-	/**
-	 * DELETE Request
-	 * @param string $uri Request URI e.g. /customer/1
-	 * @throws RequestException
-	 * @return object|null
-	 */
-	public function delete($uri) {
-		$this->_checkConfig();
-
-		// API key
-		$api_key = $this->api->getApiKey();
-
-		// Endpoint
-		$url = $this->api->getApiEndpoint($uri);
-
-		// Do request
-		$resp = HttpRequest::delete($url)
-			->expectsJson()
-			->withAuthorization("Bearer {$api_key}")
-			->send();
-
-		// Check response code
-		if($resp->code != 200 || $resp->code != 204) {
-			throw new RequestException("Mollie API DELETE request failed", $resp->code, $url, $resp);
-		}
-
-		// Return response body
-		if($resp->hasBody()) {
-			return $resp->body;
-		}
-	}
+        // Return response body
+        if ($resp->hasBody()) {
+            return $resp->body;
+        }
+    }
 }

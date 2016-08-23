@@ -2,93 +2,117 @@
 
 namespace Mollie\API\Resource;
 
-use Mollie\API\Mollie;
 use Mollie\API\Model\Customer;
+use Mollie\API\Resource\Customer\PaymentResource;
+use Mollie\API\Resource\Customer\MandateResource;
+use Mollie\API\Resource\Customer\SubscriptionResource;
 
-class CustomerResource extends ResourceBase {
+class CustomerResource extends Base\CustomerResourceBase
+{
+    /**
+     * Get customer
+     *
+     * @param Customer|string $id
+     * @return Customer
+     */
+    public function get($id = null)
+    {
+        // Get customer ID
+        $id = $this->getCustomerID($id);
 
-	/**
-	 * @var Customer\PaymentResource
-	 */
-	public $payment;
+        // Get customer
+        $resp = $this->api->request->get("/customers/{$id}");
 
-	/**
-	 * @var Customer\MandateResource
-	 */
-	public $mandate;
+        // Return customer model
+        return new Customer($this->api, $resp);
+    }
 
-	/**
-	 * Constructor
-	 * @param string $api_key Mollie API key
-	 */
-	public function __construct(Mollie $api) {
+    /**
+     * Get all customers
+     * @return Customer[]
+     */
+    public function all()
+    {
+        $items = [];
 
-		// Customer resources
-		$this->payment 		= new Customer\PaymentResource($api, $this);
-		$this->mandate 		= new Customer\MandateResource($api, $this);
+        // Get all customers
+        $resp = $this->api->request->getAll("/customers");
 
-		parent::__construct($api);
-	}
+        if (!empty($resp) && is_array($resp)) {
+            foreach ($resp as $item) {
+                $items[] = new Customer($this->api, $item);
+            }
+        }
 
-	/**
-	 * Get customer
-	 * @param string $id Customer ID
-	 * @return Customer
-	 */
-	public function get($id) {
-		$resp = $this->api->get("/customers/{$id}");
+        return $items;
+    }
 
-		// Return customer model
-		return new Customer($resp);
-	}
+    /**
+     * Create customer
+     *
+     * @see https://www.mollie.com/nl/docs/reference/customers/create
+     * @param string $name Customer name
+     * @param string $email Customer email
+     * @param array $metadata Metadata for this customer
+     * @return Customer
+     */
+    public function create($name, $email, array $metadata = null)
+    {
+        // Convert metadata to JSON
+        $metadata = !empty($metadata) ? json_encode($metadata) : null;
 
-	/**
-	 * Get all customers
-	 * @return Generator|Customer[]
-	 */
-	public function all() {
-		$items = $this->api->getAll("/customers");
+        // Create customer
+        $resp = $this->api->request->post("/customers", [
+            'name'      => $name,
+            'email'     => $email,
+            'locale'    => $this->api->getLocale(),
+            'metadata'  => $metadata,
+        ]);
 
-		foreach($items as $item) {
-			yield new Customer($item);
-		}
-	}
+        // Return customer model
+        return new Customer($this->api, $resp);
+    }
 
-	/**
-	 * Create customer
-	 * @see https://www.mollie.com/nl/docs/reference/customers/create
-	 * @param string $name Customer name
-	 * @param string $email Customer email
-	 * @param string $locale Allow you to preset the language to be used in the payment screens shown to the consumer.
-	 * @param array $metadata Metadata for this customer
-	 * @return Customer
-	 */
-	public function create($name, $email, $locale = null, array $metadata = null) {
+    /**
+     * Customer payment resource
+     * @return Customer\PaymentResource
+     */
+    public function payment()
+    {
+        if (empty($this->customer)) {
+            throw new \BadMethodCallException("No customer ID was given");
+        }
 
-		// Check locale
-		if(!empty($locale)) {
-			if(!in_array($locale, Mollie::locales)) {
-				$locale = null; // Use browser language
-			}
-		}
+        return new PaymentResource($this->api, $this->customer);
+    }
 
-		// Convert metadata to JSON
-		if(!empty($metadata)) {
-			$metadata = json_encode($metadata);
-		}
+    /**
+     * Customer mandate resource
+     *
+     * @param Mollie\API\Model\Mandate|string $mandate
+     * @return Customer\MandateResource
+     */
+    public function mandate($mandate = null)
+    {
+        if (empty($this->customer)) {
+            throw new \BadMethodCallException("No customer ID was given");
+        }
 
-		// Construct parameters
-		$params = [
-			'name'		=> $name,
-			'email'		=> $email,
-			'locale'	=> $locale,
-			'metadata'	=> $metadata,
-		];
+        return new MandateResource($this->api, $this->customer, $mandate);
+    }
 
-		// API request
-		$resp = $this->api->post("/customers", $params);
+    /**
+     * Customer subscription resource
+     *
+     * @param Mollie\API\Model\Subscription|string $subscription
+     * @return Customer\SubscriptionResource
+     */
+    public function subscription($subscription = null)
+    {
+        if (empty($this->customer)) {
+            throw new \BadMethodCallException("No customer ID was given");
+        }
 
-		// Return customer model
-		return new Customer($resp);
-	}
+        return new SubscriptionResource($this->api, $this->customer, $subscription);
+    }
 }

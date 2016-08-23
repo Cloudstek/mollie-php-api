@@ -2,32 +2,46 @@
 
 namespace Mollie\API\Resource;
 
-use Mollie\API\Mollie;
-use Mollie\API\Mollie\Model\Issuer;
+use Mollie\API\Model\Issuer;
+use Mollie\API\Resource\Base\ResourceBase;
 
-class IssuerResource extends ResourceBase {
+class IssuerResource extends ResourceBase
+{
+    /**
+     * Get issuer
+     *
+     * @param Issuer|string $id Issuer ID
+     * @return Issuer
+     */
+    public function get($id = null)
+    {
+        // Get issuer ID
+        $id = $this->getResourceID($id, Issuer::class);
 
-	/**
-	 * Get iDEAL issuer
-	 * @param string $id iDEAL issuer ID
-	 * @return Issuer
-	 */
-	public function get($id) {
-		$resp = $this->api->get("/issuers/{$id}");
+        // Get issuer
+        $resp = $this->api->request->get("/issuers/{$id}");
 
-		// Return method model
-		return new Issuer($resp);
-	}
+        // Return issuer model
+        return new Issuer($this->api, $resp);
+    }
 
-	/**
-	 * Get all iDEAL issuers
-	 * @return Generator|Issuer[]
-	 */
-	public function all() {
-		$items = $this->api->getAll("/issuers");
+    /**
+     * Get all issuers
+     * @return Issuer[]
+     */
+    public function all()
+    {
+        $items = [];
 
-		foreach($items as $item) {
-			yield new Issuer($item);
-		}
-	}
+        // Get all issuers
+        $resp = $this->api->request->getAll("/issuers");
+
+        if (!empty($resp) && is_array($resp)) {
+            foreach ($resp as $item) {
+                $items[] = new Issuer($this->api, $item);
+            }
+        }
+
+        return $items;
+    }
 }
