@@ -69,16 +69,20 @@ abstract class ModelBase
                 try {
                     return new \DateTime($value);
                 } catch (\Exception $ex) {
-                    throw new \InvalidArgumentException("Property {$name} is not a valid ISO 8601 date/time string.");
+                    throw new \InvalidArgumentException("Property {$name} is not a valid ISO 8601 date/time string: {$value}.");
                 }
             }
 
             // ISO 8601 Duration
-            if (preg_match('/.+(Period)$/', $name)) {
+            if (preg_match('/.+(Period)$/', $name))
+            {
+                // Remove trailing T returned by API in test mode
+                $value = rtrim($value, 'T');
+
                 try {
                     return new \DateInterval($value);
                 } catch (\Exception $ex) {
-                    throw new \InvalidArgumentException("Property {$name} is not a valid ISO 8601 duration string.");
+                    throw new \InvalidArgumentException("Property {$name} is not a valid ISO 8601 duration string: {$value}.");
                 }
             }
 
