@@ -1,7 +1,7 @@
 {
     "name": "cloudstek/mollie-php-api",
     "description": "Mollie API client library for PHP",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "homepage": "https://github.com/cloudstek/mollie-php-api",
     "license": "BSD-2-Clause",
 
