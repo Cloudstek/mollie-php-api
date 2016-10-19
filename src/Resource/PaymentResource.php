@@ -3,7 +3,7 @@
 namespace Mollie\API\Resource;
 
 use Mollie\API\Model\Payment;
-use Mollie\API\Resource\Payment\RefundResource;
+use Mollie\API\Resource\Payment\RefundResource as PaymentRefundResource;
 
 class PaymentResource extends Base\PaymentResourceBase
 {
@@ -91,7 +91,7 @@ class PaymentResource extends Base\PaymentResourceBase
      * Payment refund resource
      *
      * @param Mollie\API\Model\Refund|string $refund
-     * @return RefundResource
+     * @return PaymentRefundResource
      */
     public function refund($refund = null)
     {
@@ -99,6 +99,6 @@ class PaymentResource extends Base\PaymentResourceBase
             throw new \BadMethodCallException("No payment ID was given");
         }
 
-        return new RefundResource($this->api, $this->payment, $refund);
+        return new PaymentRefundResource($this->api, $this->payment, $refund);
     }
 }

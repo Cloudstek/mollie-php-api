@@ -3,9 +3,9 @@
 namespace Mollie\API\Resource;
 
 use Mollie\API\Model\Customer;
-use Mollie\API\Resource\Customer\PaymentResource;
-use Mollie\API\Resource\Customer\MandateResource;
-use Mollie\API\Resource\Customer\SubscriptionResource;
+use Mollie\API\Resource\Customer\PaymentResource as CustomerPaymentResource;
+use Mollie\API\Resource\Customer\MandateResource as CustomerMandateResource;
+use Mollie\API\Resource\Customer\SubscriptionResource as CustomerSubscriptionResource;
 
 class CustomerResource extends Base\CustomerResourceBase
 {
@@ -75,7 +75,7 @@ class CustomerResource extends Base\CustomerResourceBase
 
     /**
      * Customer payment resource
-     * @return Customer\PaymentResource
+     * @return CustomerPaymentResource
      */
     public function payment()
     {
@@ -83,14 +83,14 @@ class CustomerResource extends Base\CustomerResourceBase
             throw new \BadMethodCallException("No customer ID was given");
         }
 
-        return new PaymentResource($this->api, $this->customer);
+        return new CustomerPaymentResource($this->api, $this->customer);
     }
 
     /**
      * Customer mandate resource
      *
      * @param Mollie\API\Model\Mandate|string $mandate
-     * @return Customer\MandateResource
+     * @return CustomerMandateResource
      */
     public function mandate($mandate = null)
     {
@@ -98,14 +98,14 @@ class CustomerResource extends Base\CustomerResourceBase
             throw new \BadMethodCallException("No customer ID was given");
         }
 
-        return new MandateResource($this->api, $this->customer, $mandate);
+        return new CustomerMandateResource($this->api, $this->customer, $mandate);
     }
 
     /**
      * Customer subscription resource
      *
      * @param Mollie\API\Model\Subscription|string $subscription
-     * @return Customer\SubscriptionResource
+     * @return CustomerSubscriptionResource
      */
     public function subscription($subscription = null)
     {
@@ -113,6 +113,6 @@ class CustomerResource extends Base\CustomerResourceBase
             throw new \BadMethodCallException("No customer ID was given");
         }
 
-        return new SubscriptionResource($this->api, $this->customer, $subscription);
+        return new CustomerSubscriptionResource($this->api, $this->customer, $subscription);
     }
 }
