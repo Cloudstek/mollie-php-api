@@ -161,7 +161,7 @@ class ResourceTest extends ResourceTestCase
      * Fill model with data that contains invalid JSON metadata
      *
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Property metadata does not contain
+     * @expectedExceptionMessage Property metadata is not an object or array
      */
     public function testFillModelInvalidMetadata()
     {

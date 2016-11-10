@@ -34,7 +34,7 @@ class PaymentResource extends CustomerResourceBase
      * @param double $amount The amount in EURO that you want to charge
      * @param string $description The description of the payment you're creating
      * @param string $redirectUrl The URL the consumer will be redirected to after the payment process
-     * @param array $metadata Metadata for this payment
+     * @param array|object $metadata Metadata for this payment
      * @param array $opts
      *                  [webhookUrl]    string Webhook URL for this payment only
      *                  [method]        string Payment method
@@ -42,15 +42,17 @@ class PaymentResource extends CustomerResourceBase
      *                  [recurringType] string Recurring payment type, first or recurring
      * @return Payment
      */
-    public function create($amount, $description, $redirectUrl, array $metadata = [], array $opts = [])
+    public function create($amount, $description, $redirectUrl, $metadata = null, array $opts = [])
     {
         // Check recurring type
         if (!empty($opts['recurringType']) && $opts['recurringType'] != "first" && $opts['recurringType'] != "recurring") {
             throw new \InvalidArgumentException(sprintf("Invalid recurring type '%s'. Recurring type must be 'first' or 'recurring'.", $opts['recurringType']));
         }
 
-        // Convert metadata to JSON
-        $metadata = !empty($metadata) ? json_encode($metadata) : null;
+        // Check metadata type
+        if (!is_object($metadata) && !is_array($metadata)) {
+            throw new \InvalidArgumentException('Metadata argument must be of type array or object.');
+        }
 
         // Construct parameters
         $params = [
@@ -87,14 +89,14 @@ class PaymentResource extends CustomerResourceBase
      * @param double $amount The amount in EURO that you want to charge
      * @param string $description The description of the payment you're creating
      * @param string $redirectUrl The URL the consumer will be redirected to after the payment process
-     * @param array $metadata Metadata for this payment
+     * @param array|object $metadata Metadata for this payment
      * @param array $opts
      *                  [webhookUrl]    string  Webhook URL for this payment onlyb
      *                  [method]        string  Payment method
      *                  [recurringType] string  Recurring payment type, first or recurring
      * @return Payment
      */
-    public function createFirstRecurring($amount, $description, $redirectUrl, array $metadata = [], array $opts = [])
+    public function createFirstRecurring($amount, $description, $redirectUrl, $metadata = nul, array $opts = [])
     {
         // Set recurring type to recurring
         $opts['recurringType'] = 'first';
@@ -113,14 +115,14 @@ class PaymentResource extends CustomerResourceBase
      * @see https://www.mollie.com/nl/docs/reference/customers/create-payment
      * @param double $amount The amount in EURO that you want to charge
      * @param string $description The description of the payment you're creating
-     * @param array $metadata Metadata for this payment
+     * @param array|object $metadata Metadata for this payment
      * @param array $opts
      *                  [webhookUrl]    string  Webhook URL for this payment only
      *                  [method]        string  Payment method
      *                  [recurringType] string  Recurring payment type, first or recurring
      * @return Payment
      */
-    public function createRecurring($amount, $description, array $metadata = [], array $opts = [])
+    public function createRecurring($amount, $description, $metadata = null, array $opts = [])
     {
         // Set recurring type to recurring
         $opts['recurringType'] = 'recurring';

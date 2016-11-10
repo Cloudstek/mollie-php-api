@@ -53,13 +53,15 @@ class CustomerResource extends Base\CustomerResourceBase
      * @see https://www.mollie.com/nl/docs/reference/customers/create
      * @param string $name Customer name
      * @param string $email Customer email
-     * @param array $metadata Metadata for this customer
+     * @param array|object $metadata Metadata for this customer
      * @return Customer
      */
-    public function create($name, $email, array $metadata = null)
+    public function create($name, $email, $metadata = null)
     {
-        // Convert metadata to JSON
-        $metadata = !empty($metadata) ? json_encode($metadata) : null;
+        // Check metadata type
+        if (!is_object($metadata) && !is_array($metadata)) {
+            throw new \InvalidArgumentException('Metadata argument must be of type array or object.');
+        }
 
         // Create customer
         $resp = $this->api->request->post("/customers", [
