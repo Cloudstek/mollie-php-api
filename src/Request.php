@@ -103,13 +103,20 @@ class Request extends Base\RequestBase
             throw new RequestException('No API key entered');
         }
 
+        // Encode post data to JSON
+        $data = json_encode($data);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \InvalidArgumentException('Request data failed to encode to JSON format.');
+        }
+
         // Endpoint
         $url = $this->api->getApiEndpoint($uri);
 
         // Do request
         $resp = HttpRequest::post($url)
             ->expectsJson()
-            ->sendsType(\Httpful\MIME::FORM)
+            ->sendsJson()
             ->withAuthorization("Bearer {$api_key}")
             ->body($data)
             ->send();
