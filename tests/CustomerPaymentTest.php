@@ -71,8 +71,7 @@ class CustomerPaymentTest extends ResourceTestCase
                     'method'        => $paymentMock->method,
                     'metadata'      => $paymentMock->metadata,
                     'locale'        => $api->getLocale(),
-                    'issuer'        => 'ideal_INGNL2A',
-                    'recurringType' => null
+                    'issuer'        => 'ideal_INGNL2A'
                 ])
             )
             ->will($this->returnValue($paymentMock));
@@ -89,7 +88,7 @@ class CustomerPaymentTest extends ResourceTestCase
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
             ]
         );
 
@@ -161,7 +160,7 @@ class CustomerPaymentTest extends ResourceTestCase
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
             ]
         );
 
@@ -173,7 +172,7 @@ class CustomerPaymentTest extends ResourceTestCase
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
             ]
         );
 
@@ -213,7 +212,7 @@ class CustomerPaymentTest extends ResourceTestCase
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
                 'recurringType' => 'superawesome' // Invalid recurring type
             ]
         );

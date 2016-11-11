@@ -38,14 +38,15 @@ class PaymentResource extends CustomerResourceBase
      * @param array $opts
      *                  [webhookUrl]    string Webhook URL for this payment only
      *                  [method]        string Payment method
-     *                  [methodParams]  array  Payment method specific options (see documentation)
      *                  [recurringType] string Recurring payment type, first or recurring
+     *                  [mandateId]     string Mandate ID to indicate which of the customers accounts should be credited
+     *                  ... Payment method specific options (see documentation)
      * @return Payment
      */
     public function create($amount, $description, $redirectUrl, $metadata = null, array $opts = [])
     {
         // Check recurring type
-        if (!empty($opts['recurringType']) && $opts['recurringType'] != "first" && $opts['recurringType'] != "recurring") {
+        if (!empty($opts['recurringType']) && !in_array($opts['recurringType'], ['first', 'recurring'])) {
             throw new \InvalidArgumentException(sprintf("Invalid recurring type '%s'. Recurring type must be 'first' or 'recurring'.", $opts['recurringType']));
         }
 
@@ -59,17 +60,12 @@ class PaymentResource extends CustomerResourceBase
             'amount'        => $amount,
             'description'   => $description,
             'redirectUrl'   => $redirectUrl,
-            'webhookUrl'    => !empty($opts['webhookUrl']) ? $opts['webhookUrl'] : null,
-            'method'        => !empty($opts['method']) ? $opts['method'] : null,
             'metadata'      => $metadata,
             'locale'        => $this->api->getLocale(),
-            'recurringType' => !empty($opts['recurringType']) ? $opts['recurringType'] : null
         ];
 
-        // Append method parameters if defined
-        if (!empty($opts['method']) && !empty($opts['methodParams'])) {
-            $params = array_merge($params, $opts['methodParams']);
-        }
+        // Merge options
+        $params = array_merge($params, $opts);
 
         // Create payment
         $resp = $this->api->request->post("/customers/{$this->customer}/payments", $params);
@@ -117,9 +113,10 @@ class PaymentResource extends CustomerResourceBase
      * @param string $description The description of the payment you're creating
      * @param array|object $metadata Metadata for this payment
      * @param array $opts
-     *                  [webhookUrl]    string  Webhook URL for this payment only
-     *                  [method]        string  Payment method
-     *                  [recurringType] string  Recurring payment type, first or recurring
+     *                  [webhookUrl]    string Webhook URL for this payment only
+     *                  [method]        string Payment method
+     *                  [recurringType] string Recurring payment type, first or recurring
+     *                  [mandateId]     string Mandate ID to indicate which of the customers accounts should be credited
      * @return Payment
      */
     public function createRecurring($amount, $description, $metadata = null, array $opts = [])
