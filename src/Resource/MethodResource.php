@@ -3,21 +3,22 @@
 namespace Mollie\API\Resource;
 
 use Mollie\API\Model\Method;
+use Mollie\API\Resource\Base\ResourceBase;
 
-class MethodResource extends Base\ResourceBase
+class MethodResource extends ResourceBase
 {
     /**
      * Get payment method
      *
-     * @param string|null $id Payment method ID
+     * @param string|null $methodId Payment method ID
      * @return Method
      */
-    public function get($id = null)
+    public function get($methodId = null)
     {
         // Get method ID
-        $id = $this->getResourceID($id, Method::class);
+        $methodId = $this->getResourceID($methodId, Method::class);
 
-        $resp = $this->api->request->get("/methods/{$id}");
+        $resp = $this->api->request->get("/methods/{$methodId}");
 
         // Return method model
         return new Method($this->api, $resp);

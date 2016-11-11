@@ -4,6 +4,9 @@ namespace Mollie\API\Model\Base;
 
 use Mollie\API\Mollie;
 
+/**
+ * Model base
+ */
 abstract class ModelBase
 {
     /** @var object */
@@ -74,8 +77,7 @@ abstract class ModelBase
             }
 
             // ISO 8601 Duration
-            if (preg_match('/.+(Period)$/', $name))
-            {
+            if (preg_match('/.+(Period)$/', $name)) {
                 // Remove trailing T returned by API in test mode
                 $value = rtrim($value, 'T');
 
@@ -86,15 +88,9 @@ abstract class ModelBase
                 }
             }
 
-            // JSON metadata
-            if ($name == 'metadata') {
-                $value = json_decode($value);
-
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    throw new \InvalidArgumentException("Property {$name} does not contain valid JSON metadata.");
-                }
-
-                return $value;
+            // Metadata
+            if ($name == "metadata" && !is_object($value) && !is_array($value)) {
+                throw new \InvalidArgumentException("Property {$name} is not an object or array.");
             }
 
             // Amount

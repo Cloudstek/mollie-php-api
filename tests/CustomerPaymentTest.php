@@ -71,8 +71,7 @@ class CustomerPaymentTest extends ResourceTestCase
                     'method'        => $paymentMock->method,
                     'metadata'      => $paymentMock->metadata,
                     'locale'        => $api->getLocale(),
-                    'issuer'        => 'ideal_INGNL2A',
-                    'recurringType' => null
+                    'issuer'        => 'ideal_INGNL2A'
                 ])
             )
             ->will($this->returnValue($paymentMock));
@@ -85,11 +84,11 @@ class CustomerPaymentTest extends ResourceTestCase
             $paymentMock->amount,
             $paymentMock->description,
             $paymentMock->links->redirectUrl,
-            json_decode($paymentMock->metadata, true),
+            $paymentMock->metadata,
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
             ]
         );
 
@@ -157,23 +156,23 @@ class CustomerPaymentTest extends ResourceTestCase
             $paymentMock->amount,
             $paymentMock->description,
             $paymentMock->links->redirectUrl,
-            json_decode($paymentMock->metadata, true),
+            $paymentMock->metadata,
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
             ]
         );
-        
+
         // Create recurring payment
         $secondPayment = $api->customer($customerMock->id)->payment()->createRecurring(
             $paymentMock->amount,
             $paymentMock->description,
-            json_decode($paymentMock->metadata, true),
+            $paymentMock->metadata,
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
             ]
         );
 
@@ -209,11 +208,11 @@ class CustomerPaymentTest extends ResourceTestCase
             $paymentMock->amount,
             $paymentMock->description,
             $paymentMock->links->redirectUrl,
-            json_decode($paymentMock->metadata, true),
+            $paymentMock->metadata,
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
                 'recurringType' => 'superawesome' // Invalid recurring type
             ]
         );

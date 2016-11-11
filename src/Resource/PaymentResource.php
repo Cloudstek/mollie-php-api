@@ -3,23 +3,25 @@
 namespace Mollie\API\Resource;
 
 use Mollie\API\Model\Payment;
+use Mollie\API\Model\Refund;
+use Mollie\API\Resource\Base\PaymentResourceBase;
 use Mollie\API\Resource\Payment\RefundResource as PaymentRefundResource;
 
-class PaymentResource extends Base\PaymentResourceBase
+class PaymentResource extends PaymentResourceBase
 {
     /**
      * Get payment
      *
-     * @param string $id Payment ID
+     * @param string $paymentId Payment ID
      * @return Payment
      */
-    public function get($id = null)
+    public function get($paymentId = null)
     {
         // Get payment ID
-        $id = $this->getPaymentID($id);
+        $paymentId = $this->getPaymentID($paymentId);
 
         // API request
-        $resp = $this->api->request->get("/payments/{$id}");
+        $resp = $this->api->request->get("/payments/{$paymentId}");
 
         // Return payment model
         return new Payment($this->api, $resp);
@@ -52,17 +54,19 @@ class PaymentResource extends Base\PaymentResourceBase
      * @param double $amount The amount in EURO that you want to charge
      * @param string $description The description of the payment you're creating.
      * @param string $redirectUrl The URL the consumer will be redirected to after the payment process.
-     * @param array $metadata Metadata for this payment
+     * @param array|object $metadata Metadata for this payment
      * @param array $opts
      *                  [webhookUrl]    string Webhook URL for this payment only
      *                  [method]        string Payment method
      *                  [methodParams]  array  Payment method specific options (see documentation)
      * @return Payment
      */
-    public function create($amount, $description, $redirectUrl, array $metadata = [], array $opts = [])
+    public function create($amount, $description, $redirectUrl, $metadata = null, array $opts = [])
     {
-        // Convert metadata to JSON
-        $metadata = !empty($metadata) ? json_encode($metadata) : null;
+        // Check metadata type
+        if (!is_object($metadata) && !is_array($metadata)) {
+            throw new \InvalidArgumentException('Metadata argument must be of type array or object.');
+        }
 
         // Construct parameters
         $params = [
@@ -90,7 +94,7 @@ class PaymentResource extends Base\PaymentResourceBase
     /**
      * Payment refund resource
      *
-     * @param Mollie\API\Model\Refund|string $refund
+     * @param Refund|string $refund
      * @return PaymentRefundResource
      */
     public function refund($refund = null)

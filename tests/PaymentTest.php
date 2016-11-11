@@ -50,9 +50,9 @@ class PaymentTest extends ResourceTestCase
 
             $payment->id .= "_{$i}";   // tr_test_1
             $payment->description .= "Order {$i}"; // Order 1
-            $payment->metadata = json_encode([
+            $payment->metadata = [
                 "order_id" => $i
-            ]);
+            ];
 
             $paymentListMock[] = $payment;
         }
@@ -119,7 +119,7 @@ class PaymentTest extends ResourceTestCase
             $paymentMock->amount,
             $paymentMock->description,
             $paymentMock->links->redirectUrl,
-            json_decode($paymentMock->metadata, true),
+            $paymentMock->metadata,
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,

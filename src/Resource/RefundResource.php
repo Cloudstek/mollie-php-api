@@ -2,10 +2,10 @@
 
 namespace Mollie\API\Resource;
 
-use Mollie\API\Mollie;
 use Mollie\API\Model\Refund;
+use Mollie\API\Resource\Base\ResourceBase;
 
-class RefundResource extends Base\ResourceBase
+class RefundResource extends ResourceBase
 {
     /**
      * Get all refunds

@@ -103,7 +103,7 @@ class CustomerTest extends ResourceTestCase
         $api->request = $requestMock;
 
         // Create customer
-        $customer = $api->customer()->create($customerMock->name, $customerMock->email, json_decode($customerMock->metadata, true));
+        $customer = $api->customer()->create($customerMock->name, $customerMock->email, $customerMock->metadata);
 
         // Check if we have the correct customer
         $this->assertCustomer($customer, $customerMock);

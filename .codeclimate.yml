@@ -1,25 +1,30 @@
 engines:
-  phpcodesniffer:
-    enabled: true
-    config:
-      standard: "PSR1,PSR2"
-  phpmd:
-    enabled: true
-    config:
-      file_extensions:
-        - php
-      rulesets: ".codeclimate.phpmd.xml"
+
   duplication:
     enabled: true
     config:
       languages:
         - php
+  fixme:
+    enabled: true
+
+  phpcodesniffer:
+    enabled: true
+    config:
+      file_exstensions: "php"
+      standard: "PSR1,PSR2"
+      ignore_warnings: true
+
+  phpmd:
+    enabled: true
+    config:
+      file_extensions: "php"
 
 ratings:
   paths:
     - src/**/*.php
 
 exclude_paths:
-  - tests/**/*
-  - vendor/**/*
-  - build/**/*
+  - tests/
+  - vendor/
+  - build/

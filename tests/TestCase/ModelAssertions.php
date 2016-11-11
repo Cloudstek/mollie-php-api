@@ -39,12 +39,6 @@ trait ModelAssertions
                 continue;
             }
 
-            // JSON metadata
-            if ($k == 'metadata') {
-                $this->assertEquals(json_decode($reference->$k), $model->$v);
-                continue;
-            }
-
             // Amount
             if (preg_match('/amount.*$/', $k) && !is_object($reference->$k)) {
                 $this->assertTrue(is_float($model->$v) || is_integer($model->$v));

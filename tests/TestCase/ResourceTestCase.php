@@ -24,9 +24,9 @@ class ResourceTestCase extends TestCase
             "name" => "Customer",
             "email" => "customer@example.org",
             "locale" => "nl_NL",
-            "metadata" => json_encode([
+            "metadata" => (object) [
                 'orderno' => 404
-            ]),
+            ],
             "recentlyUsedMethods" => (object) [
                 "creditcard",
                 "ideal"
@@ -226,9 +226,9 @@ class ResourceTestCase extends TestCase
             "amount" => 35.07,
             "description" => "Order 33",
             "method" => "ideal",
-            "metadata" => json_encode([
+            "metadata" => (object) [
                 "order_id" => "33"
-            ]),
+            ],
             "details" => (object) [
                 "consumerName" => "John Doe",
                 "consumerAccount" => "NL53INGB0000000000",
