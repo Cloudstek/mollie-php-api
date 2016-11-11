@@ -65,12 +65,13 @@ class MandateResource extends CustomerResourceBase
     /**
      * Create SEPA direct debit mandate
      *
+     * @see https://www.mollie.com/en/docs/reference/mandates/create
      * @param string $name Consumer name
      * @param string $account Consumer IBAN account number
      * @param array  $opts
-     *                  [bic]           string      Consumer BIC
-     *                  [signatureDate] DateTime    Signature date
-     *                  [reference]     string      Custom reference
+     *                  [consumerBic]       string      The consumer's bank's BIC / SWIFT code.
+     *                  [signatureDate]     DateTime    Signature date
+     *                  [mandateReference]  string      Custom reference
      * @return Mandate
      */
     public function create($name, $account, array $opts = [])
@@ -88,11 +89,11 @@ class MandateResource extends CustomerResourceBase
         $params = [
             'method' => 'directdebit',
             'consumerName' => $name,
-            'consumerAccount' => $account,
-            'consumerBic' => !empty($opts['bic']) ? $opts['bic'] : null,
-            'signatureDate' => !empty($opts['signatureDate']) ? $opts['signatureDate'] : null,
-            'mandateReference' => !empty($opts['reference']) ? $opts['reference'] : null
+            'consumerAccount' => $account
         ];
+
+        // Merge options
+        $params = array_merge($params, $opts);
 
         // Create mandate
         $resp = $this->api->request->post("/customers/{$this->customer}/mandates", $params);

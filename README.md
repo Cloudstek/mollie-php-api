@@ -1,6 +1,6 @@
 # Mollie PHP API client
 
-[![Build Status](https://travis-ci.org/Cloudstek/mollie-php-api.svg?branch=master)](https://travis-ci.org/Cloudstek/mollie-php-api) [![Code Climate](https://codeclimate.com/github/Cloudstek/mollie-php-api/badges/gpa.svg)](https://codeclimate.com/github/Cloudstek/mollie-php-api) [![Test Coverage](https://codeclimate.com/github/Cloudstek/mollie-php-api/badges/coverage.svg)](https://codeclimate.com/github/Cloudstek/mollie-php-api/coverage)
+[![Travis](https://img.shields.io/travis/Cloudstek/mollie-php-api.svg)](https://travis-ci.org/Cloudstek/mollie-php-api) [![Code Climate](https://img.shields.io/codeclimate/github/Cloudstek/mollie-php-api.svg)](https://codeclimate.com/github/Cloudstek/mollie-php-api) [![Test Coverage](https://img.shields.io/codeclimate/coverage/github/Cloudstek/mollie-php-api.svg)](https://codeclimate.com/github/Cloudstek/mollie-php-api/coverage) [![Code Climate](https://img.shields.io/codeclimate/issues/github/Cloudstek/mollie-php-api.svg)](https://codeclimate.com/github/Cloudstek/mollie-php-api/issues) [![Downloads](https://img.shields.io/packagist/dt/cloudstek/mollie-php-api.svg)](https://packagist.org/packages/cloudstek/mollie-php-api) [![Latest Version](https://img.shields.io/packagist/v/cloudstek/mollie-php-api.svg)](https://packagist.org/packages/cloudstek/mollie-php-api)
 
 Simple to use, modern and well-tested PHP API client for [Mollie](https://www.mollie.com/nl/docs/overview).
 
@@ -38,7 +38,7 @@ You can also manually add the package to your projects composer.json requirement
 ```json
 {
   "require": {
-    "cloudstek/mollie-php-api": "^1.0.0"
+    "cloudstek/mollie-php-api": "^2.0.0"
   }
 }
 ```
@@ -58,7 +58,7 @@ Below are a few common examples on how to use the Mollie PHP API client. For adv
 
 ```php
 <?php
-  
+
   // Import the namespace
   use Mollie\API\Mollie;
 
@@ -87,10 +87,10 @@ Below are a few common examples on how to use the Mollie PHP API client. For adv
   // Alternatively you can also specify a locale and/or metadata.
   // In the following example we'll create the same customer with some metadata
   $customer = $mollie->customer()->create(
-    'John Doe', 
-    'john.doe@example.org', 
+    'John Doe',
+    'john.doe@example.org',
     array(
-      'user_id' => 11, 
+      'user_id' => 11,
       'group' => 'regular_customers'
     )
   );
@@ -112,8 +112,8 @@ Below are a few common examples on how to use the Mollie PHP API client. For adv
 
   // Create new payment
   $payment = $mollie->payment()->create(
-    10.00, 
-    'Expensive cup of coffee', 
+    10.00,
+    'Expensive cup of coffee',
     'https://example.org/order/101'
   );
 
@@ -139,8 +139,8 @@ According to the Mollie API documentation, Linking customers to payments enables
 
   // Create new payment
   $payment = $mollie->customer('cst_test')->payment()->create(
-    10.00, 
-    'Expensive cup of coffee', 
+    10.00,
+    'Expensive cup of coffee',
     'https://example.org/order/101'
   );
 
@@ -164,12 +164,12 @@ According to the Mollie API documentation, Linking customers to payments enables
 
   // Make sure the customer has no valid mandates
   if(!$customer->mandate()->hasValid()) {
-    // Create mandate by issueing the first recurring payment. 
-    // This is usually a small amount like a few cents as it's only used to confirm 
+    // Create mandate by issueing the first recurring payment.
+    // This is usually a small amount like a few cents as it's only used to confirm
     // the payment details.
     $customer->mandate()->createFirstRecurring(
-      0.01, 
-      'Recurring payment mandate confirmation', 
+      0.01,
+      'Recurring payment mandate confirmation',
       'https://example.org/account'
     );
   }
@@ -195,6 +195,10 @@ According to the Mollie API documentation, Linking customers to payments enables
     // Customer has no valid mandates, you should get one first.
   }
 ```
+
+## Changelog
+
+See CHANGELOG.md for a complete list of changes.
 
 ## Contributing
 

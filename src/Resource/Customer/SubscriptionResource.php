@@ -70,27 +70,33 @@ class SubscriptionResource extends CustomerResourceBase
      * @param string $interval Interval to wait between charges like "1 month(s)" or "14 days"
      * @param string $description A description unique per customer. This will be included in the payment description along with the charge date in Y-m-d format
      * @param int|null $times Total number of charges for the subscription to complete. Leave empty for an on-going subscription
-     * @param string|null $method The payment method used for this subscription, either forced on creation or null if any of the customer's valid mandates may be used
-     * @param string|null $webhookUrl Use this parameter to set a webhook URL for all subscription payments
+     * @param array $opts
+     *                  [webhookUrl]    string Use this parameter to set a webhook URL for all subscription payments.
+     *                  [method]        string The payment method used for this subscription, creditcard, directdebit or null for any valid mandate
+     *                  [startDate]     DateTime The start date of the subscription
      * @throws \InvalidArgumentException
      * @return Subscription
      */
-    public function create($amount, $interval, $description, $times = null, $method = null, $webhookUrl = null)
+    public function create($amount, $interval, $description, $times = null, array $opts = [])
     {
         // Check number of times
-        if (isset($times) && $times < 1) {
+        if (isset($times) && ($times < 1 || !is_numeric($times))) {
             throw new \InvalidArgumentException("Invalid number of charges for this subscription. Please enter a number of 1 or more, or leave null for an ongoing subscription.");
         }
 
-        // Create customer subscription
-        $resp = $this->api->request->post("/customers/{$this->customer}/subscriptions", [
+        // Construct parameters
+        $params = [
             'amount'        => $amount,
             'times'         => $times,
             'interval'      => $interval,
-            'description'   => $description,
-            'method'        => $method,
-            'webhookUrl'    => $webhookUrl
-        ]);
+            'description'   => $description
+        ];
+
+        // Merge options
+        $params = array_merge($params, $opts);
+
+        // Create customer subscription
+        $resp = $this->api->request->post("/customers/{$this->customer}/subscriptions", $params);
 
         // Return subscription model
         return new Subscription($this->api, $resp);
