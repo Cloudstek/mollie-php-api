@@ -3,23 +3,25 @@
 namespace Mollie\API\Resource;
 
 use Mollie\API\Model\Payment;
+use Mollie\API\Model\Refund;
+use Mollie\API\Resource\Base\PaymentResourceBase;
 use Mollie\API\Resource\Payment\RefundResource as PaymentRefundResource;
 
-class PaymentResource extends Base\PaymentResourceBase
+class PaymentResource extends PaymentResourceBase
 {
     /**
      * Get payment
      *
-     * @param string $id Payment ID
+     * @param string $paymentId Payment ID
      * @return Payment
      */
-    public function get($id = null)
+    public function get($paymentId = null)
     {
         // Get payment ID
-        $id = $this->getPaymentID($id);
+        $paymentId = $this->getPaymentID($paymentId);
 
         // API request
-        $resp = $this->api->request->get("/payments/{$id}");
+        $resp = $this->api->request->get("/payments/{$paymentId}");
 
         // Return payment model
         return new Payment($this->api, $resp);
@@ -92,7 +94,7 @@ class PaymentResource extends Base\PaymentResourceBase
     /**
      * Payment refund resource
      *
-     * @param Mollie\API\Model\Refund|string $refund
+     * @param Refund|string $refund
      * @return PaymentRefundResource
      */
     public function refund($refund = null)

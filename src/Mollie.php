@@ -7,13 +7,13 @@ use Mollie\API\Base\RequestBase;
 class Mollie
 {
     /** @var string API Key */
-    private $api_key;
+    private $apiKey;
 
     /** @var string API Endpoint */
-    private $api_endpoint = "https://api.mollie.nl/v1";
+    private $apiEndpoint = "https://api.mollie.nl/v1";
 
     /** @var string Locale */
-    private $api_locale;
+    private $apiLocale;
 
     /** @var RequestBase Request Handler */
     public $request;
@@ -21,20 +21,20 @@ class Mollie
     /**
      * Mollie API constructor
      *
-     * @param string|null $api_key Mollie API key
-     * @param string|null $api_ep Mollie API endpoint URL
+     * @param string|null $apiKey Mollie API key
+     * @param string|null $apiEndpoint Mollie API endpoint URL
      * @param RequestBase|null $requestHandler Request handler
      */
-    public function __construct($api_key = null, $api_ep = null, RequestBase $requestHandler = null)
+    public function __construct($apiKey = null, $apiEndpoint = null, RequestBase $requestHandler = null)
     {
         // API Key
-        if (!empty($api_key)) {
-            $this->setApiKey($api_key);
+        if (!empty($apiKey)) {
+            $this->setApiKey($apiKey);
         }
 
         // API endpoint URL
-        if (!empty($api_ep)) {
-            $this->setApiEndpoint($api_ep);
+        if (!empty($apiEndpoint)) {
+            $this->setApiEndpoint($apiEndpoint);
         }
 
         // Request handler
@@ -47,22 +47,22 @@ class Mollie
      */
     public function getApiKey()
     {
-        return $this->api_key;
+        return $this->apiKey;
     }
 
     /**
      * Set API key
-     * @param string $api_key Mollie API key
+     * @param string $apiKey Mollie API key
      */
-    public function setApiKey($api_key)
+    public function setApiKey($apiKey)
     {
-        $api_key = trim($api_key);
+        $apiKey = trim($apiKey);
 
-        if (!preg_match('/^(live|test)_\w+$/', $api_key)) {
-            throw new \InvalidArgumentException("Invalid Mollie API key: {$api_key}.");
+        if (!preg_match('/^(live|test)_\w+$/', $apiKey)) {
+            throw new \InvalidArgumentException("Invalid Mollie API key: {$apiKey}.");
         }
 
-        $this->api_key = $api_key;
+        $this->apiKey = $apiKey;
     }
 
     /**
@@ -74,7 +74,7 @@ class Mollie
      */
     public function getApiEndpoint($uri = null, $params = [])
     {
-        $url = $this->api_endpoint;
+        $url = $this->apiEndpoint;
 
         if (!empty($uri)) {
             $url .= "/" . trim(trim($uri), '/');
@@ -90,17 +90,17 @@ class Mollie
 
     /**
      * Set API endpoint URL
-     * @param string $ep API endpoint URL (without trailing slash)
+     * @param string $apiEndpoint API endpoint URL (without trailing slash)
      */
-    public function setApiEndpoint($ep)
+    public function setApiEndpoint($apiEndpoint)
     {
-        if (!preg_match('/^https?\:\/\//', $ep)) {
-            throw new \InvalidArgumentException("Invalid Mollie API endpoint: {$ep}. Must be a valid http(s) url starting with http:// or https://.");
+        if (!preg_match('/^https?\:\/\//', $apiEndpoint)) {
+            throw new \InvalidArgumentException("Invalid Mollie API endpoint: {$apiEndpoint}. Must be a valid http(s) url starting with http:// or https://.");
         }
 
-        $ep = trim(rtrim($ep, '/'));
+        $apiEndpoint = trim(rtrim($apiEndpoint, '/'));
 
-        $this->api_endpoint = $ep;
+        $this->apiEndpoint = $apiEndpoint;
     }
 
     /**
@@ -109,7 +109,7 @@ class Mollie
      */
     public function getLocale()
     {
-        return $this->api_locale;
+        return $this->apiLocale;
     }
 
     /**
@@ -118,7 +118,7 @@ class Mollie
      */
     public function setLocale($locale)
     {
-        $this->api_locale = $locale;
+        $this->apiLocale = $locale;
     }
 
     /**

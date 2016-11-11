@@ -3,25 +3,26 @@
 namespace Mollie\API\Resource;
 
 use Mollie\API\Model\Customer;
+use Mollie\API\Resource\Base\CustomerResourceBase;
 use Mollie\API\Resource\Customer\PaymentResource as CustomerPaymentResource;
 use Mollie\API\Resource\Customer\MandateResource as CustomerMandateResource;
 use Mollie\API\Resource\Customer\SubscriptionResource as CustomerSubscriptionResource;
 
-class CustomerResource extends Base\CustomerResourceBase
+class CustomerResource extends CustomerResourceBase
 {
     /**
      * Get customer
      *
-     * @param Customer|string $id
+     * @param Customer|string $customerId
      * @return Customer
      */
-    public function get($id = null)
+    public function get($customerId = null)
     {
         // Get customer ID
-        $id = $this->getCustomerID($id);
+        $customerId = $this->getCustomerID($customerId);
 
         // Get customer
-        $resp = $this->api->request->get("/customers/{$id}");
+        $resp = $this->api->request->get("/customers/{$customerId}");
 
         // Return customer model
         return new Customer($this->api, $resp);

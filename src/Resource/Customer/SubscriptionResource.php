@@ -27,16 +27,16 @@ class SubscriptionResource extends CustomerResourceBase
     /**
      * Get customer subscription
      *
-     * @param Subscription|string $id Subscription ID
+     * @param Subscription|string $subscriptionId Subscription ID
      * @return Subscription
      */
-    public function get($id = null)
+    public function get($subscriptionId = null)
     {
         // Get subscription ID
-        $subscription_id = $this->getSubscriptionID($id);
+        $subscriptionId = $this->getSubscriptionID($subscriptionId);
 
         // Get subscription
-        $resp = $this->api->request->get("/customers/{$this->customer}/subscriptions/{$subscription_id}");
+        $resp = $this->api->request->get("/customers/{$this->customer}/subscriptions/{$subscriptionId}");
 
         // Return subscription model
         return new Subscription($this->api, $resp);
@@ -100,16 +100,16 @@ class SubscriptionResource extends CustomerResourceBase
      * Cancel customer subscription
      *
      * @see https://www.mollie.com/nl/docs/reference/subscriptions/delete
-     * @param Subscription|string $id Subscription ID
+     * @param Subscription|string $subscriptionId Subscription ID
      * @return Subscription
      */
-    public function cancel($id = null)
+    public function cancel($subscriptionId = null)
     {
         // Get subscription ID
-        $subscription_id = $this->getSubscriptionID($id);
+        $subscriptionId = $this->getSubscriptionID($subscriptionId);
 
         // API request
-        $resp = $this->api->request->delete("/customers/{$this->customer}/subscriptions/{$subscription_id}");
+        $resp = $this->api->request->delete("/customers/{$this->customer}/subscriptions/{$subscriptionId}");
 
         // Return cancelled subscription model
         return new Subscription($this->api, $resp);

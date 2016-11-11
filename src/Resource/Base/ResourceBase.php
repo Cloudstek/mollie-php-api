@@ -10,18 +10,18 @@ abstract class ResourceBase
     protected $api;
 
     /** @var string */
-    protected $id;
+    protected $resourceId;
 
     /**
      * Constructor
      *
      * @param Mollie $api Mollie API reference
-     * @param string $id Resource ID
+     * @param string $resourceId Resource ID
      */
-    public function __construct(Mollie $api, $id = null)
+    public function __construct(Mollie $api, $resourceId = null)
     {
         $this->api = $api;
-        $this->id = $id;
+        $this->resourceId = $resourceId;
     }
 
     /**
@@ -43,7 +43,7 @@ abstract class ResourceBase
      */
     protected function getResourceID($resource, $type, &$property = null)
     {
-        // Get short class name
+        // Get short resource type class name (payment, customer...)
         $name = strtolower(substr($type, strrpos($type, '\\') + 1));
 
         if (!empty($resource)) {
@@ -58,9 +58,9 @@ abstract class ResourceBase
         } elseif (isset($property) && !empty($property)) {
             // Return global resource ID
             return $property;
-        } elseif (!empty($this->id)) {
+        } elseif (!empty($this->resourceId)) {
             // Return global resource ID
-            return $this->id;
+            return $this->resourceId;
         }
 
         // No local or global resource ID

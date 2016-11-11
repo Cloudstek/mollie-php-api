@@ -27,16 +27,16 @@ class MandateResource extends CustomerResourceBase
     /**
      * Get customer mandate
      *
-     * @param string $id Mandate ID
+     * @param string $mandateId Mandate ID
      * @return Mandate
      */
-    public function get($id = null)
+    public function get($mandateId = null)
     {
         // Get mandate ID
-        $mandate_id = $this->getMandateID($id);
+        $mandateId = $this->getMandateID($mandateId);
 
         // Get mandate
-        $resp = $this->api->request->get("/customers/{$this->customer}/mandates/{$mandate_id}");
+        $resp = $this->api->request->get("/customers/{$this->customer}/mandates/{$mandateId}");
 
         // Return mandate model
         return new Mandate($this->api, $resp);
@@ -75,6 +75,7 @@ class MandateResource extends CustomerResourceBase
      */
     public function create($name, $account, array $opts = [])
     {
+        // Signature date
         if (!empty($opts['signatureDate'])) {
             if (!($opts['signatureDate'] instanceof \DateTime)) {
                 throw new \InvalidArgumentException("Argument signatureDate must be of type DateTime.");

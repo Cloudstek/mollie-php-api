@@ -30,9 +30,9 @@ class Request extends Base\RequestBase
     public function get($uri, array $params = [])
     {
         // API key
-        $api_key = $this->api->getApiKey();
+        $apiKey = $this->api->getApiKey();
 
-        if (empty($api_key)) {
+        if (empty($apiKey)) {
             throw new RequestException('No API key entered');
         }
 
@@ -42,7 +42,7 @@ class Request extends Base\RequestBase
         // Do request
         $resp = HttpRequest::get($url)
             ->expectsJson()
-            ->withAuthorization("Bearer {$api_key}")
+            ->withAuthorization("Bearer {$apiKey}")
             ->send();
 
         // Check response code
@@ -97,9 +97,9 @@ class Request extends Base\RequestBase
     public function post($uri, $data)
     {
         // API key
-        $api_key = $this->api->getApiKey();
+        $apiKey = $this->api->getApiKey();
 
-        if (empty($api_key)) {
+        if (empty($apiKey)) {
             throw new RequestException('No API key entered');
         }
 
@@ -117,7 +117,7 @@ class Request extends Base\RequestBase
         $resp = HttpRequest::post($url)
             ->expectsJson()
             ->sendsJson()
-            ->withAuthorization("Bearer {$api_key}")
+            ->withAuthorization("Bearer {$apiKey}")
             ->body($data)
             ->send();
 
@@ -142,9 +142,9 @@ class Request extends Base\RequestBase
     public function delete($uri)
     {
         // API key
-        $api_key = $this->api->getApiKey();
+        $apiKey = $this->api->getApiKey();
 
-        if (empty($api_key)) {
+        if (empty($apiKey)) {
             throw new RequestException('No API key entered');
         }
 
@@ -154,7 +154,7 @@ class Request extends Base\RequestBase
         // Do request
         $resp = HttpRequest::delete($url)
             ->expectsJson()
-            ->withAuthorization("Bearer {$api_key}")
+            ->withAuthorization("Bearer {$apiKey}")
             ->send();
 
         // Check response code
