@@ -7,7 +7,7 @@ use Mollie\API\Mollie;
 use Mollie\API\Model;
 use Mollie\API\Request;
 
-class ResourceTestCase extends TestCase
+abstract class ResourceTestCase extends TestCase
 {
     use ModelAssertions;
 
@@ -154,6 +154,7 @@ class ResourceTestCase extends TestCase
      */
     protected function getSubscription()
     {
+        // TODO Add startDate
         return (object) [
             "resource" => "subscription",
             "id" => "sub_test",
@@ -234,6 +235,7 @@ class ResourceTestCase extends TestCase
                 "consumerAccount" => "NL53INGB0000000000",
                 "consumerBic" => "INGBNL2A"
             ],
+            'expiryPeriod' => 'P2D',
             "locale" => "nl",
             "profileId" => "pfl_test",
             "links" => (object) [

@@ -34,7 +34,7 @@ trait ModelAssertions
             }
 
             // ISO 8601 Duration
-            if (preg_match('/.+(Period)$/', $k) && preg_match('^P.+', $reference->$k)) {
+            if (preg_match('/.+(Period)$/', $k) && preg_match('/^P.+/', $reference->$k)) {
                 $this->assertInstanceOf(\DateInterval::class, $model->$v);
                 continue;
             }

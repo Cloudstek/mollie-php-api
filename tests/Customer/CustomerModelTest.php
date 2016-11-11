@@ -5,110 +5,11 @@ use Mollie\API\Request;
 use Mollie\API\Model\Customer;
 use Mollie\API\Tests\TestCase\ResourceTestCase;
 
-class CustomerTest extends ResourceTestCase
+/**
+ * Customer model tests
+ */
+class CustomerModelTest extends ResourceTestCase
 {
-    /**
-     * Get customer
-     */
-    public function testGetCustomer()
-    {
-        // Mock the customer
-        $customerMock = $this->getCustomer();
-
-        // Mock the request
-        $requestMock = $this->createMock(Request::class);
-
-        $requestMock
-            ->expects($this->exactly(2))
-            ->method('get')
-            ->with($this->equalTo("/customers/{$customerMock->id}"))
-            ->will($this->returnValue($customerMock));
-
-        // Create API instance
-        $api = new Mollie('test_testapikey');
-        $api->request = $requestMock;
-
-        // Get customer
-        $customer = $api->customer($customerMock->id)->get();
-        $customer2 = $api->customer()->get($customerMock->id);
-
-        // Check if we have the correct customer
-        $this->assertEquals($customer, $customer2);
-        $this->assertCustomer($customer, $customerMock);
-    }
-
-    /**
-     * Get all customers
-     */
-    public function testGetCustomers()
-    {
-        // Prepare a list of customers
-        $customerListMock = [];
-
-        for ($i = 0; $i <= 15; $i++) {
-            $customer = $this->getCustomer();
-
-            $customer->id .= "_{$i}";   // cst_test_1
-            $customer->name .= " {$i}"; // Customer 1
-
-            $customerListMock[] = $customer;
-        }
-
-        // Create API instance
-        $api = new Mollie('test_testapikey');
-
-        // Mock the request handler
-        $requestMock = $this->getMultiPageRequestMock($api, $customerListMock, '/customers');
-
-        // Set request handler
-        $api->request = $requestMock;
-
-        // Get customers
-        $customers = $api->customer()->all();
-
-        // Check the number of customers returned
-        $this->assertEquals(count($customerListMock), count($customers));
-
-        // Check all customers
-        $this->assertcustomers($customers, $customerListMock);
-    }
-
-    /**
-     * Create customer
-     */
-    public function testCreateCustomer()
-    {
-        // Mock the customer
-        $customerMock = $this->getCustomer();
-
-        // Mock the request
-        $requestMock = $this->createMock(Request::class);
-
-        $requestMock
-            ->expects($this->once())
-            ->method('post')
-            ->with(
-                $this->equalTo("/customers"),
-                $this->equalTo([
-                    'name'      => $customerMock->name,
-                    'email'     => $customerMock->email,
-                    'locale'    => null,
-                    'metadata'  => $customerMock->metadata
-                ])
-            )
-            ->will($this->returnValue($customerMock));
-
-        // Create API instance
-        $api = new Mollie('test_testapikey');
-        $api->request = $requestMock;
-
-        // Create customer
-        $customer = $api->customer()->create($customerMock->name, $customerMock->email, $customerMock->metadata);
-
-        // Check if we have the correct customer
-        $this->assertCustomer($customer, $customerMock);
-    }
-
     /**
      * Get customer mandate through customer object
      *
@@ -222,17 +123,5 @@ class CustomerTest extends ResourceTestCase
         // Check if we have the correct subscription
         $this->assertEquals($subscription, $subscription2);
         $this->assertSubscription($subscription, $subscriptionMock);
-    }
-
-    /**
-     * Get customer without customer ID
-     *
-     * @expectedException BadMethodCallException
-     * @expectedExceptionMessage No customer ID
-     */
-    public function testGetCustomerWithoutID()
-    {
-        $api = new Mollie('test_testapikey');
-        $api->customer()->get();
     }
 }
