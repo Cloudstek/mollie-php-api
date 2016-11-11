@@ -103,6 +103,20 @@ class MandateResource extends CustomerResourceBase
     }
 
     /**
+     * Revoke customer mandate
+     *
+     * @param string|null $mandateId Mandate ID
+     */
+    public function revoke($mandateId = null)
+    {
+        // Get mandate ID
+        $mandateId = $this->getMandateID($mandateId);
+
+        // Revoke mandate
+        $this->api->request->delete("/customers/{$this->customer}/mandates/{$mandateId}");
+    }
+
+    /**
      * Check if customer has any valid mandates
      * @return boolean
      */

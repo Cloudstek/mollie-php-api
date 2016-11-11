@@ -3,6 +3,7 @@
 ## [2.0.0]
 ### Added
 - This beautiful change log
+- Support mandate revocation
 
 ### Changed
 - Allow metadata to be entered as array or object instead of just array
