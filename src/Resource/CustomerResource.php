@@ -83,40 +83,53 @@ class CustomerResource extends CustomerResourceBase
      * @param string $name Customer name
      * @param string $email Customer email
      * @param array|object $metadata Metadata for this customer
+     * @param string $locale Customer locale
      * @param Customer|string $customerId
      * @throws \BadMethodCallException
      * @return Customer
      */
-    public function update($name = null, $email = null, $metadata = null, $customerId = null)
+    public function update($name = null, $email = null, $metadata = null, $locale = null, $customerId = null)
     {
-        // Check metadata type
-        if (!is_object($metadata) && !is_array($metadata)) {
+        // Check metadata type if given
+        if (isset($metadata) && !is_object($metadata) && !is_array($metadata)) {
             throw new \InvalidArgumentException('Metadata argument must be of type array or object.');
+        }
+
+        // Check name
+        if (isset($name) && empty($name)) {
+            throw new \InvalidArgumentException("Name argument can't be an empty string.");
+        }
+
+        // Check email
+        if (isset($email) && empty($email)) {
+            throw new \InvalidArgumentException("Email argument can't be an empty string.");
+        }
+
+        // Parameter list
+        $params = [
+            'name'      => $name,
+            'email'     => $email,
+            'metadata'  => $metadata,
+            'locale'    => $locale
+        ];
+
+        // Filter all null (skipped) items. Keeping them in would unintentionally set their value to null!
+        $params = array_filter($params, function($v) {
+            return isset($v);
+        });
+
+        // Filter all empty but not skipped items. Just to check if at least one entry has a value
+        $nonEmptyParams = array_filter($params, function($v) {
+            return !empty($v);
+        });
+
+        // Check parameters for at least one field to update
+        if (count($params) == 0 || count($nonEmptyParams) == 0) {
+            throw new \BadMethodCallException("No arguments supplied, please provide either name, email or metadata.");
         }
 
         // Get customer ID
         $customerId = $this->getCustomerID($customerId);
-
-        // Build parameter list
-        $params = [];
-
-        if (!empty($name)) {
-            $params['name'] = $name;
-        }
-        if (!empty($email)) {
-            $params['email'] = $email;
-        }
-        if (!empty($metadata)) {
-            $params['metadata'] = $metadata;
-        }
-
-        // Check parameters for at least one field to update
-        if (empty($params)) {
-            throw new \BadMethodCallException("No arguments supplied, please provide either name, email or metadata.");
-        }
-
-        // Set locale
-        $params['locale'] = $this->api->getLocale();
 
         // Update customer
         $resp = $this->api->request->post("/customers/{$customerId}", $params);
