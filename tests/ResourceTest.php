@@ -123,7 +123,7 @@ class ResourceTest extends ResourceTestCase
      * Fill model with data that contains invalid date
      *
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Property createdDatetime is not a valid ISO 8601
+     * @expectedExceptionMessage Property createdDatetime is not a valid date/time string
      */
     public function testFillModelInvalidDate()
     {

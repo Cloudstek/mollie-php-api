@@ -77,6 +77,55 @@ class CustomerResource extends CustomerResourceBase
     }
 
     /**
+     * Update customer details
+     *
+     * @see https://www.mollie.com/nl/docs/reference/customers/update
+     * @param string $name Customer name
+     * @param string $email Customer email
+     * @param array|object $metadata Metadata for this customer
+     * @param Customer|string $customerId
+     * @throws \BadMethodCallException
+     * @return Customer
+     */
+    public function update($name = null, $email = null, $metadata = null, $customerId = null)
+    {
+        // Check metadata type
+        if (!is_object($metadata) && !is_array($metadata)) {
+            throw new \InvalidArgumentException('Metadata argument must be of type array or object.');
+        }
+
+        // Get customer ID
+        $customerId = $this->getCustomerID($customerId);
+
+        // Build parameter list
+        $params = [];
+
+        if (!empty($name)) {
+            $params['name'] = $name;
+        }
+        if (!empty($email)) {
+            $params['email'] = $email;
+        }
+        if (!empty($metadata)) {
+            $params['metadata'] = $metadata;
+        }
+
+        // Check parameters for at least one field to update
+        if (empty($params)) {
+            throw new \BadMethodCallException("No arguments supplied, please provide either name, email or metadata.");
+        }
+
+        // Set locale
+        $params['locale'] = $this->api->getLocale();
+
+        // Update customer
+        $resp = $this->api->request->post("/customers/{$customerId}", $params);
+
+        // Return customer model
+        return new Customer($this->api, $resp);
+    }
+
+    /**
      * Customer payment resource
      * @return CustomerPaymentResource
      */

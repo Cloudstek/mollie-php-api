@@ -66,13 +66,13 @@ abstract class ModelBase
      */
     protected function parseData($name, $value)
     {
-        if(!empty($value)) {
+        if (!empty($value)) {
             // ISO 8601 Date
             if (preg_match('/.+(Datetime|Date)$/', $name)) {
                 try {
                     return new \DateTime($value);
                 } catch (\Exception $ex) {
-                    throw new \InvalidArgumentException("Property {$name} is not a valid ISO 8601 date/time string: {$value}.");
+                    throw new \InvalidArgumentException("Property {$name} is not a valid date/time string: {$value}.");
                 }
             }
 

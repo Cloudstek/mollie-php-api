@@ -40,6 +40,9 @@ class Subscription extends ModelBase
     /** @var string Customer ID */
     public $customerId;
 
+    /** @var \DateTime Subscription start date */
+    public $startDate;
+
     /** @var \DateTime Subscription's date and time of creation */
     public $createdDatetime;
 

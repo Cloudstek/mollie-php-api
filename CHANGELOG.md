@@ -3,7 +3,8 @@
 ## [2.0.0]
 ### Added
 - This beautiful change log
-- Support mandate revocation
+- Method for mandate revocation
+- Method for updating customer details
 
 ### Changed
 - Allow metadata to be entered as array or object instead of just array
