@@ -2,7 +2,16 @@
 
 namespace Mollie\API\Model;
 
-class Method extends Base\ModelBase
+use Mollie\API\Model\Base\ModelBase;
+
+/**
+ * Method model
+ *
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class Method extends ModelBase
 {
     /** @var string Payment method ID */
     public $id;

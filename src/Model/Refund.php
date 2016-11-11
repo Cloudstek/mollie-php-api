@@ -2,7 +2,16 @@
 
 namespace Mollie\API\Model;
 
-class Refund extends Base\ModelBase
+use Mollie\API\Model\Base\ModelBase;
+
+/**
+ * Refund model
+ *
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class Refund extends ModelBase
 {
     /** @var string Refund ID */
     public $id;

@@ -2,7 +2,16 @@
 
 namespace Mollie\API\Model;
 
-class Subscription extends Base\ModelBase
+use Mollie\API\Model\Base\ModelBase;
+
+/**
+ * Subscription model
+ *
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class Subscription extends ModelBase
 {
     /** @var string Subscription ID */
     public $id;

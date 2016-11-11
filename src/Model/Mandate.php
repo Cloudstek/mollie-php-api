@@ -2,7 +2,16 @@
 
 namespace Mollie\API\Model;
 
-class Mandate extends Base\ModelBase
+use Mollie\API\Model\Base\ModelBase;
+
+/**
+ * Mandate model
+ *
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class Mandate extends ModelBase
 {
     /** @var string Mandate ID */
     public $id;

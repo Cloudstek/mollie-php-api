@@ -4,6 +4,9 @@ namespace Mollie\API\Model\Base;
 
 use Mollie\API\Mollie;
 
+/**
+ * Model base
+ */
 abstract class ModelBase
 {
     /** @var object */
@@ -74,8 +77,7 @@ abstract class ModelBase
             }
 
             // ISO 8601 Duration
-            if (preg_match('/.+(Period)$/', $name))
-            {
+            if (preg_match('/.+(Period)$/', $name)) {
                 // Remove trailing T returned by API in test mode
                 $value = rtrim($value, 'T');
 
