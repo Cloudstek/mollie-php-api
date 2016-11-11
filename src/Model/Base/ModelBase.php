@@ -66,7 +66,7 @@ abstract class ModelBase
      */
     protected function parseData($name, $value)
     {
-        if (!empty($value) && is_string($value)) {
+        if(!empty($value)) {
             // ISO 8601 Date
             if (preg_match('/.+(Datetime|Date)$/', $name)) {
                 try {
@@ -87,16 +87,16 @@ abstract class ModelBase
                     throw new \InvalidArgumentException("Property {$name} is not a valid ISO 8601 duration string: {$value}.");
                 }
             }
+        }
 
-            // Metadata
-            if ($name == "metadata" && !is_object($value) && !is_array($value)) {
-                throw new \InvalidArgumentException("Property {$name} is not an object or array.");
-            }
+        // Metadata
+        if ($name == "metadata" && !is_object($value) && !is_array($value)) {
+            throw new \InvalidArgumentException("Property {$name} is not an object or array.");
+        }
 
-            // Amount
-            if (preg_match('/amount.*$/', $name)) {
-                return $value + 0.0;
-            }
+        // Amount
+        if (preg_match('/amount.*$/', $name) && isset($value)) {
+            return $value + 0.0;
         }
 
         return $value;
