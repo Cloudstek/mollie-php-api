@@ -119,9 +119,9 @@ class CustomerMandateTest extends ResourceTestCase
             $mandateMock->details->consumerName,
             $mandateMock->details->consumerAccount,
             [
-                'bic' => $mandateMock->details->consumerBic,
+                'consumerBic' => $mandateMock->details->consumerBic,
                 'signatureDate' => new \DateTime($mandateMock->details->signatureDate),
-                'reference' => $mandateMock->details->mandateReference
+                'mandateReference' => $mandateMock->details->mandateReference
             ]
         );
 

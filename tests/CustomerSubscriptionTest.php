@@ -118,8 +118,10 @@ class CustomerSubscriptionTest extends ResourceTestCase
             $subscriptionMock->interval,
             $subscriptionMock->description,
             $subscriptionMock->times,
-            $subscriptionMock->method,
-            $subscriptionMock->links->webhookUrl
+            [
+                'method'        => $subscriptionMock->method,
+                'webhookUrl'    => $subscriptionMock->links->webhookUrl
+            ]
         );
 
         // Check subscription details
@@ -219,8 +221,10 @@ class CustomerSubscriptionTest extends ResourceTestCase
             $subscriptionMock->interval,
             $subscriptionMock->description,
             0,
-            $subscriptionMock->method,
-            $subscriptionMock->links->webhookUrl
+            [
+                'method'        => $subscriptionMock->method,
+                'webhookUrl'    => $subscriptionMock->links->webhookUrl
+            ]
         );
     }
 

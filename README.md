@@ -38,7 +38,7 @@ You can also manually add the package to your projects composer.json requirement
 ```json
 {
   "require": {
-    "cloudstek/mollie-php-api": "^1.1.0"
+    "cloudstek/mollie-php-api": "^2.0.0"
   }
 }
 ```
