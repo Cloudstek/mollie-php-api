@@ -58,7 +58,7 @@ class PaymentResource extends PaymentResourceBase
      * @param array $opts
      *                  [webhookUrl]    string Webhook URL for this payment only
      *                  [method]        string Payment method
-     *                  [methodParams]  array  Payment method specific options (see documentation)
+     *                  ... Payment method specific options (see documentation)
      * @return Payment
      */
     public function create($amount, $description, $redirectUrl, $metadata = null, array $opts = [])
@@ -73,16 +73,12 @@ class PaymentResource extends PaymentResourceBase
             'amount'        => $amount,
             'description'   => $description,
             'redirectUrl'   => $redirectUrl,
-            'webhookUrl'    => !empty($opts['webhookUrl']) ? $opts['webhookUrl'] : null,
-            'method'        => !empty($opts['method']) ? $opts['method'] : null,
             'metadata'      => $metadata,
             'locale'        => $this->api->getLocale()
         ];
 
-        // Append method parameters if defined
-        if (!empty($opts['method']) && !empty($opts['methodParams'])) {
-            $params = array_merge($params, $opts['methodParams']);
-        }
+        // Merge options
+        $params = array_merge($params, $opts);
 
         // API request
         $resp = $this->api->request->post("/payments", $params);

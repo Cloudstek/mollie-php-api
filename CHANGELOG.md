@@ -8,6 +8,7 @@
 - Allow metadata to be entered as array or object instead of just array
 - Send post request as JSON instead of form encoded
 - No longer send metadata as JSON string as the whole request is sent as JSON now
+- **Removed** methodParams option in PaymentResource $opts parameter. Add method parameters to $opts directly.
 - **Removed** methodParams option in Customer\\PaymentResource $opts parameter. Add method parameters to $opts directly.
 - **Removed** method and webhookUrl parameters from Customer\\SubscriptionResource. Add them to new parameter $opts instead for consistency.
 - **Renamed** $opts parameters bic to consumerBic and reference to mandateReference in Customer\\MandateResource

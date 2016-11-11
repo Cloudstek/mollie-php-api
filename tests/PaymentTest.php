@@ -123,9 +123,7 @@ class PaymentTest extends ResourceTestCase
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => [
-                    'issuer' => $issuerMock->id
-                ]
+                'issuer' => $issuerMock->id
             ]
         );
 
