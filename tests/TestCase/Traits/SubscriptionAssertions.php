@@ -16,13 +16,13 @@ trait SubscriptionAssertions
      */
     protected function getSubscription()
     {
-        // TODO Add startDate
         return (object) [
             "resource" => "subscription",
             "id" => "sub_test",
             "customerId" => "cst_test",
             "mode" => "test",
             "createdDatetime" => "2016-06-01T12:23:34.0Z",
+            "startDate" => "2016-06-02",
             "status" => "active",
             "amount" => "25.00",
             "times" => 4,
@@ -59,6 +59,7 @@ trait SubscriptionAssertions
             'customerId',
             'createdDatetime',
             'cancelledDatetime',
+            'startDate',
             'links'
         ]);
     }

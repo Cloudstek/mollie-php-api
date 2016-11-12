@@ -84,6 +84,20 @@ class SubscriptionResource extends CustomerResourceBase
             throw new \InvalidArgumentException("Invalid number of charges for this subscription. Please enter a number of 1 or more, or leave null for an ongoing subscription.");
         }
 
+        // Check start date
+        if (!empty($opts['startDate'])) {
+            if (!($opts['startDate'] instanceof \DateTime)) {
+                try {
+                    $opts['startDate'] = new \DateTime($opts['startDate']);
+                } catch (\Exception $ex) {
+                    throw new \InvalidArgumentException("Option startDate must be a valid DateTime object or date string, preferably yyyy-mm-dd.");
+                }
+            }
+
+            // Format startDate as yyyy-mm-dd
+            $opts['startDate'] = $opts['startDate']->format('Y-m-d');
+        }
+
         // Construct parameters
         $params = [
             'amount'        => $amount,

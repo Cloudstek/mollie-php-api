@@ -114,13 +114,13 @@ class CustomerResource extends CustomerResourceBase
         ];
 
         // Filter all null (skipped) items. Keeping them in would unintentionally set their value to null!
-        $params = array_filter($params, function($v) {
-            return isset($v);
+        $params = array_filter($params, function ($value) {
+            return isset($value);
         });
 
         // Filter all empty but not skipped items. Just to check if at least one entry has a value
-        $nonEmptyParams = array_filter($params, function($v) {
-            return !empty($v);
+        $nonEmptyParams = array_filter($params, function ($value) {
+            return !empty($value);
         });
 
         // Check parameters for at least one field to update

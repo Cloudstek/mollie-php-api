@@ -11,7 +11,6 @@ class CustomerSubscriptionCreateTest extends ResourceTestCase
 {
     /**
      * Create customer subscription
-     * TODO: Add startDate check
      */
     public function testCreateCustomerSubscription()
     {
@@ -35,7 +34,8 @@ class CustomerSubscriptionCreateTest extends ResourceTestCase
                     'interval'      => $subscriptionMock->interval,
                     'description'   => $subscriptionMock->description,
                     'method'        => $subscriptionMock->method,
-                    'webhookUrl'    => $subscriptionMock->links->webhookUrl
+                    'webhookUrl'    => $subscriptionMock->links->webhookUrl,
+                    'startDate'     => $subscriptionMock->startDate
                 ])
             )
             ->will($this->returnValue($subscriptionMock));
@@ -52,7 +52,8 @@ class CustomerSubscriptionCreateTest extends ResourceTestCase
             $subscriptionMock->times,
             [
                 'method'        => $subscriptionMock->method,
-                'webhookUrl'    => $subscriptionMock->links->webhookUrl
+                'webhookUrl'    => $subscriptionMock->links->webhookUrl,
+                'startDate'     => $subscriptionMock->startDate
             ]
         );
 
@@ -71,6 +72,9 @@ class CustomerSubscriptionCreateTest extends ResourceTestCase
         // Mock the subscription
         $subscriptionMock = $this->getSubscription();
 
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
         // Mock the request
         $requestMock = $this->createMock(Request::class);
 
@@ -83,14 +87,54 @@ class CustomerSubscriptionCreateTest extends ResourceTestCase
         $api->request = $requestMock;
 
         // Create subscription
-        $subscription = $api->customer('cst_test')->subscription()->create(
+        $subscription = $api->customer($customerMock->id)->subscription()->create(
             $subscriptionMock->amount,
             $subscriptionMock->interval,
             $subscriptionMock->description,
             0,
             [
                 'method'        => $subscriptionMock->method,
-                'webhookUrl'    => $subscriptionMock->links->webhookUrl
+                'webhookUrl'    => $subscriptionMock->links->webhookUrl,
+                'startDate'     => $subscriptionMock->startDate
+            ]
+        );
+    }
+
+    /**
+     * Create customer subscription with invalid start date (yyyy-mm-dd format)
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Option startDate must be a valid DateTime object or date string
+     */
+    public function testCreateCustomerSubscriptionInvalidStartDate()
+    {
+        // Mock the subscription
+        $subscriptionMock = $this->getSubscription();
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
+        // Mock the request
+        $requestMock = $this->createMock(Request::class);
+
+        $requestMock
+            ->expects($this->never())
+            ->method('post');
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+        $api->request = $requestMock;
+
+        // Create subscription
+        $subscription = $api->customer($customerMock->id)->subscription()->create(
+            $subscriptionMock->amount,
+            $subscriptionMock->interval,
+            $subscriptionMock->description,
+            null,
+            [
+                'method'        => $subscriptionMock->method,
+                'webhookUrl'    => $subscriptionMock->links->webhookUrl,
+                'startDate'     => 'blabla'
             ]
         );
     }
