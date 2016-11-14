@@ -4,43 +4,11 @@ use Mollie\API\Mollie;
 use Mollie\API\Request;
 use Mollie\API\Tests\TestCase\ResourceTestCase;
 
-class CustomerPaymentTest extends ResourceTestCase
+/**
+ * Customer payment creation tests
+ */
+class CustomerPaymentCreateTest extends ResourceTestCase
 {
-    /**
-     * Get all customer payments
-     */
-    public function testGetCustomerPayments()
-    {
-        // Prepare a list of payments
-        $paymentListMock = [];
-
-        for ($i = 0; $i <= 15; $i++) {
-            $payment = $this->getPayment();
-            $paymentListMock[] = $payment;
-        }
-
-        // Mock the customer
-        $customerMock = $this->getCustomer();
-
-        // Create API instance
-        $api = new Mollie('test_testapikey');
-
-        // Mock the request handler
-        $requestMock = $this->getMultiPageRequestMock($api, $paymentListMock, "/customers/{$customerMock->id}/payments");
-
-        // Set request handler
-        $api->request = $requestMock;
-
-        // Get payments
-        $payments = $api->customer($customerMock->id)->payment()->all();
-
-        // Check the number of payments returned
-        $this->assertEquals(count($paymentListMock), count($payments));
-
-        // Check all payments
-        $this->assertPayments($payments, $paymentListMock);
-    }
-
     /**
      * Create customer payment
      */
@@ -71,8 +39,7 @@ class CustomerPaymentTest extends ResourceTestCase
                     'method'        => $paymentMock->method,
                     'metadata'      => $paymentMock->metadata,
                     'locale'        => $api->getLocale(),
-                    'issuer'        => 'ideal_INGNL2A',
-                    'recurringType' => null
+                    'issuer'        => 'ideal_INGNL2A'
                 ])
             )
             ->will($this->returnValue($paymentMock));
@@ -85,11 +52,11 @@ class CustomerPaymentTest extends ResourceTestCase
             $paymentMock->amount,
             $paymentMock->description,
             $paymentMock->links->redirectUrl,
-            json_decode($paymentMock->metadata, true),
+            $paymentMock->metadata,
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
             ]
         );
 
@@ -157,23 +124,23 @@ class CustomerPaymentTest extends ResourceTestCase
             $paymentMock->amount,
             $paymentMock->description,
             $paymentMock->links->redirectUrl,
-            json_decode($paymentMock->metadata, true),
+            $paymentMock->metadata,
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
             ]
         );
-        
+
         // Create recurring payment
         $secondPayment = $api->customer($customerMock->id)->payment()->createRecurring(
             $paymentMock->amount,
             $paymentMock->description,
-            json_decode($paymentMock->metadata, true),
+            $paymentMock->metadata,
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
             ]
         );
 
@@ -193,6 +160,9 @@ class CustomerPaymentTest extends ResourceTestCase
         // Mock the payment
         $paymentMock = $this->getPayment();
 
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
         // Mock the request
         $requestMock = $this->createMock(Request::class);
 
@@ -205,29 +175,54 @@ class CustomerPaymentTest extends ResourceTestCase
         $api->request = $requestMock;
 
         // Get payment
-        $payment = $api->customer('cst_test')->payment()->create(
+        $payment = $api->customer($customerMock->id)->payment()->create(
             $paymentMock->amount,
             $paymentMock->description,
             $paymentMock->links->redirectUrl,
-            json_decode($paymentMock->metadata, true),
+            $paymentMock->metadata,
             [
                 'webhookUrl' => $paymentMock->links->webhookUrl,
                 'method' => $paymentMock->method,
-                'methodParams' => ['issuer' => 'ideal_INGNL2A'],
+                'issuer' => 'ideal_INGNL2A',
                 'recurringType' => 'superawesome' // Invalid recurring type
             ]
         );
     }
 
     /**
-     * Get customer payments without customer ID
+     * Create customer payment with invalid metadata
      *
-     * @expectedException BadMethodCallException
-     * @expectedExceptionMessage No customer ID
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Metadata argument must be of type
      */
-    public function testGetCustomerPaymentWithoutCustomerID()
+    public function testCreateCustomerPaymentWithInvalidMetadata()
     {
+        // Mock the payment
+        $paymentMock = $this->getPayment();
+
+        // Mock the customer
+        $customerMock = $this->getCustomer();
+
+        // Create API instance
         $api = new Mollie('test_testapikey');
-        $api->customer()->payment()->all();
+
+        // Mock the request
+        $requestMock = $this->createMock(Request::class);
+
+        $requestMock
+            ->expects($this->never())
+            ->method('post')
+            ->with($this->equalTo("/customers/{$customerMock->id}/payments"));
+
+        // Set request handler
+        $api->request = $requestMock;
+
+        // Create payment
+        $api->customer($customerMock->id)->payment()->create(
+            $paymentMock->amount,
+            $paymentMock->description,
+            $paymentMock->links->redirectUrl,
+            'my funny coment and invalid metadata.'
+        );
     }
 }

@@ -10,16 +10,16 @@ class IssuerResource extends ResourceBase
     /**
      * Get issuer
      *
-     * @param Issuer|string $id Issuer ID
+     * @param Issuer|string $issuerId Issuer ID
      * @return Issuer
      */
-    public function get($id = null)
+    public function get($issuerId = null)
     {
         // Get issuer ID
-        $id = $this->getResourceID($id, Issuer::class);
+        $issuerId = $this->getResourceID($issuerId, Issuer::class);
 
         // Get issuer
-        $resp = $this->api->request->get("/issuers/{$id}");
+        $resp = $this->api->request->get("/issuers/{$issuerId}");
 
         // Return issuer model
         return new Issuer($this->api, $resp);

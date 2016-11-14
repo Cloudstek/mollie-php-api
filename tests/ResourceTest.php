@@ -123,7 +123,7 @@ class ResourceTest extends ResourceTestCase
      * Fill model with data that contains invalid date
      *
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Property createdDatetime is not a valid ISO 8601
+     * @expectedExceptionMessage Property createdDatetime is not a valid date/time string
      */
     public function testFillModelInvalidDate()
     {
@@ -158,16 +158,55 @@ class ResourceTest extends ResourceTestCase
     }
 
     /**
+     * Fill model with data that contains valid JSON metadata
+     */
+    public function testFillModelJSONMetadata()
+    {
+        // Mock the payment
+        $paymentMock = $this->getPayment();
+        $paymentMock->metadata = "{\"test_data\":\"yes, this is test data!\"}";
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+
+        // Get payment
+        $payment = new Model\Payment($api, $paymentMock);
+
+        // Validate metadata
+        $this->assertInternalType('object', $payment->metadata);
+        $this->assertObjectHasAttribute('test_data', $payment->metadata);
+    }
+
+    /**
      * Fill model with data that contains invalid JSON metadata
      *
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Property metadata does not contain
+     * @expectedExceptionMessage Property metadata is not an object, array or valid JSON string
+     */
+    public function testFillModelInvalidJSONMetadata()
+    {
+        // Mock the payment
+        $paymentMock = $this->getPayment();
+        $paymentMock->metadata = '{asdaSD}';
+
+        // Create API instance
+        $api = new Mollie('test_testapikey');
+
+        // Get payment
+        $payment = new Model\Payment($api, $paymentMock);
+    }
+
+    /**
+     * Fill model with data that contains invalid metadata
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Property metadata is not an object, array or valid JSON string
      */
     public function testFillModelInvalidMetadata()
     {
         // Mock the payment
         $paymentMock = $this->getPayment();
-        $paymentMock->metadata = '{asdaSD}';
+        $paymentMock->metadata = new \DateTime();
 
         // Create API instance
         $api = new Mollie('test_testapikey');

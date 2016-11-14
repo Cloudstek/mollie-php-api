@@ -2,11 +2,19 @@
 
 namespace Mollie\API\Model;
 
+use Mollie\API\Model\Base\ModelBase;
 use Mollie\API\Resource\Customer\MandateResource;
 use Mollie\API\Resource\Customer\PaymentResource;
 use Mollie\API\Resource\Customer\SubscriptionResource;
 
-class Customer extends Base\ModelBase
+/**
+ * Customer model
+ *
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class Customer extends ModelBase
 {
     /** @var string Customer ID */
     public $id;

@@ -28,16 +28,16 @@ class RefundResource extends PaymentResourceBase
     /**
      * Get payment refund
      *
-     * @param Refund|string $id
+     * @param Refund|string $refundId
      * @return Refund
      */
-    public function get($id = null)
+    public function get($refundId = null)
     {
         // Get refund ID
-        $refund_id = $this->getRefundID($id);
+        $refundId = $this->getRefundID($refundId);
 
         // Get refund
-        $resp = $this->api->request->get("/payments/{$this->payment}/refunds/{$refund_id}");
+        $resp = $this->api->request->get("/payments/{$this->payment}/refunds/{$refundId}");
 
         // Return refund model
         return new Refund($this->api, $resp);
@@ -83,14 +83,14 @@ class RefundResource extends PaymentResourceBase
      * Cancel payment refund
      *
      * @see https://www.mollie.com/nl/docs/reference/refunds/delete
-     * @param Refund|string $id
+     * @param Refund|string $refundId
      */
-    public function cancel($id = null)
+    public function cancel($refundId = null)
     {
         // Get refund ID
-        $refund_id = $this->getRefundID($id);
+        $refundId = $this->getRefundID($refundId);
 
         // API request
-        $this->api->request->delete("/payments/{$this->payment}/refunds/{$refund_id}");
+        $this->api->request->delete("/payments/{$this->payment}/refunds/{$refundId}");
     }
 }

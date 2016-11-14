@@ -4,6 +4,9 @@ namespace Mollie\API\Model\Base;
 
 use Mollie\API\Mollie;
 
+/**
+ * Model base
+ */
 abstract class ModelBase
 {
     /** @var object */
@@ -63,44 +66,42 @@ abstract class ModelBase
      */
     protected function parseData($name, $value)
     {
-        if (!empty($value) && is_string($value)) {
-            // ISO 8601 Date
+        if (!empty($value)) {
             if (preg_match('/.+(Datetime|Date)$/', $name)) {
+                // ISO 8601 Date
                 try {
                     return new \DateTime($value);
                 } catch (\Exception $ex) {
-                    throw new \InvalidArgumentException("Property {$name} is not a valid ISO 8601 date/time string: {$value}.");
+                    throw new \InvalidArgumentException("Property {$name} is not a valid date/time string: {$value}.");
                 }
-            }
-
-            // ISO 8601 Duration
-            if (preg_match('/.+(Period)$/', $name))
-            {
-                // Remove trailing T returned by API in test mode
-                $value = rtrim($value, 'T');
-
+            } elseif (preg_match('/.+(Period)$/', $name)) {
+                // ISO 8601 Duration
                 try {
                     return new \DateInterval($value);
                 } catch (\Exception $ex) {
                     throw new \InvalidArgumentException("Property {$name} is not a valid ISO 8601 duration string: {$value}.");
                 }
             }
+        }
 
-            // JSON metadata
-            if ($name == 'metadata') {
-                $value = json_decode($value);
+        if ($name == "metadata") {
+            // Metadata
+            if (is_string($value)) {
+                // Try to parse as JSON string
+                $jsonVal = json_decode($value);
 
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    throw new \InvalidArgumentException("Property {$name} does not contain valid JSON metadata.");
+                if (json_last_error() == JSON_ERROR_NONE) {
+                    return $jsonVal;
                 }
-
-                return $value;
             }
 
+            // If not JSON, check if it's an object or array
+            if (!$value instanceof \stdClass && !is_array($value)) {
+                throw new \InvalidArgumentException("Property {$name} is not an object, array or valid JSON string.");
+            }
+        } elseif (preg_match('/amount.*$/', $name) && isset($value)) {
             // Amount
-            if (preg_match('/amount.*$/', $name)) {
-                return $value + 0.0;
-            }
+            return $value + 0.0;
         }
 
         return $value;

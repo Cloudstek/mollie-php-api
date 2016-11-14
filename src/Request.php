@@ -30,9 +30,9 @@ class Request extends Base\RequestBase
     public function get($uri, array $params = [])
     {
         // API key
-        $api_key = $this->api->getApiKey();
+        $apiKey = $this->api->getApiKey();
 
-        if (empty($api_key)) {
+        if (empty($apiKey)) {
             throw new RequestException('No API key entered');
         }
 
@@ -42,7 +42,7 @@ class Request extends Base\RequestBase
         // Do request
         $resp = HttpRequest::get($url)
             ->expectsJson()
-            ->withAuthorization("Bearer {$api_key}")
+            ->withAuthorization("Bearer {$apiKey}")
             ->send();
 
         // Check response code
@@ -97,10 +97,17 @@ class Request extends Base\RequestBase
     public function post($uri, $data)
     {
         // API key
-        $api_key = $this->api->getApiKey();
+        $apiKey = $this->api->getApiKey();
 
-        if (empty($api_key)) {
+        if (empty($apiKey)) {
             throw new RequestException('No API key entered');
+        }
+
+        // Encode post data to JSON
+        $data = json_encode($data);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \InvalidArgumentException('Request data failed to encode to JSON format.');
         }
 
         // Endpoint
@@ -109,8 +116,8 @@ class Request extends Base\RequestBase
         // Do request
         $resp = HttpRequest::post($url)
             ->expectsJson()
-            ->sendsType(\Httpful\MIME::FORM)
-            ->withAuthorization("Bearer {$api_key}")
+            ->sendsJson()
+            ->withAuthorization("Bearer {$apiKey}")
             ->body($data)
             ->send();
 
@@ -135,9 +142,9 @@ class Request extends Base\RequestBase
     public function delete($uri)
     {
         // API key
-        $api_key = $this->api->getApiKey();
+        $apiKey = $this->api->getApiKey();
 
-        if (empty($api_key)) {
+        if (empty($apiKey)) {
             throw new RequestException('No API key entered');
         }
 
@@ -147,7 +154,7 @@ class Request extends Base\RequestBase
         // Do request
         $resp = HttpRequest::delete($url)
             ->expectsJson()
-            ->withAuthorization("Bearer {$api_key}")
+            ->withAuthorization("Bearer {$apiKey}")
             ->send();
 
         // Check response code

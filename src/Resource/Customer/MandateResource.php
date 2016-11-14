@@ -27,16 +27,16 @@ class MandateResource extends CustomerResourceBase
     /**
      * Get customer mandate
      *
-     * @param string $id Mandate ID
+     * @param string $mandateId Mandate ID
      * @return Mandate
      */
-    public function get($id = null)
+    public function get($mandateId = null)
     {
         // Get mandate ID
-        $mandate_id = $this->getMandateID($id);
+        $mandateId = $this->getMandateID($mandateId);
 
         // Get mandate
-        $resp = $this->api->request->get("/customers/{$this->customer}/mandates/{$mandate_id}");
+        $resp = $this->api->request->get("/customers/{$this->customer}/mandates/{$mandateId}");
 
         // Return mandate model
         return new Mandate($this->api, $resp);
@@ -65,16 +65,18 @@ class MandateResource extends CustomerResourceBase
     /**
      * Create SEPA direct debit mandate
      *
+     * @see https://www.mollie.com/en/docs/reference/mandates/create
      * @param string $name Consumer name
      * @param string $account Consumer IBAN account number
      * @param array  $opts
-     *                  [bic]           string      Consumer BIC
-     *                  [signatureDate] DateTime    Signature date
-     *                  [reference]     string      Custom reference
+     *                  [consumerBic]       string      The consumer's bank's BIC / SWIFT code.
+     *                  [signatureDate]     DateTime    Signature date
+     *                  [mandateReference]  string      Custom reference
      * @return Mandate
      */
     public function create($name, $account, array $opts = [])
     {
+        // Signature date
         if (!empty($opts['signatureDate'])) {
             if (!($opts['signatureDate'] instanceof \DateTime)) {
                 throw new \InvalidArgumentException("Argument signatureDate must be of type DateTime.");
@@ -87,17 +89,31 @@ class MandateResource extends CustomerResourceBase
         $params = [
             'method' => 'directdebit',
             'consumerName' => $name,
-            'consumerAccount' => $account,
-            'consumerBic' => !empty($opts['bic']) ? $opts['bic'] : null,
-            'signatureDate' => !empty($opts['signatureDate']) ? $opts['signatureDate'] : null,
-            'mandateReference' => !empty($opts['reference']) ? $opts['reference'] : null
+            'consumerAccount' => $account
         ];
+
+        // Merge options
+        $params = array_merge($params, $opts);
 
         // Create mandate
         $resp = $this->api->request->post("/customers/{$this->customer}/mandates", $params);
 
         // Return mandate model
         return new Mandate($this->api, $resp);
+    }
+
+    /**
+     * Revoke customer mandate
+     *
+     * @param string|null $mandateId Mandate ID
+     */
+    public function revoke($mandateId = null)
+    {
+        // Get mandate ID
+        $mandateId = $this->getMandateID($mandateId);
+
+        // Revoke mandate
+        $this->api->request->delete("/customers/{$this->customer}/mandates/{$mandateId}");
     }
 
     /**

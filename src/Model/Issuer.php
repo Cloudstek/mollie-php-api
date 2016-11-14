@@ -2,7 +2,16 @@
 
 namespace Mollie\API\Model;
 
-class Issuer extends Base\ModelBase
+use Mollie\API\Model\Base\ModelBase;
+
+/**
+ * Issuer model
+ *
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class Issuer extends ModelBase
 {
     /** @var string Issuer ID */
     public $id;
