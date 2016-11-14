@@ -4,7 +4,10 @@ use Mollie\API\Mollie;
 use Mollie\API\Request;
 use Mollie\API\Tests\TestCase\ResourceTestCase;
 
-class PaymentMethodTest extends ResourceTestCase
+/**
+ * Payment method get tests
+ */
+class PaymentMethodGetTest extends ResourceTestCase
 {
     /**
      * Get method

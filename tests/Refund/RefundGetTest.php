@@ -3,7 +3,7 @@
 use Mollie\API\Mollie;
 use Mollie\API\Tests\TestCase\ResourceTestCase;
 
-class RefundTest extends ResourceTestCase
+class RefundGetTest extends ResourceTestCase
 {
     /**
      * Get all payments

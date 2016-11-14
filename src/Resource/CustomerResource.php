@@ -77,6 +77,68 @@ class CustomerResource extends CustomerResourceBase
     }
 
     /**
+     * Update customer details
+     *
+     * @see https://www.mollie.com/nl/docs/reference/customers/update
+     * @param string $name Customer name
+     * @param string $email Customer email
+     * @param array|object $metadata Metadata for this customer
+     * @param string $locale Customer locale
+     * @param Customer|string $customerId
+     * @throws \BadMethodCallException
+     * @return Customer
+     */
+    public function update($name = null, $email = null, $metadata = null, $locale = null, $customerId = null)
+    {
+        // Check metadata type if given
+        if (isset($metadata) && !is_object($metadata) && !is_array($metadata)) {
+            throw new \InvalidArgumentException('Metadata argument must be of type array or object.');
+        }
+
+        // Check name
+        if (isset($name) && empty($name)) {
+            throw new \InvalidArgumentException("Name argument can't be an empty string.");
+        }
+
+        // Check email
+        if (isset($email) && empty($email)) {
+            throw new \InvalidArgumentException("Email argument can't be an empty string.");
+        }
+
+        // Parameter list
+        $params = [
+            'name'      => $name,
+            'email'     => $email,
+            'metadata'  => $metadata,
+            'locale'    => $locale
+        ];
+
+        // Filter all null (skipped) items. Keeping them in would unintentionally set their value to null!
+        $params = array_filter($params, function ($value) {
+            return isset($value);
+        });
+
+        // Filter all empty but not skipped items. Just to check if at least one entry has a value
+        $nonEmptyParams = array_filter($params, function ($value) {
+            return !empty($value);
+        });
+
+        // Check parameters for at least one field to update
+        if (count($params) == 0 || count($nonEmptyParams) == 0) {
+            throw new \BadMethodCallException("No arguments supplied, please provide either name, email or metadata.");
+        }
+
+        // Get customer ID
+        $customerId = $this->getCustomerID($customerId);
+
+        // Update customer
+        $resp = $this->api->request->post("/customers/{$customerId}", $params);
+
+        // Return customer model
+        return new Customer($this->api, $resp);
+    }
+
+    /**
      * Customer payment resource
      * @return CustomerPaymentResource
      */
