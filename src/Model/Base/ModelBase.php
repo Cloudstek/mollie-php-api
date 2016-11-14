@@ -78,9 +78,6 @@ abstract class ModelBase
 
             // ISO 8601 Duration
             if (preg_match('/.+(Period)$/', $name)) {
-                // Remove trailing T returned by API in test mode
-                $value = rtrim($value, 'T');
-
                 try {
                     return new \DateInterval($value);
                 } catch (\Exception $ex) {
