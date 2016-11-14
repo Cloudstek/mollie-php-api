@@ -67,17 +67,15 @@ abstract class ModelBase
     protected function parseData($name, $value)
     {
         if (!empty($value)) {
-            // ISO 8601 Date
             if (preg_match('/.+(Datetime|Date)$/', $name)) {
+                // ISO 8601 Date
                 try {
                     return new \DateTime($value);
                 } catch (\Exception $ex) {
                     throw new \InvalidArgumentException("Property {$name} is not a valid date/time string: {$value}.");
                 }
-            }
-
-            // ISO 8601 Duration
-            if (preg_match('/.+(Period)$/', $name)) {
+            } elseif (preg_match('/.+(Period)$/', $name)) {
+                // ISO 8601 Duration
                 try {
                     return new \DateInterval($value);
                 } catch (\Exception $ex) {
@@ -86,13 +84,23 @@ abstract class ModelBase
             }
         }
 
-        // Metadata
-        if ($name == "metadata" && !is_object($value) && !is_array($value)) {
-            throw new \InvalidArgumentException("Property {$name} is not an object or array.");
-        }
+        if ($name == "metadata") {
+            // Metadata
+            if (is_string($value)) {
+                // Try to parse as JSON string
+                $jsonVal = json_decode($value);
 
-        // Amount
-        if (preg_match('/amount.*$/', $name) && isset($value)) {
+                if (json_last_error() == JSON_ERROR_NONE) {
+                    return $jsonVal;
+                }
+            }
+
+            // If not JSON, check if it's an object or array
+            if (!$value instanceof \stdClass && !is_array($value)) {
+                throw new \InvalidArgumentException("Property {$name} is not an object, array or valid JSON string.");
+            }
+        } elseif (preg_match('/amount.*$/', $name) && isset($value)) {
+            // Amount
             return $value + 0.0;
         }
 
