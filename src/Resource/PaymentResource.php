@@ -33,7 +33,7 @@ class PaymentResource extends PaymentResourceBase
      */
     public function all()
     {
-        $items = [];
+        $items = array();
 
         // Get all payments
         $resp = $this->api->request->getAll("/payments");
@@ -61,7 +61,7 @@ class PaymentResource extends PaymentResourceBase
      *                  ... Payment method specific options (see documentation)
      * @return Payment
      */
-    public function create($amount, $description, $redirectUrl, $metadata = null, array $opts = [])
+    public function create($amount, $description, $redirectUrl, $metadata = null, array $opts = array())
     {
         // Check metadata type
         if (!is_object($metadata) && !is_array($metadata)) {
@@ -69,13 +69,13 @@ class PaymentResource extends PaymentResourceBase
         }
 
         // Construct parameters
-        $params = [
+        $params = array(
             'amount'        => $amount,
             'description'   => $description,
             'redirectUrl'   => $redirectUrl,
             'metadata'      => $metadata,
             'locale'        => $this->api->getLocale()
-        ];
+        );
 
         // Merge options
         $params = array_merge($params, $opts);

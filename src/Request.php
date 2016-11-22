@@ -27,7 +27,7 @@ class Request extends Base\RequestBase
      * @throws RequestException
      * @return object
      */
-    public function get($uri, array $params = [])
+    public function get($uri, array $params = array())
     {
         // API key
         $apiKey = $this->api->getApiKey();
@@ -68,7 +68,7 @@ class Request extends Base\RequestBase
         $resp = $this->get($uri);
 
         // Data
-        $data = !empty($resp->data) ? $resp->data : [];
+        $data = !empty($resp->data) ? $resp->data : array();
         $next = !empty($resp->links->next) ? $resp->links->next : null;
 
         // Get next pages (if any)

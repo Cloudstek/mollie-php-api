@@ -1,7 +1,7 @@
 {
     "name": "cloudstek/mollie-php-api",
     "description": "Mollie API client library for PHP",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "homepage": "https://github.com/cloudstek/mollie-php-api",
     "license": "BSD-2-Clause",
 
@@ -32,7 +32,7 @@
     },
 
     "require": {
-        "php": ">=5.6",
+        "php": ">=5.3",
         "lib-curl": "*",
         "lib-openssl": "*",
         "nategood/httpful": "^0.2.20"
@@ -40,6 +40,8 @@
 
     "require-dev": {
         "phpunit/phpunit": "^5.4",
-        "codeclimate/php-test-reporter": "^0.3.2"
+        "codeclimate/php-test-reporter": "^0.3.2",
+        "squizlabs/php_codesniffer": "^2.7",
+        "frenck/php-compatibility": "^7.0"
     }
 }

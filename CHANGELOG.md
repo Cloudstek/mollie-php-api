@@ -1,6 +1,11 @@
 # Change log
 
-## [2.0.0]
+## [2.0.1] - 2016-11-22
+### Added
+- Support for php 5.3
+- Add PHP compatibility sniffs to PHP_CodeSniffer to ensure compatibility
+
+## [2.0.0] - 2016-11-14
 ### Added
 - This beautiful change log
 - Method for mandate revocation

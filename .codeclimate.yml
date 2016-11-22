@@ -15,8 +15,7 @@ engines:
     enabled: true
     config:
       file_exstensions: "php"
-      standard: "PSR1,PSR2"
-      ignore_warnings: true
+      standard: "phpcs.xml"
     exclude_paths:
       - tests/
 

@@ -34,7 +34,7 @@ class CustomerResource extends CustomerResourceBase
      */
     public function all()
     {
-        $items = [];
+        $items = array();
 
         // Get all customers
         $resp = $this->api->request->getAll("/customers");
@@ -65,12 +65,12 @@ class CustomerResource extends CustomerResourceBase
         }
 
         // Create customer
-        $resp = $this->api->request->post("/customers", [
+        $resp = $this->api->request->post("/customers", array(
             'name'      => $name,
             'email'     => $email,
             'locale'    => $this->api->getLocale(),
             'metadata'  => $metadata,
-        ]);
+        ));
 
         // Return customer model
         return new Customer($this->api, $resp);
@@ -106,12 +106,12 @@ class CustomerResource extends CustomerResourceBase
         }
 
         // Parameter list
-        $params = [
+        $params = array(
             'name'      => $name,
             'email'     => $email,
             'metadata'  => $metadata,
             'locale'    => $locale
-        ];
+        );
 
         // Filter all null (skipped) items. Keeping them in would unintentionally set their value to null!
         $params = array_filter($params, function ($value) {

@@ -48,7 +48,7 @@ class SubscriptionResource extends CustomerResourceBase
      */
     public function all()
     {
-        $items = [];
+        $items = array();
 
         // Get all subscriptions
         $resp = $this->api->request->getAll("/customers/{$this->customer}/subscriptions");
@@ -77,7 +77,7 @@ class SubscriptionResource extends CustomerResourceBase
      * @throws \InvalidArgumentException
      * @return Subscription
      */
-    public function create($amount, $interval, $description, $times = null, array $opts = [])
+    public function create($amount, $interval, $description, $times = null, array $opts = array())
     {
         // Check number of times
         if (isset($times) && ($times < 1 || !is_numeric($times))) {
@@ -99,12 +99,12 @@ class SubscriptionResource extends CustomerResourceBase
         }
 
         // Construct parameters
-        $params = [
+        $params = array(
             'amount'        => $amount,
             'times'         => $times,
             'interval'      => $interval,
             'description'   => $description
-        ];
+        );
 
         // Merge options
         $params = array_merge($params, $opts);

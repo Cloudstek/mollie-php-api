@@ -48,7 +48,7 @@ class MandateResource extends CustomerResourceBase
      */
     public function all()
     {
-        $items = [];
+        $items = array();
 
         // Get all customer mandates
         $resp = $this->api->request->getAll("/customers/{$this->customer}/mandates");
@@ -74,7 +74,7 @@ class MandateResource extends CustomerResourceBase
      *                  [mandateReference]  string      Custom reference
      * @return Mandate
      */
-    public function create($name, $account, array $opts = [])
+    public function create($name, $account, array $opts = array())
     {
         // Signature date
         if (!empty($opts['signatureDate'])) {
@@ -86,11 +86,11 @@ class MandateResource extends CustomerResourceBase
         }
 
         // Construct parameters
-        $params = [
+        $params = array(
             'method' => 'directdebit',
             'consumerName' => $name,
             'consumerAccount' => $account
-        ];
+        );
 
         // Merge options
         $params = array_merge($params, $opts);

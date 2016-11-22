@@ -13,7 +13,7 @@ class RefundResource extends ResourceBase
      */
     public function all()
     {
-        $items = [];
+        $items = array();
 
         // API request
         $resp = $this->api->request->getAll("/refunds");
