@@ -13,7 +13,7 @@ class PaymentResource extends CustomerResourceBase
      */
     public function all()
     {
-        $items = [];
+        $items = array();
 
         // Get all customer payments
         $resp = $this->api->request->getAll("/customers/{$this->customer}/payments");
@@ -43,10 +43,10 @@ class PaymentResource extends CustomerResourceBase
      *                  ... Payment method specific options (see documentation)
      * @return Payment
      */
-    public function create($amount, $description, $redirectUrl, $metadata = null, array $opts = [])
+    public function create($amount, $description, $redirectUrl, $metadata = null, array $opts = array())
     {
         // Check recurring type
-        if (!empty($opts['recurringType']) && !in_array($opts['recurringType'], ['first', 'recurring'])) {
+        if (!empty($opts['recurringType']) && !in_array($opts['recurringType'], array('first', 'recurring'))) {
             throw new \InvalidArgumentException(sprintf("Invalid recurring type '%s'. Recurring type must be 'first' or 'recurring'.", $opts['recurringType']));
         }
 
@@ -56,13 +56,13 @@ class PaymentResource extends CustomerResourceBase
         }
 
         // Construct parameters
-        $params = [
+        $params = array(
             'amount'        => $amount,
             'description'   => $description,
             'redirectUrl'   => $redirectUrl,
             'metadata'      => $metadata,
             'locale'        => $this->api->getLocale(),
-        ];
+        );
 
         // Merge options
         $params = array_merge($params, $opts);
@@ -92,7 +92,7 @@ class PaymentResource extends CustomerResourceBase
      *                  [recurringType] string  Recurring payment type, first or recurring
      * @return Payment
      */
-    public function createFirstRecurring($amount, $description, $redirectUrl, $metadata = nul, array $opts = [])
+    public function createFirstRecurring($amount, $description, $redirectUrl, $metadata = nul, array $opts = array())
     {
         // Set recurring type to recurring
         $opts['recurringType'] = 'first';
@@ -119,7 +119,7 @@ class PaymentResource extends CustomerResourceBase
      *                  [mandateId]     string Mandate ID to indicate which of the customers accounts should be credited
      * @return Payment
      */
-    public function createRecurring($amount, $description, $metadata = null, array $opts = [])
+    public function createRecurring($amount, $description, $metadata = null, array $opts = array())
     {
         // Set recurring type to recurring
         $opts['recurringType'] = 'recurring';

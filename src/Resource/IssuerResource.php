@@ -31,7 +31,7 @@ class IssuerResource extends ResourceBase
      */
     public function all()
     {
-        $items = [];
+        $items = array();
 
         // Get all issuers
         $resp = $this->api->request->getAll("/issuers");

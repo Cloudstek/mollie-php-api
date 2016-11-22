@@ -30,7 +30,7 @@ class MethodResource extends ResourceBase
      */
     public function all()
     {
-        $items = [];
+        $items = array();
 
         // Get all methods
         $resp = $this->api->request->getAll("/methods");

@@ -49,7 +49,7 @@ class RefundResource extends PaymentResourceBase
      */
     public function all()
     {
-        $items = [];
+        $items = array();
 
         // API request
         $resp = $this->api->request->getAll("/payments/{$this->payment}/refunds");
@@ -71,9 +71,9 @@ class RefundResource extends PaymentResourceBase
     public function create($amount = null)
     {
         // API request
-        $resp = $this->api->request->post("/payments/{$this->payment}/refunds", [
+        $resp = $this->api->request->post("/payments/{$this->payment}/refunds", array(
             'amount'        => $amount
-        ]);
+        ));
 
         // Return refund model
         return new Refund($this->api, $resp);

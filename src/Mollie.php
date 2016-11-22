@@ -72,7 +72,7 @@ class Mollie
      * @param string[] $params URI parameters
      * @return string Complete endpoint URL to make requests to
      */
-    public function getApiEndpoint($uri = null, $params = [])
+    public function getApiEndpoint($uri = null, $params = array())
     {
         $url = $this->apiEndpoint;
 

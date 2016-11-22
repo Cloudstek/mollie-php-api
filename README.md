@@ -6,7 +6,7 @@ Simple to use, modern and well-tested PHP API client for [Mollie](https://www.mo
 
 ## Requirements
 
-* PHP 5.6 or newer
+* PHP 5.3 or newer
 * PHP cURL extension (with SSL)
 * PHP xdebug extension (optional, for unit tests)
 * [Composer](https://getcomposer.org)
@@ -38,7 +38,7 @@ You can also manually add the package to your projects composer.json requirement
 ```json
 {
   "require": {
-    "cloudstek/mollie-php-api": "^2.0.0"
+    "cloudstek/mollie-php-api": "^2.0.1"
   }
 }
 ```
